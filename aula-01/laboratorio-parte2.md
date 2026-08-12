@@ -11,14 +11,14 @@
 ## Pré-requisitos
 
 - Docker Desktop instalado e rodando ([download aqui](https://www.docker.com/products/docker-desktop/))
-- Laboratório Parte 1 concluído (repositório `technova-api` com código no GitHub)
+- Laboratório Parte 1 concluído (repositório `app-technova` com código no GitHub)
 - Terminal (Git Bash no Windows, Terminal no macOS/Linux)
 - Editor de texto (VS Code recomendado)
 
 > **Nota:** Se você não completou a Parte 1, clone o repositório base:
 > ```bash
-> git clone https://github.com/SEU-USUARIO/technova-api.git
-> cd technova-api
+> git clone https://github.com/SEU-USUARIO/app-technova.git
+> cd app-technova
 > ```
 
 ---
@@ -149,7 +149,7 @@ VERSION_ID=3.x.x
 ### Passo 3.1: Navegar até o repositório do projeto
 
 ```bash
-cd technova-api
+cd app-technova
 ```
 
 > **Continuidade da Parte 1:** Este é o mesmo repositório que você criou e publicou no GitHub. Agora vamos adicionar containerização ao projeto.
@@ -162,7 +162,7 @@ ls -la
 
 **Estrutura esperada (da Parte 1):**
 ```
-technova-api/
+app-technova/
 ├── src/
 │   ├── index.js
 │   └── routes/
@@ -263,7 +263,7 @@ Abra o `package.json` e confirme que tem o Express listado:
 
 ```json
 {
-  "name": "technova-api",
+  "name": "app-technova",
   "version": "1.0.0",
   "description": "API de gerenciamento de pedidos da TechNova",
   "main": "src/index.js",
@@ -287,12 +287,12 @@ Se não tiver, adicione a seção `dependencies`.
 ### Passo 4.1: Construir a imagem
 
 ```bash
-docker build -t technova-api:1.0 .
+docker build -t app-technova:1.0 .
 ```
 
 **Explicação:**
 - `docker build`: comando para construir imagem
-- `-t technova-api:1.0`: nomeia a imagem como `technova-api` com tag `1.0`
+- `-t app-technova:1.0`: nomeia a imagem como `app-technova` com tag `1.0`
 - `.`: usa o diretório atual como contexto de build (envia os arquivos para o Docker Engine)
 
 **Resultado esperado:** Cada passo do Dockerfile é executado:
@@ -304,7 +304,7 @@ docker build -t technova-api:1.0 .
  => [4/5] RUN npm install --production
  => [5/5] COPY . .
  => exporting to image
- => => naming to docker.io/library/technova-api:1.0
+ => => naming to docker.io/library/app-technova:1.0
 ```
 
 ### Passo 4.2: Verificar que a imagem foi criada
@@ -315,7 +315,7 @@ docker images | grep technova
 
 **Resultado esperado:**
 ```
-technova-api   1.0   xxxxxxxxxxxx   Just now   ~XXX MB
+app-technova   1.0   xxxxxxxxxxxx   Just now   ~XXX MB
 ```
 
 ### Passo 4.3: Executar um segundo build (demonstrar cache)
@@ -323,7 +323,7 @@ technova-api   1.0   xxxxxxxxxxxx   Just now   ~XXX MB
 Sem alterar nada, execute novamente:
 
 ```bash
-docker build -t technova-api:1.0 .
+docker build -t app-technova:1.0 .
 ```
 
 **Resultado esperado:** O build é praticamente instantâneo! Todas as camadas vêm do cache:
@@ -337,7 +337,7 @@ docker build -t technova-api:1.0 .
 ### Passo 4.4: Rodar o container
 
 ```bash
-docker run -d --name technova-container -p 3000:3000 technova-api:1.0
+docker run -d --name technova-container -p 3000:3000 app-technova:1.0
 ```
 
 **Flags:**
@@ -354,7 +354,7 @@ docker ps
 **Resultado esperado:**
 ```
 CONTAINER ID   IMAGE              COMMAND                  STATUS         PORTS                    NAMES
-xxxxxxxxxxxx   technova-api:1.0   "docker-entrypoint.s…"   Up X seconds   0.0.0.0:3000->3000/tcp   technova-container
+xxxxxxxxxxxx   app-technova:1.0   "docker-entrypoint.s…"   Up X seconds   0.0.0.0:3000->3000/tcp   technova-container
 ```
 
 ### Passo 4.6: Testar a API
@@ -378,7 +378,7 @@ curl http://localhost:3000/health
 
 **Resultado esperado:**
 ```json
-{"status":"healthy","timestamp":"2026-XX-XXTXX:XX:XX.XXXZ","service":"technova-api","version":"1.0.0"}
+{"status":"healthy","timestamp":"2026-XX-XXTXX:XX:XX.XXXZ","service":"app-technova","version":"1.0.0"}
 ```
 
 ### Passo 4.8: Verificar os logs do container
@@ -433,7 +433,7 @@ docker ps -a
 **Resultado esperado:** O container aparece com status "Exited":
 ```
 CONTAINER ID   IMAGE              STATUS                     NAMES
-xxxxxxxxxxxx   technova-api:1.0   Exited (0) X seconds ago   technova-container
+xxxxxxxxxxxx   app-technova:1.0   Exited (0) X seconds ago   technova-container
 ```
 
 ### Passo 5.3: Reiniciar o container
@@ -508,7 +508,7 @@ docker rm technova-container
 ### Passo 5.8: Rodar com --rm (auto-remove ao parar)
 
 ```bash
-docker run -d --rm --name technova-temp -p 3000:3000 technova-api:1.0
+docker run -d --rm --name technova-temp -p 3000:3000 app-technova:1.0
 ```
 
 Teste:
@@ -527,7 +527,7 @@ docker ps -a | grep technova-temp
 ### Passo 5.9: Rodar com variável de ambiente customizada
 
 ```bash
-docker run -d --rm --name technova-prod -p 3000:3000 -e NODE_ENV=production technova-api:1.0
+docker run -d --rm --name technova-prod -p 3000:3000 -e NODE_ENV=production app-technova:1.0
 ```
 
 Teste o endpoint `/info`:
@@ -595,10 +595,10 @@ Simule um novo desenvolvedor entrando no time:
 cd ..
 mkdir teste-novo-dev
 cd teste-novo-dev
-git clone https://github.com/SEU-USUARIO/technova-api.git
-cd technova-api
-docker build -t technova-api:1.0 .
-docker run -d --rm --name teste-final -p 3000:3000 technova-api:1.0
+git clone https://github.com/SEU-USUARIO/app-technova.git
+cd app-technova
+docker build -t app-technova:1.0 .
+docker run -d --rm --name teste-final -p 3000:3000 app-technova:1.0
 curl http://localhost:3000
 ```
 
@@ -636,7 +636,7 @@ docker ps
 docker stop <nome-do-container>
 
 # Opção 2: Usar outra porta no mapeamento
-docker run -d --name technova-container -p 3001:3000 technova-api:1.0
+docker run -d --name technova-container -p 3001:3000 app-technova:1.0
 # Acesse via http://localhost:3001
 ```
 
@@ -710,7 +710,7 @@ Ao concluir este laboratório, você deve ter:
 - [ ] Imagem `node:20-alpine` baixada e testada
 - [ ] Arquivo `Dockerfile` criado com otimização de camadas
 - [ ] Arquivo `.dockerignore` configurado corretamente
-- [ ] Imagem `technova-api:1.0` construída com sucesso
+- [ ] Imagem `app-technova:1.0` construída com sucesso
 - [ ] Container rodando e API respondendo na porta 3000
 - [ ] Experiência com logs, exec, stop, start e rm
 - [ ] Container rodando com variáveis de ambiente customizadas

@@ -70,8 +70,8 @@ git config --list
 ### Passo 2.1: Criar diretório do projeto
 
 ```bash
-mkdir technova-api
-cd technova-api
+mkdir app-technova
+cd app-technova
 ```
 
 ### Passo 2.2: Inicializar o repositório Git
@@ -82,7 +82,7 @@ git init
 
 **Resultado esperado:**
 ```
-Initialized empty Git repository in .../technova-api/.git/
+Initialized empty Git repository in .../app-technova/.git/
 ```
 
 ### Passo 2.3: Verificar o status inicial
@@ -209,7 +209,7 @@ Crie o arquivo `package.json`:
 
 ```json
 {
-  "name": "technova-api",
+  "name": "app-technova",
   "version": "1.0.0",
   "description": "API de gerenciamento de pedidos da TechNova",
   "main": "src/index.js",
@@ -355,7 +355,7 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    service: 'technova-api',
+    service: 'app-technova',
     version: '1.0.0'
   });
 });
@@ -512,7 +512,7 @@ git branch -d feature/mensagem-v2
 ### Passo 5.1: Criar repositório no GitHub
 
 1. Acesse [github.com/new](https://github.com/new)
-2. Nome do repositório: `technova-api`
+2. Nome do repositório: `app-technova`
 3. Visibilidade: **Público**
 4. Deixe **sem** README, .gitignore ou licença (já temos localmente)
 5. Clique em "Create repository"
@@ -520,7 +520,7 @@ git branch -d feature/mensagem-v2
 ### Passo 5.2: Conectar o repositório local ao remoto
 
 ```bash
-git remote add origin https://github.com/SEU-USUARIO/technova-api.git
+git remote add origin https://github.com/SEU-USUARIO/app-technova.git
 ```
 
 ### Passo 5.3: Verificar o remoto configurado
@@ -531,8 +531,8 @@ git remote -v
 
 **Resultado esperado:**
 ```
-origin  https://github.com/SEU-USUARIO/technova-api.git (fetch)
-origin  https://github.com/SEU-USUARIO/technova-api.git (push)
+origin  https://github.com/SEU-USUARIO/app-technova.git (fetch)
+origin  https://github.com/SEU-USUARIO/app-technova.git (push)
 ```
 
 ### Passo 5.4: Enviar os commits para o GitHub
@@ -546,7 +546,7 @@ git push -u origin main
 Enumerating objects: X, done.
 Counting objects: 100% (X/X), done.
 ...
-To https://github.com/SEU-USUARIO/technova-api.git
+To https://github.com/SEU-USUARIO/app-technova.git
  * [new branch]      main -> main
 branch 'main' set up to track 'origin/main'.
 ```
@@ -558,7 +558,7 @@ branch 'main' set up to track 'origin/main'.
 
 ### Passo 5.5: Verificar no GitHub
 
-Acesse `https://github.com/SEU-USUARIO/technova-api` no navegador e confirme que:
+Acesse `https://github.com/SEU-USUARIO/app-technova` no navegador e confirme que:
 
 - [ ] Todos os arquivos estão visíveis
 - [ ] O README.md é renderizado na página inicial
@@ -596,8 +596,8 @@ Atualize a página no GitHub — a alteração deve aparecer imediatamente.
 
 ```bash
 cd ..
-git clone https://github.com/SEU-USUARIO/technova-api.git technova-api-rafael
-cd technova-api-rafael
+git clone https://github.com/SEU-USUARIO/app-technova.git app-technova-rafael
+cd app-technova-rafael
 ```
 
 ### Passo 6.2: Verificar que o clone está completo
@@ -645,7 +645,7 @@ git push
 ### Passo 6.4: Voltar ao repositório original e sincronizar
 
 ```bash
-cd ../technova-api
+cd ../app-technova
 git pull origin main
 git log --oneline
 ```
@@ -672,7 +672,7 @@ O código do Rafael está disponível localmente. Isso demonstra o fluxo complet
 
 **Solução:**
 ```bash
-cd technova-api
+cd app-technova
 # ou se ainda não inicializou:
 git init
 ```
@@ -684,7 +684,7 @@ git init
 **Solução:**
 ```bash
 git remote remove origin
-git remote add origin https://github.com/SEU-USUARIO/technova-api.git
+git remote add origin https://github.com/SEU-USUARIO/app-technova.git
 ```
 
 ### ❌ Erro: `error: failed to push some refs`
@@ -736,7 +736,7 @@ git push -u origin main
 Ao concluir este laboratório, você deve ter:
 
 - [ ] Git configurado com nome, e-mail e branch padrão
-- [ ] Repositório `technova-api` inicializado com pelo menos 4 commits
+- [ ] Repositório `app-technova` inicializado com pelo menos 4 commits
 - [ ] Arquivo `.gitignore` configurado e protegendo `node_modules/` e `.env`
 - [ ] Experiência com criação de branch e merge (fast-forward)
 - [ ] Repositório publicado no GitHub com todos os commits

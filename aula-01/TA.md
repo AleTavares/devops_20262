@@ -336,10 +336,10 @@ docker pull node:20-alpine
 docker images
 
 # Construir imagem a partir de um Dockerfile
-docker build -t technova-api:1.0 .
+docker build -t app-technova:1.0 .
 
 # Criar e iniciar um container
-docker run -d --name minha-api -p 3000:3000 technova-api:1.0
+docker run -d --name minha-api -p 3000:3000 app-technova:1.0
 
 # Listar containers em execução
 docker ps
