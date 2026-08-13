@@ -59,6 +59,51 @@ Antes da aula, o aluno deve ter:
 
 ---
 
+## Entrega do Trabalho de Fixação (TF)
+
+O TF desta aula deve ser desenvolvido no **seu repositório pessoal** (`unifaat-devops-portfolio`). A entrega neste repositório da disciplina consiste em um **arquivo Markdown (`entrega.md`)** contendo o **link para o seu repositório** e as evidências solicitadas.
+
+### Passo a Passo
+
+1. **Desenvolva o TF** no seu repositório pessoal (`unifaat-devops-portfolio`)
+2. Faça **fork** do repositório da disciplina (se ainda não fez)
+3. Crie uma **branch**: `SEU-RA/tf-01`
+4. Crie a pasta `entregas/aula-01/SEU-RA/`
+5. Adicione o arquivo **`entrega.md`** com o link do seu repositório + evidências
+6. Faça commits descritivos seguindo [Conventional Commits](https://www.conventionalcommits.org/pt-br/)
+7. Abra um **Pull Request** para o repositório original com título: `[Aula 01] RA: XXXXX - Nome Completo`
+
+### Modelo do arquivo `entrega.md`
+
+```markdown
+# Entrega — Aula 01: Fundamentos de Git e Docker
+
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Data:** [Data da entrega]
+
+## Repositório
+
+- URL: https://github.com/SEU-USUARIO/unifaat-devops-portfolio
+
+## Evidências
+
+- [ ] Repositório público com estrutura completa
+- [ ] Mínimo de 5 commits demonstrando workflow Git
+- [ ] Dockerfile funcional
+- [ ] Container rodando (evidência abaixo)
+
+## Evidência de Container Rodando
+
+[Cole aqui o output do `docker ps` ou screenshot]
+```
+
+> **Importante:** O repositório pessoal do aluno deve estar **público** para que o professor consiga avaliar. PRs que não contenham o link para o repositório ou cujo repositório esteja privado serão considerados **incompletos**.
+
+Para detalhes completos sobre os entregáveis e critérios de avaliação, consulte o arquivo [`TF.md`](TF.md).
+
+---
+
 ## Estrutura de Arquivos desta Aula
 
 | Arquivo | Descrição |
