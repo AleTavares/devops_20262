@@ -129,11 +129,40 @@ Cada pasta `aula-XX/` possui **7 arquivos padronizados**:
 
 ## Regras de Entrega dos Trabalhos de Fixação (TF)
 
-1. Faça **fork** deste repositório
-2. Crie uma **branch**: `SEU-RA/tx-XX` (ex: `12345/tf-01`)
-3. Crie a pasta `entregas/SEU-RA/tf-XX/` com os artefatos solicitados
-4. Faça commits descritivos seguindo [Conventional Commits](https://www.conventionalcommits.org/pt-br/)
-5. Abra um **Pull Request** com título: `[Aula XX] RA: XXXXX - Nome Completo`
+### O que entregar
+
+Cada TF deve ser desenvolvido no **repositório pessoal do aluno** (criado na Aula 01: `unifaat-devops-portfolio`). A entrega neste repositório da disciplina consiste em um **arquivo Markdown (`entrega.md`)** contendo o **link para o seu repositório** e as evidências solicitadas.
+
+### Passo a Passo
+
+1. **Desenvolva o TF** no seu repositório pessoal (`unifaat-devops-portfolio`)
+2. Faça **fork** deste repositório da disciplina (se ainda não fez)
+3. Crie uma **branch**: `SEU-RA/tf-XX` (ex: `12345/tf-01`)
+4. Crie a pasta `entregas/aula-XX/SEU-RA/`
+5. Adicione o arquivo **`entrega.md`** com o link do seu repositório + evidências (veja modelo abaixo)
+6. Faça commits descritivos seguindo [Conventional Commits](https://www.conventionalcommits.org/pt-br/)
+7. Abra um **Pull Request** para o repositório original com título: `[Aula XX] RA: XXXXX - Nome Completo`
+
+### Modelo do arquivo `entrega.md`
+
+```markdown
+# Entrega — Aula XX: [Título do TF]
+
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Data:** [Data da entrega]
+
+## Repositório
+
+- URL: https://github.com/SEU-USUARIO/unifaat-devops-portfolio
+
+## Evidências
+
+- [ ] [Liste os entregáveis conforme solicitado no TF]
+- [ ] [Adicione screenshots ou logs quando pedido]
+```
+
+> **Importante:** O repositório pessoal do aluno deve estar **público** para que o professor consiga avaliar. PRs que não contenham o link para o repositório ou cujo repositório esteja privado serão considerados **incompletos**.
 
 ### Arquivos proibidos (nunca commitar):
 - `*.tfstate` e `*.tfstate.backup`
