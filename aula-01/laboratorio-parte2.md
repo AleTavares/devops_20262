@@ -1,24 +1,24 @@
-# Laboratório Parte 2 — Containerizando a API TechNova
+# Laboratório Parte 2 — Containerizando a API do Portfólio
 
 **Tempo estimado:** 120 minutos
 
 ## Missão: Garantir que a API Rode de Forma Idêntica em Qualquer Ambiente
 
-> A equipe de Platform Engineering acabou de implementar Git com sucesso (Parte 1). O código está versionado e seguro no GitHub. Agora é hora de atacar o segundo problema: eliminar o "funciona na minha máquina". A solução: containerizar a API usando Docker. Ao final deste laboratório, qualquer membro da equipe poderá rodar a aplicação com um único comando, independente do sistema operacional ou configurações locais.
+> A equipe de Platform Engineering acabou de implementar Git com sucesso (Parte 1). O código está versionado e seguro no GitHub no repositório `unifaat-devops-portfolio`. Agora é hora de atacar o segundo problema: eliminar o "funciona na minha máquina". A solução: containerizar a API usando Docker. Ao final deste laboratório, qualquer membro da equipe poderá rodar a aplicação com um único comando, independente do sistema operacional ou configurações locais.
 
 ---
 
 ## Pré-requisitos
 
 - Docker Desktop instalado e rodando ([download aqui](https://www.docker.com/products/docker-desktop/))
-- Laboratório Parte 1 concluído (repositório `technova-api` com código no GitHub)
+- Laboratório Parte 1 concluído (repositório `unifaat-devops-portfolio` com código no GitHub)
 - Terminal (Git Bash no Windows, Terminal no macOS/Linux)
 - Editor de texto (VS Code recomendado)
 
 > **Nota:** Se você não completou a Parte 1, clone o repositório base:
 > ```bash
-> git clone https://github.com/SEU-USUARIO/technova-api.git
-> cd technova-api
+> git clone https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git
+> cd unifaat-devops-portfolio
 > ```
 
 ---
@@ -149,7 +149,7 @@ VERSION_ID=3.x.x
 ### Passo 3.1: Navegar até o repositório do projeto
 
 ```bash
-cd technova-api
+cd unifaat-devops-portfolio
 ```
 
 > **Continuidade da Parte 1:** Este é o mesmo repositório que você criou e publicou no GitHub. Agora vamos adicionar containerização ao projeto.
@@ -157,17 +157,18 @@ cd technova-api
 ### Passo 3.2: Verificar a estrutura atual do projeto
 
 ```bash
-ls -la
+ls -la aula-01/app/
 ```
 
 **Estrutura esperada (da Parte 1):**
 ```
-technova-api/
-├── src/
-│   ├── index.js
-│   └── routes/
-│       └── orders.js
-├── package.json
+unifaat-devops-portfolio/
+├── aula-01/
+│   └── app/
+│       ├── server.js
+│       ├── package.json
+│       └── routes/
+│           └── orders.js
 ├── .gitignore
 ├── .env
 ├── node_modules/  (se fez npm install localmente)
@@ -176,7 +177,7 @@ technova-api/
 
 ### Passo 3.3: Criar o arquivo `.dockerignore`
 
-Crie o arquivo `.dockerignore` na raiz do projeto:
+Crie o arquivo `aula-01/app/.dockerignore`:
 
 ```dockerignore
 # Dependências (serão instaladas no container)
@@ -205,12 +206,12 @@ Dockerfile
 
 ### Passo 3.4: Criar o Dockerfile
 
-Crie o arquivo `Dockerfile` (sem extensão) na raiz do projeto:
+Crie o arquivo `aula-01/app/Dockerfile` (sem extensão):
 
 ```dockerfile
 # ==================================================
-# Dockerfile - TechNova API
-# Containeriza a API de gerenciamento de pedidos
+# Dockerfile - Portfolio DevOps API (Aula 01)
+# Containeriza a API do portfólio DevOps
 # ==================================================
 
 # 1. Imagem base: Node.js 20 com Alpine Linux (leve)
@@ -234,7 +235,7 @@ COPY . .
 EXPOSE 3000
 
 # 7. Comando para iniciar a aplicação
-CMD ["node", "src/index.js"]
+CMD ["node", "server.js"]
 ```
 
 ### Passo 3.5: Entender a estratégia de otimização de camadas
@@ -259,16 +260,16 @@ Isso economiza de segundos a minutos em cada build — especialmente quando `npm
 
 ### Passo 3.6: Verificar se o package.json tem as dependências corretas
 
-Abra o `package.json` e confirme que tem o Express listado:
+Abra o `aula-01/app/package.json` e confirme que tem o Express listado:
 
 ```json
 {
-  "name": "technova-api",
+  "name": "devops-portfolio-aula01",
   "version": "1.0.0",
-  "description": "API de gerenciamento de pedidos da TechNova",
-  "main": "src/index.js",
+  "description": "Aplicação da Aula 01 - Fundamentos de Git e Docker",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "4.18.2"
@@ -287,12 +288,13 @@ Se não tiver, adicione a seção `dependencies`.
 ### Passo 4.1: Construir a imagem
 
 ```bash
-docker build -t technova-api:1.0 .
+cd aula-01/app
+docker build -t portfolio-aula01:1.0 .
 ```
 
 **Explicação:**
 - `docker build`: comando para construir imagem
-- `-t technova-api:1.0`: nomeia a imagem como `technova-api` com tag `1.0`
+- `-t portfolio-aula01:1.0`: nomeia a imagem como `portfolio-aula01` com tag `1.0`
 - `.`: usa o diretório atual como contexto de build (envia os arquivos para o Docker Engine)
 
 **Resultado esperado:** Cada passo do Dockerfile é executado:
@@ -304,18 +306,18 @@ docker build -t technova-api:1.0 .
  => [4/5] RUN npm install --production
  => [5/5] COPY . .
  => exporting to image
- => => naming to docker.io/library/technova-api:1.0
+ => => naming to docker.io/library/portfolio-aula01:1.0
 ```
 
 ### Passo 4.2: Verificar que a imagem foi criada
 
 ```bash
-docker images | grep technova
+docker images | grep portfolio
 ```
 
 **Resultado esperado:**
 ```
-technova-api   1.0   xxxxxxxxxxxx   Just now   ~XXX MB
+portfolio-aula01   1.0   xxxxxxxxxxxx   Just now   ~XXX MB
 ```
 
 ### Passo 4.3: Executar um segundo build (demonstrar cache)
@@ -323,7 +325,7 @@ technova-api   1.0   xxxxxxxxxxxx   Just now   ~XXX MB
 Sem alterar nada, execute novamente:
 
 ```bash
-docker build -t technova-api:1.0 .
+docker build -t portfolio-aula01:1.0 .
 ```
 
 **Resultado esperado:** O build é praticamente instantâneo! Todas as camadas vêm do cache:
@@ -337,12 +339,12 @@ docker build -t technova-api:1.0 .
 ### Passo 4.4: Rodar o container
 
 ```bash
-docker run -d --name technova-container -p 3000:3000 technova-api:1.0
+docker run -d --name portfolio-container -p 3000:3000 portfolio-aula01:1.0
 ```
 
 **Flags:**
 - `-d`: executa em background (detached) — libera o terminal
-- `--name technova-container`: nomeia o container para fácil referência
+- `--name portfolio-container`: nomeia o container para fácil referência
 - `-p 3000:3000`: mapeia porta 3000 do host para porta 3000 do container
 
 ### Passo 4.5: Verificar que o container está rodando
@@ -353,8 +355,8 @@ docker ps
 
 **Resultado esperado:**
 ```
-CONTAINER ID   IMAGE              COMMAND                  STATUS         PORTS                    NAMES
-xxxxxxxxxxxx   technova-api:1.0   "docker-entrypoint.s…"   Up X seconds   0.0.0.0:3000->3000/tcp   technova-container
+CONTAINER ID   IMAGE                COMMAND                  STATUS         PORTS                    NAMES
+xxxxxxxxxxxx   portfolio-aula01:1.0 "docker-entrypoint.s…"   Up X seconds   0.0.0.0:3000->3000/tcp   portfolio-container
 ```
 
 ### Passo 4.6: Testar a API
@@ -378,13 +380,13 @@ curl http://localhost:3000/health
 
 **Resultado esperado:**
 ```json
-{"status":"healthy","timestamp":"2026-XX-XXTXX:XX:XX.XXXZ","service":"technova-api","version":"1.0.0"}
+{"status":"healthy","timestamp":"2026-XX-XXTXX:XX:XX.XXXZ","service":"devops-portfolio-api","version":"1.0.0"}
 ```
 
 ### Passo 4.8: Verificar os logs do container
 
 ```bash
-docker logs technova-container
+docker logs portfolio-container
 ```
 
 **Resultado esperado:**
@@ -395,7 +397,7 @@ Servidor rodando na porta 3000
 ### Passo 4.9: Acompanhar logs em tempo real
 
 ```bash
-docker logs -f technova-container
+docker logs -f portfolio-container
 ```
 
 Abra outra aba do terminal e faça uma requisição:
@@ -406,7 +408,7 @@ curl http://localhost:3000
 
 Você verá o log da requisição aparecer. Pressione `Ctrl+C` para sair.
 
-✅ **Checkpoint 4:** A API TechNova está rodando dentro de um container Docker, acessível na porta 3000. O mesmo container produz resultado idêntico em qualquer máquina!
+✅ **Checkpoint 4:** A API do portfólio está rodando dentro de um container Docker, acessível na porta 3000. O mesmo container produz resultado idêntico em qualquer máquina!
 
 ---
 
@@ -415,7 +417,7 @@ Você verá o log da requisição aparecer. Pressione `Ctrl+C` para sair.
 ### Passo 5.1: Parar o container
 
 ```bash
-docker stop technova-container
+docker stop portfolio-container
 ```
 
 ### Passo 5.2: Verificar que parou
@@ -432,14 +434,14 @@ docker ps -a
 
 **Resultado esperado:** O container aparece com status "Exited":
 ```
-CONTAINER ID   IMAGE              STATUS                     NAMES
-xxxxxxxxxxxx   technova-api:1.0   Exited (0) X seconds ago   technova-container
+CONTAINER ID   IMAGE                STATUS                     NAMES
+xxxxxxxxxxxx   portfolio-aula01:1.0 Exited (0) X seconds ago   portfolio-container
 ```
 
 ### Passo 5.3: Reiniciar o container
 
 ```bash
-docker start technova-container
+docker start portfolio-container
 ```
 
 Teste novamente:
@@ -452,7 +454,7 @@ Funciona! O container voltou ao estado anterior.
 ### Passo 5.4: Acessar o shell dentro do container
 
 ```bash
-docker exec -it technova-container sh
+docker exec -it portfolio-container sh
 ```
 
 **Agora você está DENTRO do container.** Explore:
@@ -487,13 +489,13 @@ exit
 ### Passo 5.5: Executar um comando direto no container (sem entrar no shell)
 
 ```bash
-docker exec technova-container node -e "console.log('Memória usada:', Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + 'MB')"
+docker exec portfolio-container node -e "console.log('Memória usada:', Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + 'MB')"
 ```
 
 ### Passo 5.6: Ver uso de recursos
 
 ```bash
-docker stats technova-container --no-stream
+docker stats portfolio-container --no-stream
 ```
 
 **Resultado esperado:** Mostra CPU%, memória, rede e I/O do container.
@@ -501,14 +503,14 @@ docker stats technova-container --no-stream
 ### Passo 5.7: Parar e remover o container
 
 ```bash
-docker stop technova-container
-docker rm technova-container
+docker stop portfolio-container
+docker rm portfolio-container
 ```
 
 ### Passo 5.8: Rodar com --rm (auto-remove ao parar)
 
 ```bash
-docker run -d --rm --name technova-temp -p 3000:3000 technova-api:1.0
+docker run -d --rm --name portfolio-temp -p 3000:3000 portfolio-aula01:1.0
 ```
 
 Teste:
@@ -518,8 +520,8 @@ curl http://localhost:3000
 
 Agora pare:
 ```bash
-docker stop technova-temp
-docker ps -a | grep technova-temp
+docker stop portfolio-temp
+docker ps -a | grep portfolio-temp
 ```
 
 **Resultado esperado:** Nada! O container foi automaticamente removido ao parar.
@@ -527,7 +529,7 @@ docker ps -a | grep technova-temp
 ### Passo 5.9: Rodar com variável de ambiente customizada
 
 ```bash
-docker run -d --rm --name technova-prod -p 3000:3000 -e NODE_ENV=production technova-api:1.0
+docker run -d --rm --name portfolio-prod -p 3000:3000 -e NODE_ENV=production portfolio-aula01:1.0
 ```
 
 Teste o endpoint `/info`:
@@ -538,7 +540,7 @@ curl http://localhost:3000/info
 **Resultado esperado:** O campo `ambiente` mostra `"production"` (definido pela variável `-e NODE_ENV=production`).
 
 ```bash
-docker stop technova-prod
+docker stop portfolio-prod
 ```
 
 ✅ **Checkpoint 5:** Domínio completo de gerenciamento de containers — start, stop, exec, logs, rm, variáveis de ambiente.
@@ -552,10 +554,11 @@ docker stop technova-prod
 ### Passo 6.1: Verificar os novos arquivos
 
 ```bash
+cd ../..  # Voltar para a raiz do unifaat-devops-portfolio
 git status
 ```
 
-**Resultado esperado:** `Dockerfile` e `.dockerignore` aparecem como untracked.
+**Resultado esperado:** `aula-01/app/Dockerfile` e `aula-01/app/.dockerignore` aparecem como untracked.
 
 ### Passo 6.2: Criar branch para a feature de Docker
 
@@ -566,7 +569,7 @@ git checkout -b feature/docker
 ### Passo 6.3: Adicionar e commitar os arquivos Docker
 
 ```bash
-git add Dockerfile .dockerignore
+git add aula-01/app/Dockerfile aula-01/app/.dockerignore
 git commit -m "feat: adiciona Dockerfile e .dockerignore para containerização"
 ```
 
@@ -585,7 +588,7 @@ git push origin main
 
 ### Passo 6.6: Verificar no GitHub
 
-Acesse o repositório no GitHub e confirme que o `Dockerfile` e `.dockerignore` estão presentes.
+Acesse o repositório no GitHub e confirme que o `aula-01/app/Dockerfile` e `aula-01/app/.dockerignore` estão presentes.
 
 ### Passo 6.7: O teste definitivo — clone e rode
 
@@ -595,10 +598,10 @@ Simule um novo desenvolvedor entrando no time:
 cd ..
 mkdir teste-novo-dev
 cd teste-novo-dev
-git clone https://github.com/SEU-USUARIO/technova-api.git
-cd technova-api
-docker build -t technova-api:1.0 .
-docker run -d --rm --name teste-final -p 3000:3000 technova-api:1.0
+git clone https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git
+cd unifaat-devops-portfolio/aula-01/app
+docker build -t portfolio-aula01:1.0 .
+docker run -d --rm --name teste-final -p 3000:3000 portfolio-aula01:1.0
 curl http://localhost:3000
 ```
 
@@ -606,7 +609,7 @@ curl http://localhost:3000
 
 ```bash
 docker stop teste-final
-cd ../..
+cd ../../..
 ```
 
 ✅ **Checkpoint 6:** Dockerfile versionado no Git. Qualquer pessoa que clonar o repo pode construir e rodar a aplicação de forma idêntica.
@@ -636,7 +639,7 @@ docker ps
 docker stop <nome-do-container>
 
 # Opção 2: Usar outra porta no mapeamento
-docker run -d --name technova-container -p 3001:3000 technova-api:1.0
+docker run -d --name portfolio-container -p 3001:3000 portfolio-aula01:1.0
 # Acesse via http://localhost:3001
 ```
 
@@ -664,13 +667,13 @@ docker run -d --name technova-container -p 3001:3000 technova-api:1.0
 **Solução:**
 ```bash
 # Verificar logs para encontrar o erro
-docker logs technova-container
+docker logs portfolio-container
 
 # Verificar mapeamento de portas
-docker port technova-container
+docker port portfolio-container
 
 # Se necessário, entrar no container para debugar
-docker exec -it technova-container sh
+docker exec -it portfolio-container sh
 ```
 
 ### ❌ Build muito lento após mudanças no código
@@ -708,9 +711,9 @@ Ao concluir este laboratório, você deve ter:
 
 - [ ] Docker instalado e funcional (verificado com `hello-world`)
 - [ ] Imagem `node:20-alpine` baixada e testada
-- [ ] Arquivo `Dockerfile` criado com otimização de camadas
-- [ ] Arquivo `.dockerignore` configurado corretamente
-- [ ] Imagem `technova-api:1.0` construída com sucesso
+- [ ] Arquivo `aula-01/app/Dockerfile` criado com otimização de camadas
+- [ ] Arquivo `aula-01/app/.dockerignore` configurado corretamente
+- [ ] Imagem `portfolio-aula01:1.0` construída com sucesso
 - [ ] Container rodando e API respondendo na porta 3000
 - [ ] Experiência com logs, exec, stop, start e rm
 - [ ] Container rodando com variáveis de ambiente customizadas
@@ -719,4 +722,4 @@ Ao concluir este laboratório, você deve ter:
 
 ---
 
-*Parabéns! A TechNova agora tem código versionado com Git E aplicação containerizada com Docker. Qualquer desenvolvedor pode ir de zero a "aplicação rodando" em 3 comandos. Na próxima aula, vamos evoluir para Docker Compose — orquestrando múltiplos containers (API + banco de dados) para montar o ambiente de desenvolvimento local completo.*
+*Parabéns! O seu portfólio DevOps agora tem código versionado com Git E aplicação containerizada com Docker. Qualquer desenvolvedor pode ir de zero a "aplicação rodando" em 3 comandos. Na próxima aula, vamos evoluir para Docker Compose — orquestrando múltiplos containers (API + banco de dados) para montar o ambiente de desenvolvimento local completo.*
