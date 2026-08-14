@@ -1,7 +1,7 @@
 # Entrega — Aula 01: Fundamentos de Git e Docker
 
-**Aluno:** Sirlande Martins
-**RA:** 6325269
+**Aluno:** Sirlande Martins  
+**RA:** 6325269  
 **Data:** 13/08/2026
 
 ## Repositório
