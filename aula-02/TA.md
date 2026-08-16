@@ -352,17 +352,6 @@ Ao utilizar IA para gerar um arquivo `docker-compose.yml`, qual é a melhor prá
 
 ---
 
-## Gabarito
-
-| Questão | Resposta | Justificativa |
-|---------|:---:|---|
-| 1 | **B** | Docker Compose centraliza toda a configuração multi-container em um arquivo YAML declarativo que pode ser versionado no Git, eliminando a necessidade de memorizar e executar dezenas de comandos manuais com flags complexas. Performance de execução não é a vantagem — a vantagem é reprodutibilidade e versionamento. |
-| 2 | **C** | Volumes nomeados são gerenciados pelo Docker e persistem independentemente do ciclo de vida dos containers. O comando `docker compose down` remove containers e redes, mas preserva volumes. Apenas `docker compose down -v` remove volumes (e seus dados). |
-| 3 | **B** | A IA generativa funciona como um copiloto — acelera tarefas, sugere soluções e gera rascunhos, mas o profissional mantém a responsabilidade de validar, decidir e garantir que o resultado atende aos requisitos do projeto. A IA pode alucinar ou gerar configurações incorretas. |
-| 4 | **C** | O output de IA deve ser tratado como um rascunho que precisa de validação. Verificar sintaxe, confirmar que imagens e versões existem, testar localmente e garantir conformidade com boas práticas são passos obrigatórios. Aceitar sem verificação é arriscado; rejeitar completamente desperdiça uma ferramenta valiosa. |
-
----
-
 *Traga suas dúvidas sobre a leitura para discussão no início da aula. Pense: "Como posso declarar todo o ambiente da TechNova em um único arquivo?" e "Em quais situações a IA pode me ajudar — e em quais devo confiar mais no meu conhecimento?"*
 
 ---
