@@ -21,14 +21,15 @@ O CTO da TechNova aprovou a adoção de Redis como cache para a API. Agora o amb
 | **Prazo** | 1 semana a partir da data da aula |
 | **Forma de entrega** | Pull Request (PR) para o repositório da disciplina |
 | **Pasta de entrega** | `entregas/aula-02/RA/` (substitua RA pelo seu número de matrícula) |
-| **Conteúdo do PR** | Pasta com todos os arquivos listados nos entregáveis + `entrega.md` |
+| **Conteúdo do PR** | Apenas o arquivo `entrega.md` com link do repositório + evidências |
+| **Arquivos do projeto** | No repositório `unifaat-devops-portfolio`, pasta `aula-02/` |
 
 ### Como Entregar via Pull Request
 
 1. Faça um **fork** do repositório da disciplina (se ainda não fez)
 2. Clone o seu fork localmente
 3. Crie a pasta `entregas/aula-02/SEU-RA/`
-4. Adicione todos os arquivos do projeto e o arquivo `entrega.md` (modelo abaixo)
+4. Adicione **apenas** o arquivo `entrega.md` (modelo abaixo) — os arquivos do projeto ficam no `unifaat-devops-portfolio`
 5. Faça commit e push para o seu fork
 6. Abra um **Pull Request** para o repositório original
 
@@ -63,28 +64,27 @@ O CTO da TechNova aprovou a adoção de Redis como cache para a API. Agora o amb
 
 ## Instruções
 
-### 1. Fork/Clone do Repositório da Disciplina
+### 1. Acessar o Repositório Portfólio
 
-Se ainda não fez, faça o fork e clone o repositório da disciplina:
+Os arquivos do projeto desta aula ficam no seu repositório `unifaat-devops-portfolio`, criado na Aula 01:
 
 ```bash
-git clone https://github.com/SEU-USUARIO/unifaat-2026-2-devops.git
-cd unifaat-2026-2-devops
+cd unifaat-devops-portfolio
+git checkout main
+git pull
 ```
 
-### 2. Criar Branch de Entrega
+### 2. Criar Branch de Desenvolvimento
 
 ```bash
-git checkout -b entregas/aula-02/SEU-RA
+git checkout -b feature/aula-02-compose
 ```
 
-> Substitua `SEU-RA` pelo seu RA (ex: `entregas/aula-02/12345`).
-
-### 3. Criar a Pasta de Entrega
+### 3. Criar a Pasta da Aula
 
 ```bash
-mkdir -p entregas/aula-02/SEU-RA
-cd entregas/aula-02/SEU-RA
+mkdir -p aula-02
+cd aula-02
 ```
 
 ### 4. Usar Kiro para Gerar o Rascunho Inicial
@@ -328,40 +328,63 @@ docker network inspect $(docker network ls -q --filter name=technova)
 docker compose down
 ```
 
-### 9. Versionar e Criar o Pull Request
+### 9. Publicar no Portfólio e Criar o Pull Request
+
+#### 9.1 — Merge e push no `unifaat-devops-portfolio`
 
 ```bash
-# Voltar para a raiz do repositório
-cd ../../..
+# Voltar para a raiz do portfólio
+cd ../..
 
 # Adicionar arquivos (NÃO incluir .env)
-git add entregas/aula-02/SEU-RA/
+git add aula-02/
 
 # Verificar que .env NÃO está incluído
 git status
 
 # Commit (use Conventional Commits)
-git commit -m "feat(aula-02): TF - Docker Compose 3 serviços + análise de IA
+git commit -m "feat(aula-02): adiciona ambiente Docker Compose com 3 serviços
 
 - docker-compose.yml com API + PostgreSQL + Redis
 - Healthchecks e restart policies configurados
 - Documentação de uso de IA (ia-analise.md)
 - Aluno: SEU NOME (RA: SEU-RA)"
 
-# Push
-git push -u origin entregas/aula-02/SEU-RA
-
-# Criar Pull Request (via GitHub CLI ou interface web)
-# Título: "TF Aula 02 - SEU NOME (RA)"
-# Base: main
-# Compare: entregas/aula-02/SEU-RA
+# Merge na main e push
+git checkout main
+git merge feature/aula-02-compose
+git push origin main
+git push origin feature/aula-02-compose  # Manter branch como evidência
 ```
+
+#### 9.2 — Registrar entrega no fork da disciplina
+
+```bash
+# No repositório do fork da disciplina (não no portfólio)
+cd /caminho/para/seu-fork-da-disciplina
+
+git checkout -b entregas/aula-02/SEU-RA
+mkdir -p entregas/aula-02/SEU-RA
+```
+
+Crie o arquivo `entrega.md` (modelo na seção de Informações de Entrega) e então:
+
+```bash
+git add entregas/aula-02/SEU-RA/entrega.md
+git commit -m "feat(aula-02): entrega TF - SEU NOME (RA: SEU-RA)"
+git push -u origin entregas/aula-02/SEU-RA
+```
+
+Abra o Pull Request no GitHub com:
+- **Título:** `TF Aula 02 - SEU NOME (RA)`
+- **Base:** `main`
+- **Compare:** `entregas/aula-02/SEU-RA`
 
 ---
 
 ## Entregáveis
 
-O Pull Request deve conter a pasta `entregas/aula-02/SEU-RA/` com:
+### No repositório `unifaat-devops-portfolio`, pasta `aula-02/`
 
 | Arquivo | Obrigatório | Descrição |
 |---------|:-----------:|-----------|
@@ -375,6 +398,12 @@ O Pull Request deve conter a pasta `entregas/aula-02/SEU-RA/` com:
 | `ia-analise.md` | ✅ | Documentação do uso de IA |
 
 > **Não incluir:** `node_modules/`, `.env` (com senhas reais), arquivos de log.
+
+### No fork do repositório da disciplina (via Pull Request)
+
+| Arquivo | Obrigatório | Descrição |
+|---------|:-----------:|-----------|
+| `entregas/aula-02/SEU-RA/entrega.md` | ✅ | Link do portfólio + evidências |
 
 ---
 
