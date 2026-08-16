@@ -45,7 +45,7 @@ O desafio desta aula: transformar a orquestração manual em um `docker-compose.
 | 2 | Conteúdo Teórico — Docker Compose | Orquestração declarativa, docker-compose.yml, redes, volumes, boas práticas |
 | 3 | Laboratório Parte 1 — Docker Compose | Hands-on: ambiente completo com API + PostgreSQL |
 | 4 | Conteúdo Teórico — IA no DevOps + Kiro | IA generativa, copiloto DevOps, Kiro, AWS Bedrock, limitações |
-| 5 | Laboratório Parte 2 — IA como Copiloto | Hands-on: usar Kiro para gerar, revisar e otimizar configurações |
+| 5 | Laboratório Parte 2 — IA como Copiloto | Hands-on: criar API REST completa do zero com Kiro Spec (requisitos → design → código), gerar Dockerfile e docker-compose.yml, testar os endpoints e fazer reflexão crítica sobre o uso de IA |
 | 6 | Encerramento + Orientação TF | Resumo, orientações da Tarefa de Fixação, próximos passos |
 
 ---
