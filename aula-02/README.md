@@ -71,6 +71,30 @@ Antes da aula, o aluno deve ter:
 
 ---
 
+## Entrega do Trabalho em Aula
+
+O trabalho em aula vale **1 ponto na nota final** do semestre (contabilizado apenas ao final, com todos os trabalhos entregues).
+
+### Onde entregar
+
+Na **mesma pasta** da entrega do TF, no fork da disciplina:
+
+```
+entregas/aula-02/SEU-RA/trabalho-em-aula.md
+```
+
+### O que entregar
+
+Um arquivo `trabalho-em-aula.md` com as respostas das atividades realizadas em sala (discussões, análises, tabelas preenchidas).
+
+### Observações
+
+- A entrega é **individual** — mesmo que a atividade tenha sido em grupo
+- O arquivo pode ser adicionado no **mesmo PR** do TF ou em PR separado
+- Entregas parciais (apenas algumas aulas) **não garantem o ponto**
+
+---
+
 ## Estrutura de Arquivos desta Aula
 
 | Arquivo | Descrição |
