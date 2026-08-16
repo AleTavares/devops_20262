@@ -6,17 +6,7 @@
 
 ## Pontuação
 
-Este trabalho vale **1 ponto na nota final do semestre**.
-
-Para receber a pontuação, o aluno precisa:
-
-1. Ter realizado **todos os trabalhos em aula** ao longo do semestre
-2. Ter entregado as respostas de **cada trabalho na pasta de entrega da respectiva aula**, dentro de uma subpasta com seu RA:
-   ```
-   entregas/aula-02/SEU-RA/
-   ```
-
-> O ponto só é contabilizado ao final do semestre, com base na entrega completa de todos os trabalhos. Entregas parciais não garantem a pontuação.
+Este trabalho vale **1 ponto na nota final do semestre** (contabilizado apenas ao final, com **todos** os trabalhos em aula entregues).
 
 ---
 
@@ -118,6 +108,76 @@ Registre suas conclusões da discussão — elas serão úteis durante os labora
 - [ ] Quais são os elementos obrigatórios de um `docker-compose.yml` para o cenário da TechNova?
 - [ ] Qual é o fluxo ideal ao usar IA para gerar configurações?
 - [ ] Quais pontos de validação são indispensáveis antes de aceitar output de IA?
+
+---
+
+## Entrega
+
+### Onde entregar
+
+No fork do repositório da disciplina, na pasta de entrega da aula:
+
+```
+entregas/aula-02/SEU-RA/trabalho-em-aula.md
+```
+
+### O que entregar
+
+Um arquivo `trabalho-em-aula.md` com as respostas das atividades realizadas em sala:
+
+```markdown
+# Trabalho em Aula — Aula 02: Docker Compose e IA como Copiloto
+
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Data:** [Data da aula]
+
+## Parte 1 — Análise do Problema Multi-Container
+
+### Problemas do Rafael (com classificação)
+
+| # | Problema | Classificação |
+|---|---|---|
+| 1 | | 🔴/🟡/🟢 |
+| 2 | | 🔴/🟡/🟢 |
+| 3 | | 🔴/🟡/🟢 |
+| 4 | | 🔴/🟡/🟢 |
+| 5 | | 🔴/🟡/🟢 |
+
+### Design da Solução
+
+| Problema do Rafael | Recurso do Docker Compose que resolve |
+|---|---|
+| | |
+| | |
+| | |
+| | |
+| | |
+
+## Parte 2 — Observações sobre a Demonstração do Kiro
+
+### O que o Kiro gerou corretamente?
+- ...
+
+### O que precisou de ajuste?
+- ...
+
+### O que a IA não fez mas deveria?
+- ...
+
+### Discussão — respostas
+
+1. **Velocidade vs Qualidade:** ...
+2. **Quando confiar:** ...
+3. **Cenário real (workflow ideal):** ...
+4. **Limitações:** ...
+```
+
+### Como entregar
+
+- O arquivo pode ser adicionado no **mesmo PR** do TF ou em PR separado
+- A entrega é **individual** — mesmo que a atividade tenha sido em grupo
+- Entregas parciais (apenas algumas aulas) **não garantem o ponto**
 
 ---
 

@@ -95,6 +95,53 @@ Um arquivo `trabalho-em-aula.md` com as respostas das atividades realizadas em s
 
 ---
 
+## Entrega do Trabalho de Fixação (TF)
+
+O TF desta aula deve ser desenvolvido no **seu repositório pessoal** (`unifaat-devops-portfolio`, pasta `aula-02/`). A entrega neste repositório da disciplina consiste em um **arquivo Markdown (`entrega.md`)** contendo o **link para o seu repositório** e as evidências solicitadas.
+
+### Passo a Passo
+
+1. **Desenvolva o TF** no seu repositório pessoal (`unifaat-devops-portfolio/aula-02/`)
+2. Faça **fork** do repositório da disciplina (se ainda não fez)
+3. Crie uma **branch**: `SEU-RA/tf-02`
+4. Crie a pasta `entregas/aula-02/SEU-RA/`
+5. Adicione o arquivo **`entrega.md`** com o link do seu repositório + evidências
+6. Faça commits descritivos seguindo [Conventional Commits](https://www.conventionalcommits.org/pt-br/)
+7. Abra um **Pull Request** para o repositório original com título: `[Aula 02] RA: XXXXX - Nome Completo`
+
+### Modelo do arquivo `entrega.md`
+
+```markdown
+# Entrega — Aula 02: Docker Compose + IA como Copiloto
+
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Data:** [Data da entrega]
+
+## Repositório
+
+- URL: https://github.com/SEU-USUARIO/unifaat-devops-portfolio
+
+## Evidências
+
+- [ ] `docker-compose.yml` com 3 serviços (API + PostgreSQL + Redis)
+- [ ] Volume nomeado configurado para PostgreSQL
+- [ ] Rede customizada conectando todos os serviços
+- [ ] Healthchecks configurados
+- [ ] Variáveis de ambiente via `.env` (não hardcoded)
+- [ ] `ia-analise.md` preenchido com reflexão crítica
+
+## Evidência do Ambiente Rodando
+
+[Cole aqui o output do `docker compose ps` ou screenshot]
+```
+
+> **Importante:** O repositório pessoal do aluno deve estar **público** para que o professor consiga avaliar. PRs que não contenham o link para o repositório ou cujo repositório esteja privado serão considerados **incompletos**.
+
+Para detalhes completos sobre os entregáveis e critérios de avaliação, consulte o arquivo [`TF.md`](TF.md).
+
+---
+
 ## Estrutura de Arquivos desta Aula
 
 | Arquivo | Descrição |
