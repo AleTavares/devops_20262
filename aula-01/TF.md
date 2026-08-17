@@ -10,15 +10,16 @@ Crie seu **repositório portfólio DevOps** no GitHub, demonstrando domínio dos
 |------|---------|
 | **Prazo** | 1 semana a partir da data da aula |
 | **Forma de entrega** | Pull Request (PR) para o repositório da disciplina |
-| **Pasta de entrega** | `entregas/aula-01/RA/` (substitua RA pelo seu número de matrícula) |
-| **Conteúdo do PR** | Arquivo `entrega.md` com link do repositório + evidências |
+| **Pasta de entrega no fork** | `entregas/aula-01/RA/` (substitua RA pelo seu número de matrícula) |
+| **Conteúdo do PR** | Apenas o arquivo `entrega.md` com link do repositório + evidências |
+| **Arquivos do projeto** | No repositório `unifaat-devops-portfolio` (não no fork da disciplina) |
 
 ### Como Entregar via Pull Request
 
 1. Faça um **fork** do repositório da disciplina (se ainda não fez)
 2. Clone o seu fork localmente
 3. Crie a pasta `entregas/aula-01/SEU-RA/`
-4. Adicione o arquivo `entrega.md` (modelo abaixo)
+4. Adicione **apenas** o arquivo `entrega.md` (modelo abaixo) — os arquivos do projeto ficam no `unifaat-devops-portfolio`
 5. Faça commit e push para o seu fork
 6. Abra um **Pull Request** para o repositório original
 
@@ -313,7 +314,7 @@ docker stop portfolio-test
 docker rm portfolio-test
 ```
 
-### 10. Merge e Publicação
+### 10. Merge e Publicação no Portfólio
 
 ```bash
 cd ..  # Voltar para a raiz do portfolio
@@ -321,16 +322,42 @@ git checkout main
 git merge feature/aula-01-app
 ```
 
-Conectar ao GitHub e fazer push:
+Conectar ao GitHub e fazer push do **portfólio**:
 
 ```bash
 git remote add origin https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git
 git push -u origin main
+git push origin feature/aula-01-app  # Manter a branch como evidência do workflow
 ```
+
+### 11. Criar o Pull Request no Repositório da Disciplina
+
+Com o portfólio publicado, agora registre a entrega no repositório da disciplina:
+
+```bash
+# No repositório do fork da disciplina (não no portfólio)
+cd /caminho/para/seu-fork-da-disciplina
+
+git checkout -b entregas/aula-01/SEU-RA
+mkdir -p entregas/aula-01/SEU-RA
+```
+
+Crie o arquivo `entrega.md` (modelo na seção de Informações de Entrega) e então:
+
+```bash
+git add entregas/aula-01/SEU-RA/entrega.md
+git commit -m "feat(aula-01): entrega TF - SEU NOME (RA: SEU-RA)"
+git push -u origin entregas/aula-01/SEU-RA
+```
+
+Abra o Pull Request no GitHub com:
+- **Título:** `TF Aula 01 - SEU NOME (RA)`
+- **Base:** `main`
+- **Compare:** `entregas/aula-01/SEU-RA`
 
 ## Entregáveis Obrigatórios
 
-O repositório `unifaat-devops-portfolio` deve conter:
+### No repositório `unifaat-devops-portfolio`
 
 - [ ] `README.md` na raiz com nome, RA, disciplina e professor
 - [ ] `.gitignore` na raiz configurado corretamente
@@ -341,7 +368,11 @@ O repositório `unifaat-devops-portfolio` deve conter:
 - [ ] `aula-01/app/.dockerignore` — configurado
 - [ ] Evidência de container rodando (`docker-logs.txt` ou `evidencia.png`)
 - [ ] Mínimo de **5 commits** demonstrando workflow Git
-- [ ] Evidência de uso de branch (feature branch + merge)
+- [ ] Branch `feature/aula-01-app` publicada (evidência do workflow)
+
+### No fork do repositório da disciplina (via Pull Request)
+
+- [ ] `entregas/aula-01/SEU-RA/entrega.md` — com link do portfólio e evidências
 
 ## Critérios de Avaliação
 

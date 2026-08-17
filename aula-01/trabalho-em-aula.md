@@ -119,7 +119,81 @@ Com base nas discussões, cada grupo deve redigir uma proposta de **3-5 linhas**
 
 - **Duração:** 30 minutos (incluído no Bloco 1 da aula)
 - **Grupos:** 3-4 pessoas
-- **Entrega:** Não há entrega formal — a avaliação é pela participação e qualidade da discussão
+- **Entrega:** Via Pull Request no repositório da disciplina (detalhes abaixo)
+
+---
+
+## Entrega
+
+### Onde entregar
+
+No fork do repositório da disciplina, na pasta de entrega da aula:
+
+```
+entregas/aula-01/SEU-RA/trabalho-em-aula.md
+```
+
+### O que entregar
+
+Um arquivo `trabalho-em-aula.md` com as respostas das 3 partes da atividade:
+
+```markdown
+# Trabalho em Aula — Aula 01: Discussão Guiada
+
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Data:** [Data da aula]
+
+## Parte 1 — O Caos do Código
+
+### 1. Problemas identificados (mínimo 4)
+- ...
+
+### 2. Impacto financeiro/operacional
+- ...
+
+### 3. Como o Git resolve
+
+| Problema Identificado | Como o Git Resolve |
+|---|---|
+| | |
+
+### 4. Regras ao adotar Git
+- ...
+
+## Parte 2 — "Funciona na Minha Máquina"
+
+### 5. Causa Raiz (3 categorias)
+- ...
+
+### 6. Requisitos da solução
+- Isolamento: ...
+- Reprodutibilidade: ...
+- Portabilidade: ...
+- Leveza: ...
+
+### 7. Container vs. VM
+
+| Aspecto | VM | Container |
+|---|---|---|
+| Tempo de inicialização | | |
+| Uso de disco | | |
+| Consumo de memória | | |
+| Facilidade de versionamento | | |
+| Densidade no servidor | | |
+
+### 8. Git + Docker juntos
+...
+
+## Parte 3 — Proposta para o CTO
+...
+```
+
+### Como entregar
+
+- O arquivo pode ser adicionado no **mesmo PR** do TF ou em PR separado
+- A entrega é **individual** — mesmo que a atividade tenha sido em grupo
+- O trabalho em aula vale **1 ponto na nota final** do semestre (contabilizado apenas ao final, com **todos** os trabalhos entregues)
 
 ---
 
