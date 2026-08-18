@@ -129,17 +129,72 @@ Cada pasta `aula-XX/` possui **7 arquivos padronizados**:
 
 ## Regras de Entrega dos Trabalhos de Fixação (TF)
 
-1. Faça **fork** deste repositório
-2. Crie uma **branch**: `SEU-RA/tx-XX` (ex: `12345/tf-01`)
-3. Crie a pasta `entregas/SEU-RA/tf-XX/` com os artefatos solicitados
-4. Faça commits descritivos seguindo [Conventional Commits](https://www.conventionalcommits.org/pt-br/)
-5. Abra um **Pull Request** com título: `[Aula XX] RA: XXXXX - Nome Completo`
+### O que entregar
+
+Cada TF deve ser desenvolvido no **repositório pessoal do aluno** (criado na Aula 01: `unifaat-devops-portfolio`). A entrega neste repositório da disciplina consiste em um **arquivo Markdown (`entrega.md`)** contendo o **link para o seu repositório** e as evidências solicitadas.
+
+### Passo a Passo
+
+1. **Desenvolva o TF** no seu repositório pessoal (`unifaat-devops-portfolio`)
+2. Faça **fork** deste repositório da disciplina (se ainda não fez)
+3. Crie uma **branch**: `SEU-RA/tf-XX` (ex: `12345/tf-01`)
+4. Crie a pasta `entregas/aula-XX/SEU-RA/`
+5. Adicione o arquivo **`entrega.md`** com o link do seu repositório + evidências (veja modelo abaixo)
+6. Faça commits descritivos seguindo [Conventional Commits](https://www.conventionalcommits.org/pt-br/)
+7. Abra um **Pull Request** para o repositório original com título: `[Aula XX] RA: XXXXX - Nome Completo`
+
+### Modelo do arquivo `entrega.md`
+
+```markdown
+# Entrega — Aula XX: [Título do TF]
+
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Data:** [Data da entrega]
+
+## Repositório
+
+- URL: https://github.com/SEU-USUARIO/unifaat-devops-portfolio
+
+## Evidências
+
+- [ ] [Liste os entregáveis conforme solicitado no TF]
+- [ ] [Adicione screenshots ou logs quando pedido]
+```
+
+> **Importante:** O repositório pessoal do aluno deve estar **público** para que o professor consiga avaliar. PRs que não contenham o link para o repositório ou cujo repositório esteja privado serão considerados **incompletos**.
 
 ### Arquivos proibidos (nunca commitar):
 - `*.tfstate` e `*.tfstate.backup`
 - `.env` (variáveis de ambiente com secrets)
 - `node_modules/`
 - `*.pem` (chaves privadas)
+
+## Regras de Entrega do Trabalho em Aula
+
+### O que é
+
+Cada aula possui uma atividade de discussão/prática em sala (`trabalho-em-aula.md`). A entrega das respostas vale **1 ponto na nota final** do semestre — contabilizado apenas ao final, com **todos** os trabalhos entregues.
+
+### O que entregar
+
+Um arquivo `trabalho-em-aula.md` com as respostas das atividades realizadas em sala (discussões, análises, tabelas preenchidas). O modelo específico de cada aula está dentro do respectivo `trabalho-em-aula.md`.
+
+### Onde entregar
+
+Na **mesma pasta** da entrega do TF, no fork da disciplina:
+
+```
+entregas/aula-XX/SEU-RA/trabalho-em-aula.md
+```
+
+### Como entregar
+
+- O arquivo pode ser adicionado no **mesmo PR** do TF ou em PR separado
+- A entrega é **individual** — mesmo que a atividade tenha sido em grupo
+- Entregas parciais (apenas algumas aulas) **não garantem o ponto**
+
+---
 
 ## Pré-requisitos
 
