@@ -316,8 +316,6 @@ aula-03/
 | **O que** pode fazer? | Policy (permissões) |
 | **Onde** pode fazer? | Resource (ARN específico) |
 
-![bg right:40%](img/awsiam.png)
-
 **Características:**
 - Gratuito — sem custo, sem limites
 - Global — vale para toda a conta AWS
