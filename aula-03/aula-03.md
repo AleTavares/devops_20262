@@ -487,25 +487,6 @@ resource "aws_iam_group_policy_attachment" "devs_s3" {
 
 ---
 
-# Cronograma da Aula
-
-| Bloco | Atividade | Duração |
-|---|---|---|
-| 1 | Revisão TA + Discussão | 30 min |
-| 2 | Teoria — Terraform e IaC | 50 min |
-| 3 | **Lab Parte 1** — Primeiro projeto Terraform (S3) | 120 min |
-| 4 | Teoria — IAM e Segurança | 50 min |
-| 5 | **Lab Parte 2** — IAM com Terraform | 120 min |
-| 6 | Encerramento + TF | 15 min |
-
-**Sobre os laboratórios:**
-- **Lab 1:** Criar bucket S3 com Terraform — fluxo completo init/plan/apply/destroy
-- **Lab 2:** Criar estrutura IAM completa (groups, users, policies, roles) usando Terraform
-
-> **A conexão:** No Lab 1 você entende o fluxo do Terraform. No Lab 2 aplica segurança como código — e pode usar Spec-Driven para gerar o rascunho inicial dos `.tf`.
-
----
-
 # Referências e Próximos Passos
 
 **Referências:**
