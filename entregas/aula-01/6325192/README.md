@@ -19,4 +19,5 @@
 
 ![Docker ps](../6325192/dockerps.jpeg)
 
+
 ![alt text](../6325192/navegador.jpeg)
