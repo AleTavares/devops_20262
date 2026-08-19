@@ -45,16 +45,16 @@ Esse é o desafio desta aula: dar os primeiros passos com Terraform, provisionar
 
 ---
 
-## Cronograma da Aula (~5 horas)
+## Cronograma da Aula
 
-| Bloco | Atividade | Duração |
-|-------|-----------|---------|
-| 1 | Revisão do TA + Discussão em Grupo | 30 min |
-| 2 | Conteúdo Teórico — Terraform Fundamentals | 50 min |
-| 3 | Laboratório Parte 1 — Terraform Basics (S3) | 120 min |
-| 4 | Conteúdo Teórico — IAM e Segurança | 50 min |
-| 5 | Laboratório Parte 2 — IAM com Terraform | 120 min |
-| 6 | Encerramento + Orientação TF | 15 min |
+| Bloco | Atividade |
+|-------|-----------|
+| 1 | Revisão do TA + Discussão em Grupo |
+| 2 | Conteúdo Teórico — Terraform Fundamentals |
+| 3 | Laboratório Parte 1 — Terraform Basics (S3) |
+| 4 | Conteúdo Teórico — IAM e Segurança |
+| 5 | Laboratório Parte 2 — IAM com Terraform |
+| 6 | Encerramento + Orientação TF |
 
 ---
 
@@ -146,8 +146,6 @@ Para detalhes completos sobre os entregáveis e critérios de avaliação, consu
 ---
 
 ## Conteúdo Teórico — Parte 1: Terraform Fundamentals
-
-*Tempo estimado: ~50 minutos*
 
 ### 1. O Problema: Infraestrutura Manual Não Escala
 
@@ -347,8 +345,6 @@ terraform-projeto/
 ---
 
 ## Conteúdo Teórico — Parte 2: IAM e Segurança
-
-*Tempo estimado: ~50 minutos*
 
 ### 1. O Problema: Credenciais Root Compartilhadas
 
