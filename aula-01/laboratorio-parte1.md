@@ -2,9 +2,11 @@
 
 **Tempo estimado:** 120 minutos
 
-## Missão: Estabelecer o Controle de Versão para o Código da TechNova
+## Missão: Criar seu Portfólio DevOps e Estabelecer Controle de Versão
 
-> O CTO da TechNova autorizou a equipe de Platform Engineering a implementar Git como sistema de controle de versão oficial da empresa. Sua missão é configurar o ambiente, criar o primeiro repositório e demonstrar o fluxo completo de trabalho com Git — da inicialização local até a publicação no GitHub.
+> O CTO da TechNova autorizou a equipe de Platform Engineering a implementar Git como sistema de controle de versão oficial da empresa. Sua missão é configurar o ambiente, criar o repositório **`unifaat-devops-portfolio`** (que será usado ao longo de toda a disciplina) e demonstrar o fluxo completo de trabalho com Git — da inicialização local até a publicação no GitHub.
+
+> **Importante:** O repositório `unifaat-devops-portfolio` criado neste laboratório é o mesmo que você usará para todas as entregas de TF da disciplina. Cuide bem dele desde o início!
 
 ---
 
@@ -70,8 +72,8 @@ git config --list
 ### Passo 2.1: Criar diretório do projeto
 
 ```bash
-mkdir technova-api
-cd technova-api
+mkdir unifaat-devops-portfolio
+cd unifaat-devops-portfolio
 ```
 
 ### Passo 2.2: Inicializar o repositório Git
@@ -105,17 +107,26 @@ nothing to commit (create/copy files and use "git add" to track)
 Crie o arquivo `README.md` com o seguinte conteúdo:
 
 ```markdown
-# TechNova API
+# Portfólio DevOps — UniFAAT 2026-2
 
-API de gerenciamento de pedidos da TechNova.
+**Aluno:** [Seu nome completo]  
+**RA:** [Seu RA]  
+**Disciplina:** DevOps — Centro Universitário UniFAAT  
+**Professor:** Alexandre Tavares  
+**Semestre:** 2026-2
 
-## Status
+## Sobre
 
-🚧 Em desenvolvimento
+Repositório de atividades e projetos da disciplina de DevOps.
+Aqui documento minha evolução desde os fundamentos de Git e Docker até pipelines completas de CI/CD.
 
-## Equipe
+## Estrutura
 
-- Platform Engineering Team
+- `aula-01/` — Fundamentos de Git e Docker
+
+## Aprendizados
+
+[Atualize esta seção a cada aula com seus principais aprendizados]
 ```
 
 ### Passo 2.5: Verificar que o Git detectou o novo arquivo
@@ -149,13 +160,13 @@ git status
 **Resultado esperado:** O arquivo aparece em verde (staged), pronto para commit.
 
 ```bash
-git commit -m "docs: adiciona README inicial do projeto"
+git commit -m "docs: estrutura inicial do portfólio DevOps"
 ```
 
 **Resultado esperado:**
 ```
-[main (root-commit) abc1234] docs: adiciona README inicial do projeto
- 1 file changed, 11 insertions(+)
+[main (root-commit) abc1234] docs: estrutura inicial do portfólio DevOps
+ 1 file changed, 17 insertions(+)
  create mode 100644 README.md
 ```
 
@@ -167,7 +178,7 @@ git log --oneline
 
 **Resultado esperado:**
 ```
-abc1234 docs: adiciona README inicial do projeto
+abc1234 docs: estrutura inicial do portfólio DevOps
 ```
 
 ✅ **Checkpoint 2:** Primeiro commit criado com sucesso. O histórico mostra a hash e a mensagem.
@@ -179,10 +190,10 @@ abc1234 docs: adiciona README inicial do projeto
 ### Passo 3.1: Criar a estrutura do projeto
 
 ```bash
-mkdir src
+mkdir -p aula-01/app
 ```
 
-Crie o arquivo `src/index.js`:
+Crie o arquivo `aula-01/app/server.js`:
 
 ```javascript
 const express = require('express');
@@ -192,9 +203,13 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ 
-    message: 'TechNova API - Online',
-    version: '1.0.0'
+  res.json({
+    servico: 'DevOps Portfolio API',
+    aluno: 'SEU NOME AQUI',
+    ra: 'SEU RA AQUI',
+    aula: '01 - Fundamentos de Git e Docker',
+    status: 'online',
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -205,16 +220,16 @@ app.listen(PORT, () => {
 
 ### Passo 3.2: Criar o package.json
 
-Crie o arquivo `package.json`:
+Crie o arquivo `aula-01/app/package.json`:
 
 ```json
 {
-  "name": "technova-api",
+  "name": "devops-portfolio-aula01",
   "version": "1.0.0",
-  "description": "API de gerenciamento de pedidos da TechNova",
-  "main": "src/index.js",
+  "description": "Aplicação da Aula 01 - Fundamentos de Git e Docker",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "4.18.2"
@@ -265,8 +280,7 @@ git status
 ```
 Untracked files:
         .gitignore
-        package.json
-        src/
+        aula-01/
 ```
 
 ### Passo 3.6: Adicionar tudo ao staging e commitar
@@ -279,7 +293,7 @@ git status
 Verifique que `node_modules/` não está no staging. Em seguida:
 
 ```bash
-git commit -m "feat: adiciona estrutura inicial do projeto com Express"
+git commit -m "feat: adiciona aplicação Express para aula 01"
 ```
 
 ### Passo 3.7: Criar um arquivo de variáveis de ambiente (que deve ser ignorado)
@@ -300,8 +314,8 @@ git log --oneline
 
 **Resultado esperado:**
 ```
-def5678 feat: adiciona estrutura inicial do projeto com Express
-abc1234 docs: adiciona README inicial do projeto
+def5678 feat: adiciona aplicação Express para aula 01
+abc1234 docs: estrutura inicial do portfólio DevOps
 ```
 
 ✅ **Checkpoint 3:** Dois commits no histórico. O `.gitignore` protege `node_modules/` e `.env` de serem rastreados.
@@ -348,14 +362,14 @@ git branch
 
 ### Passo 4.4: Implementar a funcionalidade na branch
 
-Edite o arquivo `src/index.js` e adicione o seguinte **antes** do `app.listen`:
+Edite o arquivo `aula-01/app/server.js` e adicione o seguinte **antes** do `app.listen`:
 
 ```javascript
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    service: 'technova-api',
+    service: 'devops-portfolio-api',
     version: '1.0.0'
   });
 });
@@ -364,19 +378,19 @@ app.get('/health', (req, res) => {
 ### Passo 4.5: Commitar na branch de feature
 
 ```bash
-git add src/index.js
+git add aula-01/app/server.js
 git commit -m "feat: adiciona endpoint de health check"
 ```
 
 ### Passo 4.6: Adicionar mais uma funcionalidade na mesma branch
 
-Adicione outro endpoint em `src/index.js` (antes do `app.listen`):
+Adicione outro endpoint em `aula-01/app/server.js` (antes do `app.listen`):
 
 ```javascript
 app.get('/info', (req, res) => {
   res.json({
     empresa: 'TechNova',
-    projeto: 'API de Gerenciamento de Pedidos',
+    projeto: 'Portfólio DevOps - UniFAAT 2026-2',
     equipe: 'Platform Engineering',
     ambiente: process.env.NODE_ENV || 'development'
   });
@@ -384,7 +398,7 @@ app.get('/info', (req, res) => {
 ```
 
 ```bash
-git add src/index.js
+git add aula-01/app/server.js
 git commit -m "feat: adiciona endpoint de informações da API"
 ```
 
@@ -408,7 +422,7 @@ git log --oneline
 Verifique o conteúdo do arquivo:
 
 ```bash
-cat src/index.js
+cat aula-01/app/server.js
 ```
 
 Os endpoints novos não estão lá — estão isolados na branch `feature/health-check`.
@@ -423,7 +437,7 @@ git merge feature/health-check
 ```
 Updating def5678..ghi9012
 Fast-forward
- src/index.js | 16 ++++++++++++++++
+ aula-01/app/server.js | 16 ++++++++++++++++
  1 file changed, 16 insertions(+)
 ```
 
@@ -455,14 +469,14 @@ Para entender conflitos, vamos simular:
 git checkout -b feature/mensagem-v2
 
 # Modificar a mensagem da rota principal
-# No src/index.js, altere a message de '/' para:
-# message: 'TechNova API v2 - Online'
+# No aula-01/app/server.js, altere o campo 'servico' de '/' para:
+# servico: 'DevOps Portfolio API v2'
 ```
 
-Edite o `message` na rota `/` para `'TechNova API v2 - Online'`.
+Edite o campo `servico` na rota `/` para `'DevOps Portfolio API v2'`.
 
 ```bash
-git add src/index.js
+git add aula-01/app/server.js
 git commit -m "feat: atualiza mensagem para v2"
 git checkout main
 ```
@@ -470,14 +484,14 @@ git checkout main
 Agora, na `main`, faça outra alteração no mesmo local:
 
 ```bash
-# No src/index.js, altere a message de '/' para:
-# message: 'TechNova API - Sistema de Pedidos'
+# No aula-01/app/server.js, altere o campo 'servico' de '/' para:
+# servico: 'DevOps Portfolio - Sistema de Pedidos'
 ```
 
-Edite o `message` na rota `/` para `'TechNova API - Sistema de Pedidos'`.
+Edite o campo `servico` na rota `/` para `'DevOps Portfolio - Sistema de Pedidos'`.
 
 ```bash
-git add src/index.js
+git add aula-01/app/server.js
 git commit -m "feat: atualiza mensagem com descrição do sistema"
 ```
 
@@ -490,15 +504,15 @@ git merge feature/mensagem-v2
 **Resultado esperado:** CONFLITO! O Git marca o arquivo:
 
 ```
-Auto-merging src/index.js
-CONFLICT (content): Merge conflict in src/index.js
+Auto-merging aula-01/app/server.js
+CONFLICT (content): Merge conflict in aula-01/app/server.js
 Automatic merge failed; fix conflicts and then commit the result.
 ```
 
 Abra o arquivo e resolva o conflito (escolha uma das versões ou combine), remova os marcadores (`<<<<<<<`, `=======`, `>>>>>>>`), depois:
 
 ```bash
-git add src/index.js
+git add aula-01/app/server.js
 git commit -m "merge: resolve conflito na mensagem da API"
 git branch -d feature/mensagem-v2
 ```
@@ -512,7 +526,7 @@ git branch -d feature/mensagem-v2
 ### Passo 5.1: Criar repositório no GitHub
 
 1. Acesse [github.com/new](https://github.com/new)
-2. Nome do repositório: `technova-api`
+2. Nome do repositório: `unifaat-devops-portfolio`
 3. Visibilidade: **Público**
 4. Deixe **sem** README, .gitignore ou licença (já temos localmente)
 5. Clique em "Create repository"
@@ -520,7 +534,7 @@ git branch -d feature/mensagem-v2
 ### Passo 5.2: Conectar o repositório local ao remoto
 
 ```bash
-git remote add origin https://github.com/SEU-USUARIO/technova-api.git
+git remote add origin https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git
 ```
 
 ### Passo 5.3: Verificar o remoto configurado
@@ -531,8 +545,8 @@ git remote -v
 
 **Resultado esperado:**
 ```
-origin  https://github.com/SEU-USUARIO/technova-api.git (fetch)
-origin  https://github.com/SEU-USUARIO/technova-api.git (push)
+origin  https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git (fetch)
+origin  https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git (push)
 ```
 
 ### Passo 5.4: Enviar os commits para o GitHub
@@ -558,7 +572,7 @@ branch 'main' set up to track 'origin/main'.
 
 ### Passo 5.5: Verificar no GitHub
 
-Acesse `https://github.com/SEU-USUARIO/technova-api` no navegador e confirme que:
+Acesse `https://github.com/SEU-USUARIO/unifaat-devops-portfolio` no navegador e confirme que:
 
 - [ ] Todos os arquivos estão visíveis
 - [ ] O README.md é renderizado na página inicial
@@ -567,12 +581,13 @@ Acesse `https://github.com/SEU-USUARIO/technova-api` no navegador e confirme que
 
 ### Passo 5.6: Fazer uma alteração e sincronizar
 
-Edite o `README.md` para adicionar informações sobre como rodar:
+Edite o `README.md` para adicionar informações sobre como rodar a aplicação da aula 01:
 
 ```markdown
-## Como Executar
+## Como Executar (Aula 01)
 
 ```bash
+cd aula-01/app
 npm install
 npm start
 ```
@@ -596,8 +611,8 @@ Atualize a página no GitHub — a alteração deve aparecer imediatamente.
 
 ```bash
 cd ..
-git clone https://github.com/SEU-USUARIO/technova-api.git technova-api-rafael
-cd technova-api-rafael
+git clone https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git portfolio-rafael
+cd portfolio-rafael
 ```
 
 ### Passo 6.2: Verificar que o clone está completo
@@ -615,14 +630,14 @@ git config user.name "Rafael Silva"
 git config user.email "rafael@technova.com"
 ```
 
-Crie o arquivo `src/routes/orders.js`:
+Crie o arquivo `aula-01/app/routes/orders.js`:
 
 ```bash
-mkdir -p src/routes
+mkdir -p aula-01/app/routes
 ```
 
 ```javascript
-// src/routes/orders.js
+// aula-01/app/routes/orders.js
 const express = require('express');
 const router = express.Router();
 
@@ -645,7 +660,7 @@ git push
 ### Passo 6.4: Voltar ao repositório original e sincronizar
 
 ```bash
-cd ../technova-api
+cd ../unifaat-devops-portfolio
 git pull origin main
 git log --oneline
 ```
@@ -655,7 +670,7 @@ git log --oneline
 ### Passo 6.5: Verificar o arquivo criado pelo colega
 
 ```bash
-cat src/routes/orders.js
+cat aula-01/app/routes/orders.js
 ```
 
 O código do Rafael está disponível localmente. Isso demonstra o fluxo completo de colaboração.
@@ -672,7 +687,7 @@ O código do Rafael está disponível localmente. Isso demonstra o fluxo complet
 
 **Solução:**
 ```bash
-cd technova-api
+cd unifaat-devops-portfolio
 # ou se ainda não inicializou:
 git init
 ```
@@ -684,7 +699,7 @@ git init
 **Solução:**
 ```bash
 git remote remove origin
-git remote add origin https://github.com/SEU-USUARIO/technova-api.git
+git remote add origin https://github.com/SEU-USUARIO/unifaat-devops-portfolio.git
 ```
 
 ### ❌ Erro: `error: failed to push some refs`
@@ -736,7 +751,7 @@ git push -u origin main
 Ao concluir este laboratório, você deve ter:
 
 - [ ] Git configurado com nome, e-mail e branch padrão
-- [ ] Repositório `technova-api` inicializado com pelo menos 4 commits
+- [ ] Repositório `unifaat-devops-portfolio` inicializado com pelo menos 4 commits
 - [ ] Arquivo `.gitignore` configurado e protegendo `node_modules/` e `.env`
 - [ ] Experiência com criação de branch e merge (fast-forward)
 - [ ] Repositório publicado no GitHub com todos os commits
@@ -745,4 +760,4 @@ Ao concluir este laboratório, você deve ter:
 
 ---
 
-*Excelente! A TechNova agora tem controle de versão. Na Parte 2 do laboratório, vamos resolver o segundo problema: "funciona na minha máquina" — containerizando a API com Docker.*
+*Excelente! A TechNova agora tem controle de versão no seu portfólio DevOps. Na Parte 2 do laboratório, vamos resolver o segundo problema: "funciona na minha máquina" — containerizando a API com Docker.*

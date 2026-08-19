@@ -170,6 +170,32 @@ Cada TF deve ser desenvolvido no **repositório pessoal do aluno** (criado na Au
 - `node_modules/`
 - `*.pem` (chaves privadas)
 
+## Regras de Entrega do Trabalho em Aula
+
+### O que é
+
+Cada aula possui uma atividade de discussão/prática em sala (`trabalho-em-aula.md`). A entrega das respostas vale **1 ponto na nota final** do semestre — contabilizado apenas ao final, com **todos** os trabalhos entregues.
+
+### O que entregar
+
+Um arquivo `trabalho-em-aula.md` com as respostas das atividades realizadas em sala (discussões, análises, tabelas preenchidas). O modelo específico de cada aula está dentro do respectivo `trabalho-em-aula.md`.
+
+### Onde entregar
+
+Na **mesma pasta** da entrega do TF, no fork da disciplina:
+
+```
+entregas/aula-XX/SEU-RA/trabalho-em-aula.md
+```
+
+### Como entregar
+
+- O arquivo pode ser adicionado no **mesmo PR** do TF ou em PR separado
+- A entrega é **individual** — mesmo que a atividade tenha sido em grupo
+- Entregas parciais (apenas algumas aulas) **não garantem o ponto**
+
+---
+
 ## Pré-requisitos
 
 - Conta GitHub (gratuita)
