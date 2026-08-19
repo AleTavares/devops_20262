@@ -351,7 +351,7 @@ git push -u origin entregas/aula-01/SEU-RA
 ```
 
 Abra o Pull Request no GitHub com:
-- **Título:** `TF Aula 01 - SEU NOME (RA)`
+- **Título:** `[Aula 01] RA: SEU-RA - SEU NOME`
 - **Base:** `main`
 - **Compare:** `entregas/aula-01/SEU-RA`
 
