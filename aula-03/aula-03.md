@@ -11,7 +11,7 @@ style: |
     color: #333333;
   }
   h1 {
-    color: #1B3A5C;
+    color: #0D2B45;
     border-bottom: 3px solid #F58220;
     padding-bottom: 5px;
     font-size: 1.45em;
