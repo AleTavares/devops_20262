@@ -657,16 +657,7 @@ Antes de seguir para o Laboratório Parte 2, verifique:
 
 ## Estrutura Final do Projeto
 
-```
-aula-04-vpc-ec2/
-├── providers.tf       ← Configuração do Terraform e provider AWS
-├── variables.tf       ← Variáveis de entrada
-├── main.tf            ← Recursos de rede (VPC, subnets, IGW, RT, SGs)
-├── outputs.tf         ← IDs exportados para o Lab Parte 2
-├── .gitignore         ← Arquivos ignorados pelo Git
-├── .terraform/        ← Plugins (gerado pelo init, NÃO versionar)
-└── terraform.tfstate  ← Estado (gerado pelo apply, NÃO versionar)
-```
+![Estrutura](img/lab1Estrutura.png)
 
 ---
 

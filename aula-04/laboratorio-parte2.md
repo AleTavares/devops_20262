@@ -767,16 +767,7 @@ variable "availability_zone" {
 
 ## Estrutura Final do Projeto
 
-```
-aula-04-vpc-ec2/
-├── providers.tf       ← Configuração do Terraform e provider AWS
-├── variables.tf       ← Variáveis de entrada (CIDRs, região, etc.)
-├── main.tf            ← Todos os recursos (VPC, subnets, IGW, RT, SGs, EC2, IAM)
-├── outputs.tf         ← IDs e informações exportadas
-├── user_data.sh       ← Script de bootstrap do EC2
-├── .gitignore         ← Arquivos ignorados pelo Git
-└── README.md          ← (opcional) Documentação do projeto
-```
+![Estrutura](img/lab2EstruturaFinal.png)
 
 ---
 
