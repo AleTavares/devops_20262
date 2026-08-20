@@ -1,0 +1,5 @@
+*.tfstate
+*.tfstate.backup
+.env
+node_modules/
+*.pem
