@@ -35,18 +35,16 @@ O desafio desta aula: transformar a orquestração manual em um `docker-compose.
 
 ---
 
-## Visão Geral da Aula
+## Cronograma da Aula
 
-
-
-| Bloco | Atividade | Descrição |
-|:---:|---|---|
-| 1 | Revisão TA + Discussão | Discussão das questões do TA, esclarecimento de dúvidas sobre Docker Compose e IA |
-| 2 | Conteúdo Teórico — Docker Compose | Orquestração declarativa, docker-compose.yml, redes, volumes, boas práticas |
-| 3 | Laboratório Parte 1 — Docker Compose | Hands-on: ambiente completo com API + PostgreSQL |
-| 4 | Conteúdo Teórico — IA no DevOps + Kiro | IA generativa, copiloto DevOps, Kiro, AWS Bedrock, limitações |
-| 5 | Laboratório Parte 2 — IA como Copiloto | Hands-on: criar API REST completa do zero com Kiro Spec (requisitos → design → código), gerar Dockerfile e docker-compose.yml, testar os endpoints e fazer reflexão crítica sobre o uso de IA |
-| 6 | Encerramento + Orientação TF | Resumo, orientações da Tarefa de Fixação, próximos passos |
+| Bloco | Atividade |
+|:---:|---|
+| 1 | Revisão TA + Discussão |
+| 2 | Conteúdo Teórico — Docker Compose |
+| 3 | Laboratório Parte 1 — Docker Compose |
+| 4 | Conteúdo Teórico — IA no DevOps + Kiro |
+| 5 | Laboratório Parte 2 — IA como Copiloto (Spec-Driven) |
+| 6 | Encerramento + Orientação TF |
 
 ---
 
@@ -68,6 +66,141 @@ Antes da aula, o aluno deve ter:
 > docker compose version
 > ```
 > Resultado esperado: `Docker Compose version v2.x.x`
+
+---
+
+## Conteúdo Teórico — Parte 1: Docker Compose
+
+### 1. O Problema: Orquestração Manual
+
+Com múltiplos containers (API + banco + cache), gerenciar tudo manualmente se torna insustentável:
+
+| Containers | Comandos manuais | Pontos de falha |
+|:---:|:---:|:---:|
+| 1 | ~3 | Poucos |
+| 2 | ~8 | Moderados |
+| 3+ | ~15+ | Muitos |
+
+Cada container adicional **multiplica** a complexidade.
+
+### 2. O que é Docker Compose
+
+**Definição:** Ferramenta para definir e executar aplicações multi-container usando um arquivo YAML declarativo.
+
+**Princípios:**
+- **Declarativo** — descreve o estado desejado, não os passos
+- **Reproduzível** — mesmo arquivo = mesmo ambiente sempre
+- **Versionável** — o arquivo vai no Git junto com o código
+- **Um comando** — `docker compose up` sobe tudo
+
+### 3. Anatomia do `docker-compose.yml`
+
+```yaml
+services:          # Containers da aplicação
+  app:
+    build: .
+    ports: ["3000:3000"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  pgdata:
+```
+
+### 4. Conceitos-Chave
+
+| Conceito | Descrição |
+|----------|-----------|
+| **Services** | Define cada container (build, imagem, portas, variáveis) |
+| **Networks** | Comunicação entre containers (pelo nome do serviço) |
+| **Volumes** | Persistência de dados entre reinicializações |
+| **depends_on** | Ordem de inicialização (com `condition: service_healthy`) |
+| **Healthchecks** | Verificação de que o serviço está pronto |
+| `.env` | Variáveis sensíveis fora do YAML (no `.gitignore`) |
+
+### 5. Comandos Essenciais
+
+| Comando | Função |
+|---------|--------|
+| `docker compose up -d` | Cria e inicia todos os serviços |
+| `docker compose down` | Para e remove containers e redes |
+| `docker compose down -v` | Remove também volumes (dados!) |
+| `docker compose ps` | Status dos serviços |
+| `docker compose logs -f` | Logs em tempo real |
+| `docker compose config` | Valida sintaxe do YAML |
+
+### 6. Boas Práticas
+
+- Usar `.env` para variáveis sensíveis — nunca hardcode
+- Definir `restart: unless-stopped` para resiliência
+- Especificar versões de imagens — nunca `latest` em produção
+- Usar `depends_on` com `condition: service_healthy`
+- `.env` no `.gitignore` — fornecer `.env.example`
+
+---
+
+## Conteúdo Teórico — Parte 2: Spec-Driven Development e IA no DevOps
+
+### 1. IA como Copiloto, Não Substituto
+
+| IA faz bem | IA não substitui |
+|-----------|-----------------|
+| Gerar rascunhos de configuração | Decisões de arquitetura |
+| Identificar padrões em logs | Entendimento do contexto |
+| Sugerir otimizações | Julgamento sobre trade-offs |
+| Acelerar tarefas repetitivas | Validação final de segurança |
+
+### 2. Spec-Driven Development — O Conceito
+
+Um workflow onde a IA **pensa antes de agir** — e você controla cada etapa:
+
+| Etapa | O que acontece | Você faz |
+|---|---|---|
+| **1. Requisitos** | Kiro documenta o que o sistema deve fazer | Revisa e corrige |
+| **2. Design** | Kiro propõe arquitetura e estrutura | Aprova ou ajusta |
+| **3. Tarefas** | Kiro gera lista ordenada de implementação | Valida a ordem |
+| **4. Código** | Kiro executa as tarefas e gera arquivos | Revisa cada mudança |
+
+### 3. Spec vs. Vibe (chat livre)
+
+| | Chat / Vibe | Spec-Driven |
+|---|---|---|
+| **Início** | Prompt direto | Descrição do que quer construir |
+| **Processo** | IA responde imediatamente | Requisitos → Design → Tarefas → Código |
+| **Controle** | Você revisa o resultado final | Você aprova cada etapa |
+| **Rastreabilidade** | Conversa descartável | Documentação gerada automaticamente |
+
+### 4. IA Responsável — Limitações
+
+- **Alucinações:** IA pode gerar configurações que parecem corretas mas têm erros
+- **Desatualização:** Pode sugerir práticas de versões antigas
+- **Contexto limitado:** Não conhece restrições de segurança do seu projeto
+- **Segurança:** Nunca compartilhe senhas ou tokens em prompts
+
+**Checklist de validação:**
+1. Sintaxe está correta? (`docker compose config`)
+2. Imagens referenciadas existem?
+3. Senhas hardcoded? (deve usar `.env`)
+4. Healthchecks configurados?
+5. Funciona quando você executa?
+
+### 5. AWS Bedrock — Visão Conceitual
+
+Serviço gerenciado da AWS para acessar modelos de IA generativa via API. Será explorado em aulas futuras quando integrarmos IA diretamente em pipelines de automação.
 
 ---
 
@@ -147,10 +280,10 @@ Para detalhes completos sobre os entregáveis e critérios de avaliação, consu
 | Arquivo | Descrição |
 |---------|-----------|
 | `README.md` | Este arquivo — visão geral da aula |
-| `TA.md` | Trabalho Anterior — leitura prévia obrigatória (~60 min) |
+| `TA.md` | Trabalho Anterior — leitura prévia obrigatória |
 | `trabalho-em-aula.md` | Atividade de discussão e demonstração em sala |
-| `laboratorio-parte1.md` | Laboratório hands-on de Docker Compose (~120 min) |
-| `laboratorio-parte2.md` | Laboratório hands-on de IA como Copiloto (~90 min) |
+| `laboratorio-parte1.md` | Laboratório hands-on de Docker Compose |
+| `laboratorio-parte2.md` | Laboratório hands-on de IA como Copiloto |
 | `TF.md` | Trabalho de Fixação — entrega semanal via PR |
 | `materiais-complementares.md` | Recursos adicionais para aprofundamento |
 

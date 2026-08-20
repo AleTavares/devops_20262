@@ -157,21 +157,7 @@ Com a Spec aprovada, autorize o Kiro a executar as tarefas. Observe o processo:
 
 Observe quais arquivos o Kiro cria. A estrutura esperada ao final é:
 
-```
-minha-api-lab2/
-├── src/
-│   ├── index.js          ← Servidor Express
-│   ├── db.js             ← Conexão com PostgreSQL
-│   └── routes/
-│       └── tasks.js      ← CRUD de tarefas
-├── Dockerfile            ← Multi-stage build
-├── docker-compose.yml    ← API + PostgreSQL
-├── init.sql              ← Schema do banco
-├── .env.example          ← Template de variáveis
-├── package.json
-└── .gitignore
-```
-
+![Estrutura](img/lab2Estrutura.png)
 ### Passo 3.3: Intervir quando necessário
 
 Se o Kiro gerar algo incorreto ou incompleto, corrija via chat durante a execução:
