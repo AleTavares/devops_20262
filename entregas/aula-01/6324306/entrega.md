@@ -32,6 +32,4 @@
 
 ![Evidência da execução](../../../aula-01/evidencias.png)
 
-## Arte de conclusão
-
 ![Arte de conclusão](../../../aula-01/publi_aula_1_conclusao.png)
