@@ -30,12 +30,8 @@
 
 ## Evidências
 
-A evidência da execução da aplicação e do container está disponível no repositório:
+![Evidência da execução](../../../aula-01/evidencias.png)
 
-[Ver evidência da execução](https://github.com/devpedrohenriquemelo-coder/unifaat-devops-portfolio/blob/main/aula-01/evidencias.png)
+## Arte de conclusão
 
-## Conclusão
-
-Nesta aula, pratiquei conceitos fundamentais de Git, GitHub, branches, commits, merge e Docker. Também aprendi a construir e executar uma aplicação dentro de um container e a documentar as etapas realizadas.
-
-A atividade contribuiu para meu aprendizado sobre versionamento de código e fundamentos de DevOps.
+![Arte de conclusão](../../../aula-01/publi_aula_1_conclusao.png)
