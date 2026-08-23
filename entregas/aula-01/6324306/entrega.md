@@ -30,6 +30,6 @@
 
 ## Evidências
 
-![Evidência da execução](../../../aula-01/evidencias.png)
+![Evidência da execução](https://raw.githubusercontent.com/devpedrohenriquemelo-coder/unifaat-devops-portfolio/main/aula-01/evidencias.png)
 
-![Arte de conclusão](../../../aula-01/publi_aula_1_conclusao.png)
+![Arte de conclusão](https://raw.githubusercontent.com/devpedrohenriquemelo-coder/unifaat-devops-portfolio/main/aula-01/publi_aula_1_conclusao.png)
