@@ -10,16 +10,17 @@
 
 ## Evidências
 
-* Repositório público com estrutura completa
-* Mínimo de 5 commits demonstrando workflow Git
-* Dockerfile funcional
-* Container executado com sucesso
+* [x] Repositório público com estrutura completa
+* [x] Mínimo de 5 commits demonstrando workflow Git
+* [x] Dockerfile funcional
+* [x] Container executado com sucesso
+* [x] Branch `feature/aula-01-app` publicada no GitHub
 
 ## Evidência de Container Rodando
 
 A evidência da execução do container está disponível no arquivo `aula-01/docker-logs.txt` do repositório do portfólio.
 
-O container foi executado utilizando:
+O container foi construído e executado com:
 
 ```bash
 docker build -t portfolio-aula01:1.0 .
