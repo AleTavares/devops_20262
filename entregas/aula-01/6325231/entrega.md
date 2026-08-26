@@ -17,7 +17,6 @@
 
 ## Evidência de Container Rodando
 
-```text
-NAMES            IMAGE                  STATUS          PORTS
-portfolio-test   portfolio-aula01:1.0   Up              0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
-```
+![Evidência 1 — container em execução](./evidencia1.png)
+
+![Evidência 2 — resposta da API](./evidencia2.png)
