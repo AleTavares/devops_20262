@@ -1,12 +1,12 @@
 # Entrega — Aula 01: Fundamentos de Git e Docker
 
-**Aluno:** Carina Gonçalves dos Santos Dalpino  
-**RA:** 6325109  
-**Data:** 18/08/2026
+**Aluno:** Caroline Lejne Geli  
+**RA:** 6325016
+**Data:** [Data da entrega]
 
 ## Repositório
 
-- URL: https://github.com/CarinaDalpino/unifaat-devops-portfolio
+- URL: https://github.com/LejneGeli/unifaat-devops-portfolio
 
 ## Evidências
 
@@ -17,4 +17,4 @@
 
 ## Evidência de Container Rodando
 
-![Evidência container rodando](image.png)
+![evidências](entrega.png)

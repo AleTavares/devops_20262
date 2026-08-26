@@ -1,5 +1,6 @@
+node_modules/
+.env
+*.log
 *.tfstate
 *.tfstate.backup
-.env
-node_modules/
 *.pem

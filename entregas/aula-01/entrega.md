@@ -1,12 +1,12 @@
 # Entrega — Aula 01: Fundamentos de Git e Docker
 
-**Aluno:** Carina Gonçalves dos Santos Dalpino  
-**RA:** 6325109  
-**Data:** 18/08/2026
+**Aluno:** Luiza Carneiro Rolfsen
+**RA:** 6325257
+**Data:** 20/08/2026
 
 ## Repositório
 
-- URL: https://github.com/CarinaDalpino/unifaat-devops-portfolio
+- URL: https://github.com/luizarolfsen/unifaat-devops-portfolio
 
 ## Evidências
 
@@ -17,4 +17,4 @@
 
 ## Evidência de Container Rodando
 
-![Evidência container rodando](image.png)
+![alt text](<Captura de tela 2026-08-20 155933.png>)
