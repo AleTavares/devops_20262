@@ -11,7 +11,7 @@ style: |
     color: #333333;
   }
   h1 {
-    color: #1B3A5C;
+    color: #0D2B45;
     border-bottom: 3px solid #F58220;
     padding-bottom: 5px;
     font-size: 1.45em;
@@ -37,7 +37,7 @@ style: |
     justify-content: center;
     padding: 60px;
   }
-  section.title h1 { color: white !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
+  section.title h1 { color: #F58220 !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
   section.title h2 { color: #F58220 !important; font-size: 1.3em; }
   section.title h3 { color: #ccc !important; }
   section.title p { color: #ccc !important; }
