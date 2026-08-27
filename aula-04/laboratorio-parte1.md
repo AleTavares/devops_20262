@@ -4,16 +4,54 @@
 
 Construir a infraestrutura de rede da TechNova do zero: uma VPC customizada com subnets públicas e privadas, Internet Gateway, Route Tables e Security Groups — tudo usando Terraform.
 
-**Duração:** ~120 minutos  
-**Pré-requisito:** AWS CLI configurado, Terraform instalado, conhecimento da Aula 03 (Terraform basics + IAM)
+**Pré-requisito:** AWS CLI e Terraform instalados (Aula 03), acesso ao AWS Academy Learner Lab
 
-> **⚠️ IMPORTANTE:** Ao final deste laboratório, NÃO execute `terraform destroy`! O Laboratório Parte 2 utiliza a infraestrutura criada aqui.
+> **IMPORTANTE:** Ao final deste laboratório, NÃO execute `terraform destroy`! O Laboratório Parte 2 utiliza a infraestrutura criada aqui.
 
 ---
 
 ## Arquitetura Final
 
 ![Internet Gateway](img/lab1IGW.png)
+
+---
+
+## Parte 0 — Atualizar Credenciais do AWS Academy (10 min)
+
+> As credenciais do **AWS Academy Learner Lab** são **temporárias** e **expiram entre sessões**. No início de cada aula, atualize-as antes de rodar qualquer comando Terraform.
+
+### 0.1 Iniciar o Learner Lab
+
+1. Acesse o **AWS Academy** → curso → **Modules → Learner Lab**
+2. Clique em **Start Lab** e aguarde o indicador ficar **verde** (🟢)
+3. Clique em **AWS Details → AWS CLI → Show**
+
+### 0.2 Atualizar o arquivo de credenciais
+
+Copie o bloco mostrado (com `aws_session_token`) e cole em `~/.aws/credentials`:
+
+```bash
+nano ~/.aws/credentials
+```
+
+```ini
+[default]
+aws_access_key_id=ASIA_SUA_KEY_AQUI
+aws_secret_access_key=SUA_SECRET_AQUI
+aws_session_token=SEU_TOKEN_AQUI
+```
+
+> **Lembrete:** O `aws_session_token` é obrigatório no Learner Lab e muda a cada sessão. Detalhes completos no Lab Parte 1 da Aula 03.
+
+### 0.3 Verificar
+
+```bash
+aws sts get-caller-identity
+```
+
+Se retornar o ARN do role temporário (`voclabs`), está pronto. Se der `ExpiredToken`, reinicie o lab e recopie as credenciais.
+
+✅ **Checkpoint:** Credenciais do Learner Lab atualizadas e válidas.
 
 ---
 
@@ -570,20 +608,17 @@ terraform output
 
 ## Troubleshooting — Problemas Comuns
 
-### Problema 1: "Error: creating VPC: UnauthorizedOperation"
+### Problema 1: "Error: creating VPC: UnauthorizedOperation" ou "ExpiredToken"
 
-**Causa:** Suas credenciais AWS não têm permissão para criar VPCs.
+**Causa:** As credenciais do Learner Lab expiraram ou não estão configuradas.
 
 **Solução:**
 ```bash
-# Verifique se o AWS CLI está configurado
+# Verifique se as credenciais estão válidas
 aws sts get-caller-identity
-
-# Se não estiver, configure:
-aws configure
 ```
 
-Verifique que seu usuário IAM tem a policy `AmazonVPCFullAccess` ou equivalente.
+Se der `ExpiredToken` ou `InvalidClientTokenId`, reinicie o **AWS Academy Learner Lab** (Start Lab) e recopie as credenciais atualizadas para `~/.aws/credentials` (veja a Parte 0). No Learner Lab, o role `voclabs` já tem as permissões necessárias para VPC/EC2.
 
 ---
 
