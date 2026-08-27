@@ -11,13 +11,13 @@
 
 ## Pré-requisitos
 
-- Conta AWS criada (com Free Tier ativo) — [Criar conta AWS](https://aws.amazon.com/free/)
+- Acesso ao **AWS Academy Learner Lab** (fornecido pelo professor)
 - Docker e Docker Compose funcionando (Aulas 01-02)
 - Git instalado e configurado (Aulas 01-02)
 - Terminal (Git Bash no Windows, Terminal no macOS/Linux)
 - Editor de texto (VS Code com extensão HashiCorp Terraform recomendada)
 
-> **⚠️ Free Tier:** Todos os recursos criados neste lab são elegíveis ao AWS Free Tier. Lembre-se de executar `terraform destroy` ao final para evitar qualquer custo.
+> **AWS Academy Learner Lab:** Usaremos o laboratório de aprendizagem da AWS Academy, que fornece credenciais temporárias e recursos sem custo. As credenciais **expiram entre sessões** — sempre reinicie o lab e recopie as credenciais no início de cada aula. Execute `terraform destroy` ao final para manter o ambiente limpo.
 
 ---
 
@@ -78,7 +78,9 @@ on linux_amd64
 
 ---
 
-## Parte 2 — Configurando Credenciais AWS (15 minutos)
+## Parte 2 — Configurando Credenciais do AWS Academy Learner Lab (15 minutos)
+
+> **Nesta disciplina usamos o AWS Academy Learner Lab.** As credenciais são **temporárias** e **expiram** ao final de cada sessão do laboratório (ou após algumas horas). Sempre que iniciar uma nova sessão, você precisará **atualizar as credenciais**. Elas incluem um `aws_session_token` — obrigatório no Learner Lab.
 
 ### Passo 2.1: Instalar o AWS CLI (se não tiver)
 
@@ -100,28 +102,68 @@ brew install awscli
 
 Baixe o instalador em: https://aws.amazon.com/cli/
 
-### Passo 2.2: Criar credenciais de acesso no IAM
+### Passo 2.2: Iniciar o Learner Lab e obter as credenciais
 
-> **⚠️ Segurança:** Idealmente, não use a conta root. Crie um usuário IAM dedicado para Terraform. Se for a primeira vez, pode usar root temporariamente — corrigiremos no Lab Parte 2.
+1. Acesse o **AWS Academy** e entre no curso
+2. Vá em **Modules → Learner Lab**
+3. Clique em **Start Lab** e aguarde o indicador ficar **verde** (🟢)
+4. Clique em **AWS Details** (no topo do painel do lab)
+5. Ao lado de **AWS CLI**, clique em **Show** — aparecerão as credenciais no formato:
 
-1. Acesse o Console AWS → IAM → Users → Create User
-2. Nome: `terraform-lab` (ou seu nome pessoal)
-3. Permissões: anexe as policies `AmazonS3FullAccess` e `IAMFullAccess` (para este lab)
-4. Crie uma Access Key (tipo: CLI)
-5. **Anote** o `Access Key ID` e `Secret Access Key` — eles aparecem apenas uma vez!
+```ini
+[default]
+aws_access_key_id=ASIA...
+aws_secret_access_key=...
+aws_session_token=...
+```
+
+> **Importante:** As três linhas (incluindo o `aws_session_token`) são obrigatórias. Elas mudam a cada nova sessão do lab.
 
 ### Passo 2.3: Configurar as credenciais localmente
 
+O Learner Lab já fornece o bloco pronto. Copie o conteúdo mostrado e cole no arquivo de credenciais da AWS:
+
+#### Opção A — Editar o arquivo diretamente (recomendado)
+
+Abra (ou crie) o arquivo `~/.aws/credentials`:
+
 ```bash
-aws configure
+mkdir -p ~/.aws
+nano ~/.aws/credentials
 ```
 
-Preencha:
+Cole o bloco copiado do Learner Lab (substituindo o conteúdo anterior):
+
+```ini
+[default]
+aws_access_key_id=ASIA_SUA_KEY_AQUI
+aws_secret_access_key=SUA_SECRET_AQUI
+aws_session_token=SEU_TOKEN_AQUI
 ```
-AWS Access Key ID [None]: SUA_ACCESS_KEY_AQUI
-AWS Secret Access Key [None]: SUA_SECRET_KEY_AQUI
-Default region name [None]: us-east-1
-Default output format [None]: json
+
+Salve (`Ctrl+O`, `Enter`, `Ctrl+X` no nano).
+
+Configure a região no arquivo `~/.aws/config`:
+
+```bash
+nano ~/.aws/config
+```
+
+```ini
+[default]
+region = us-east-1
+output = json
+```
+
+#### Opção B — Variáveis de ambiente (para a sessão atual do terminal)
+
+Alternativamente, exporte as variáveis (válidas só enquanto o terminal estiver aberto):
+
+```bash
+export AWS_ACCESS_KEY_ID="ASIA_SUA_KEY_AQUI"
+export AWS_SECRET_ACCESS_KEY="SUA_SECRET_AQUI"
+export AWS_SESSION_TOKEN="SEU_TOKEN_AQUI"
+export AWS_DEFAULT_REGION="us-east-1"
 ```
 
 ### Passo 2.4: Verificar que as credenciais funcionam
@@ -130,16 +172,20 @@ Default output format [None]: json
 aws sts get-caller-identity
 ```
 
-Resultado esperado:
+Resultado esperado (o ARN mostra um role temporário do Academy, ex: `voclabs`):
 ```json
 {
-    "UserId": "AIDAIOSFODNN7EXAMPLE",
+    "UserId": "AROA...:user...",
     "Account": "123456789012",
-    "Arn": "arn:aws:iam::123456789012:user/terraform-lab"
+    "Arn": "arn:aws:sts::123456789012:assumed-role/voclabs/user..."
 }
 ```
 
-✅ **Checkpoint:** AWS CLI configurado e autenticado. O Terraform usará estas mesmas credenciais.
+> **Se der erro `ExpiredToken` ou `InvalidClientTokenId`:** a sessão do lab expirou. Volte ao AWS Academy, clique em **Start Lab** novamente e recopie as credenciais atualizadas (Passo 2.2).
+
+✅ **Checkpoint:** AWS CLI configurado com as credenciais temporárias do Learner Lab. O Terraform usará estas mesmas credenciais.
+
+> **Lembrete recorrente:** Toda vez que reiniciar o Learner Lab, repita o Passo 2.3 para atualizar as credenciais — elas expiram entre sessões.
 
 ---
 
