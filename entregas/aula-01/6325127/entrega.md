@@ -17,7 +17,21 @@
 
 ## Evidência de Container Rodando
 
+**`docker ps`:**
+
 ```text
-<!-- Cole aqui o output do `docker ps` e/ou a resposta de `curl http://localhost:3000`.
-     Ou substitua este bloco por uma imagem: ![evidência](evidencia.png) -->
+CONTAINER ID   IMAGE                  COMMAND                  CREATED         STATUS         PORTS                                       NAMES
+b09a1877f451   portfolio-aula01:1.0   "docker-entrypoint.s…"   9 minutes ago   Up 9 minutes   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp   portfolio-test
+```
+
+**`curl http://localhost:3000`:**
+
+```json
+{"servico":"DevOps Portfolio API","aluno":"MARCOS EDUARDO DOS SANTOS SOUSA","ra":"6325127","aula":"01 - Fundamentos de Git e Docker","status":"online","timestamp":"2026-08-27T23:10:23.832Z"}
+```
+
+**`curl http://localhost:3000/health`:**
+
+```json
+{"status":"healthy","uptime":187.456147934,"version":"1.0.0"}
 ```
