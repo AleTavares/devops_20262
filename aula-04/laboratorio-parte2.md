@@ -58,7 +58,7 @@ Inicie uma nova sessão do tipo **Spec** e forneça o seguinte prompt:
 
 > **Prompt para o Spec:**
 >
-> "Preciso adicionar uma instância EC2 ao projeto Terraform existente (que já tem VPC, subnets, IGW e Security Groups criados no Lab Parte 1). O cenário é:
+> "Preciso adicionar uma instância EC2 ao projeto Terraform existente (que já tem VPC, subnets, IGW e Security Groups criados no Lab Parte 1). Estou usando o **AWS Academy Learner Lab**, que **não permite criar IAM Roles** — devo usar o instance profile pré-existente chamado `LabInstanceProfile` (que contém a role `LabRole`). O cenário é:
 >
 > **Instância EC2:**
 > - Tipo: t2.micro (Free Tier)
@@ -69,10 +69,9 @@ Inicie uma nova sessão do tipo **Spec** e forneça o seguinte prompt:
 > - User Data: script `user_data.sh` que instala Node.js 18, cria uma API Express na porta 3000, e inicia automaticamente
 > - Disco: 8 GB gp2
 >
-> **IAM (Instance Profile):**
-> - IAM Role para EC2 assumir (trust policy `ec2.amazonaws.com`)
-> - Anexar policy `AmazonS3ReadOnlyAccess` (managed)
-> - Instance Profile vinculando o role à instância
+> **IAM (usar recurso pré-existente do Learner Lab):**
+> - NÃO criar `aws_iam_role`, `aws_iam_role_policy_attachment` nem `aws_iam_instance_profile` (o Learner Lab bloqueia a criação de roles)
+> - Usar o instance profile existente: `iam_instance_profile = "LabInstanceProfile"` diretamente no `aws_instance`
 >
 > **User Data (`user_data.sh`) deve:**
 > - Atualizar o sistema (`yum update -y`)
@@ -92,7 +91,8 @@ Inicie uma nova sessão do tipo **Spec** e forneça o seguinte prompt:
 > **Restrições:**
 > - Adicionar ao `main.tf` existente (não criar novo arquivo de providers)
 > - Usar `file()` para ler a chave pública e o user_data
-> - Não usar access keys hardcoded — usar Instance Profile"
+> - Não usar access keys hardcoded — usar o instance profile `LabInstanceProfile`
+> - Não criar recursos IAM (usar apenas o que já existe no Learner Lab)"
 
 ### 2.2 Revisar os Requisitos (Etapa 1 do Spec)
 
@@ -107,7 +107,7 @@ O Kiro vai gerar um documento de requisitos. **Revise:**
 | Key Pair usa `file()`? | Lê `~/.ssh/technova-key.pub` |
 | User Data instala Node 18? | Via nodesource |
 | API tem 3 endpoints? | `/`, `/health`, `/orders` |
-| Instance Profile com S3 read? | `AmazonS3ReadOnlyAccess` |
+| Usa `LabInstanceProfile`? | `iam_instance_profile = "LabInstanceProfile"` — NÃO cria role |
 | Outputs listados? | IP, DNS, SSH command, API URL |
 
 ### 2.3 Revisar o Design (Etapa 2 do Spec)
@@ -116,7 +116,7 @@ Valide a arquitetura proposta:
 
 - Os novos recursos se integram ao `main.tf` existente?
 - O `user_data.sh` é arquivo separado (não inline)?
-- O fluxo IAM está correto? (Role → Policy Attachment → Instance Profile → EC2)
+- O EC2 referencia `LabInstanceProfile` (sem criar recursos IAM)?
 - Tags presentes em todos os recursos?
 
 ### 2.4 Revisar as Tarefas (Etapa 3 do Spec)
@@ -125,12 +125,11 @@ A ordem esperada é:
 
 1. Data source `aws_ami` (buscar AMI)
 2. `aws_key_pair` (registrar chave SSH)
-3. `aws_iam_role` + trust policy
-4. `aws_iam_role_policy_attachment` (S3 read)
-5. `aws_iam_instance_profile`
-6. Criar `user_data.sh`
-7. `aws_instance` (EC2)
-8. Outputs
+3. Criar `user_data.sh`
+4. `aws_instance` (EC2) — usando `iam_instance_profile = "LabInstanceProfile"`
+5. Outputs
+
+> **Nota:** Não há tarefas de criação de IAM Role/Instance Profile — no Learner Lab usamos o `LabInstanceProfile` que já existe.
 
 ### 2.5 Aceitar a Geração de Código (Etapa 4 do Spec)
 
@@ -145,14 +144,14 @@ Deixe o Kiro gerar os arquivos. Em modo **Supervised**, revise cada mudança ant
 | # | Item | Comando/Verificação | ✅ |
 |---|---|---|---|
 | 1 | Sintaxe HCL válida | `terraform validate` | |
-| 2 | Plan mostra ~5 novos recursos | `terraform plan` | |
+| 2 | Plan mostra ~2 novos recursos | `terraform plan` | |
 | 3 | AMI via data source (não ID fixo) | Verificar `data "aws_ami"` | |
 | 4 | Instance type é `t2.micro` | Verificar `aws_instance` | |
 | 5 | Subnet é a pública | `subnet_id = aws_subnet.public.id` | |
 | 6 | SG é o da API | `vpc_security_group_ids` correto | |
 | 7 | User Data usa `file("user_data.sh")` | Verificar `aws_instance` | |
-| 8 | Trust policy = `ec2.amazonaws.com` | Verificar `aws_iam_role` | |
-| 9 | Instance Profile vinculado | `iam_instance_profile` no EC2 | |
+| 8 | Usa `LabInstanceProfile` (não cria role) | `iam_instance_profile = "LabInstanceProfile"` | |
+| 9 | NÃO há `aws_iam_role` no código | Buscar por `aws_iam_role` (não deve existir) | |
 | 10 | Nenhuma access key hardcoded | Buscar por `aws_iam_access_key` | |
 | 11 | Tags em todos os recursos | Verificar blocos `tags {}` | |
 | 12 | `user_data.sh` instala Node 18 | Revisar script | |
@@ -168,20 +167,20 @@ terraform plan
 
 **Plan esperado:**
 ```
-Plan: 5 to add, 0 to change, 0 to destroy.
+Plan: 2 to add, 0 to change, 0 to destroy.
 
   + aws_key_pair.main
-  + aws_iam_role.ec2_role
-  + aws_iam_role_policy_attachment.ec2_s3_read
-  + aws_iam_instance_profile.ec2_profile
   + aws_instance.api
 ```
+
+> Note que **não há recursos IAM** no plan — o EC2 apenas referencia o `LabInstanceProfile` existente.
 
 ### 3.3 Corrigir se necessário
 
 Se o Kiro gerou algo que viola o checklist, peça correção no chat:
 - Se fixou ID de AMI → peça para usar data source
 - Se colocou user data inline → peça para usar `file()`
+- Se **criou `aws_iam_role` ou `aws_iam_instance_profile`** → peça para usar o `LabInstanceProfile` existente (o Learner Lab bloqueia criação de roles)
 - Se esqueceu tags → peça para adicionar
 - Se esqueceu algum output → peça para complementar
 
@@ -242,16 +241,18 @@ aws sts get-caller-identity  # Mostra a Role (não access keys)
 exit
 ```
 
-### 4.5 Verificar IAM Role
+### 4.5 Verificar o Instance Profile (LabRole)
 
-O comando `aws sts get-caller-identity` dentro do EC2 deve mostrar:
+O comando `aws sts get-caller-identity` dentro do EC2 deve mostrar a `LabRole`:
 ```json
 {
-  "Arn": "arn:aws:sts::XXXX:assumed-role/technova-ec2-role/i-0abc..."
+  "Arn": "arn:aws:sts::XXXX:assumed-role/LabRole/i-0abc..."
 }
 ```
 
-Isso confirma: EC2 usa Role com credenciais temporárias — sem access keys no código.
+Isso confirma: o EC2 está usando o `LabInstanceProfile` (que contém a `LabRole`) com credenciais temporárias — sem access keys no código.
+
+> **Por que LabRole?** No AWS Academy Learner Lab não é permitido criar IAM Roles. A `LabRole` é uma role pré-configurada com permissões amplas para uso educacional. Em um ambiente de produção real, você criaria uma role dedicada com menor privilégio (como fizemos conceitualmente na Aula 03).
 
 ---
 
@@ -337,6 +338,14 @@ Peça: "Use um data source aws_ami para buscar a AMI mais recente do Amazon Linu
 
 Peça: "Coloque o user data em um arquivo separado user_data.sh e use file() para referenciá-lo"
 
+### ❌ Erro `AccessDenied` em `iam:CreateRole` no `terraform apply`
+
+O Kiro gerou recursos IAM que o Learner Lab bloqueia. Peça: "Remova os recursos aws_iam_role, aws_iam_role_policy_attachment e aws_iam_instance_profile. Use o instance profile existente com `iam_instance_profile = \"LabInstanceProfile\"` diretamente no aws_instance."
+
+### ❌ Erro `ExpiredToken` durante o apply
+
+As credenciais do Learner Lab expiraram no meio do lab. Reinicie o lab (Start Lab) e recopie as credenciais para `~/.aws/credentials`, depois rode o `terraform apply` novamente.
+
 ---
 
 ## Validação Final
@@ -347,8 +356,8 @@ Peça: "Coloque o user data em um arquivo separado user_data.sh e use file() par
 - [ ] `curl http://<IP>:3000` retorna JSON da API
 - [ ] `curl http://<IP>:3000/health` retorna `{"status":"healthy"}`
 - [ ] SSH funciona: `ssh -i ~/.ssh/technova-key ec2-user@<IP>`
-- [ ] `aws sts get-caller-identity` dentro do EC2 mostra a Role
-- [ ] Checklist de validação aprovado (sem access keys, com tags, AMI via data source)
+- [ ] `aws sts get-caller-identity` dentro do EC2 mostra a `LabRole`
+- [ ] Checklist de validação aprovado (sem criar IAM, usando LabInstanceProfile, com tags, AMI via data source)
 - [ ] Reflexão documentada em `spec-reflexao.md`
 - [ ] `terraform destroy` removeu todos os recursos
 - [ ] Código versionado no Git (sem .tfstate, sem .pem)
