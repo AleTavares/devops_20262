@@ -162,7 +162,7 @@ def precheck(owner, repo, aula, token):
         "tem_condition_ou_deny": None,
         "tfstate_versionado": False,
         "plan_output_vazio": None,
-        "no_main": None,
+        "codigo_na_branch_main": None,
         "observacoes": [],
     }
     h = gh_headers(token)
@@ -180,10 +180,10 @@ def precheck(owner, repo, aula, token):
         return result
     result["pasta_aula_encontrada"] = True
     result["branch"] = branch
-    result["no_main"] = branch in ("main", "master")
-    if not result["no_main"]:
+    result["codigo_na_branch_main"] = branch in ("main", "master")
+    if not result["codigo_na_branch_main"]:
         result["observacoes"].append(
-            f"Codigo esta no branch '{branch}', nao na main/master.")
+            f"Codigo publicado no branch '{branch}', nao na main/master do portfolio.")
 
     nomes = {item["name"]: item for item in listing}
     required = REQUIRED_BY_AULA.get(aula, [])
@@ -321,8 +321,8 @@ def parecer_deterministico(precheck_data, aula, ra):
         linhas.append("- ❌ `.tfstate` versionado (nao deveria estar no repo).")
     if precheck_data["plan_output_vazio"]:
         linhas.append("- ⚠️ `terraform-plan-output.txt` vazio.")
-    if precheck_data["no_main"] is False:
-        linhas.append(f"- ⚠️ Codigo fora da main (branch `{precheck_data['branch']}`).")
+    if precheck_data["codigo_na_branch_main"] is False:
+        linhas.append(f"- ⚠️ Codigo publicado fora da main do portfolio (branch `{precheck_data['branch']}`).")
     linhas.append("\n> ⚠️ Componente **AWS Academy** deve ser conferido pelo professor (nao verificavel pelo PR).")
     return "\n".join(linhas)
 
