@@ -123,6 +123,8 @@ REQUIRED_BY_AULA = {
            "terraform-plan-output.txt"],
     "04": ["providers.tf", "main.tf", "variables.tf", "outputs.tf",
            "README.md", ".gitignore"],
+    "05": ["providers.tf", "main.tf", "variables.tf", "outputs.tf",
+           "README.md", ".gitignore"],
     "02": ["docker-compose.yml", "Dockerfile", "app.js", "package.json",
            ".gitignore", "ia-analise.md"],
 }
