@@ -20,13 +20,18 @@ Construir a infraestrutura de rede da TechNova do zero: uma VPC customizada com 
 
 > As credenciais do **AWS Academy Learner Lab** são **temporárias** e **expiram entre sessões**. Vamos criar um pequeno script `.sh` dentro da pasta do lab para carregar as credenciais como **variáveis de ambiente** — elas ficam ativas apenas na sessão atual do terminal e desaparecem ao fechá-lo, o que combina perfeitamente com credenciais efêmeras.
 
-### 0.1 Criar a pasta do projeto
+### 0.1 Criar a pasta do projeto e abrir no Kiro
 
 ```bash
 # Na pasta do seu projeto de aula
 mkdir -p aula-04-vpc-ec2
 cd aula-04-vpc-ec2
+
+# Abrir a pasta no Kiro
+kiro .
 ```
+
+> A partir daqui, criaremos todos os arquivos pela interface do **Kiro** (não pelo terminal). Use o terminal apenas para rodar comandos.
 
 ### 0.2 Iniciar o Learner Lab e obter as credenciais
 
@@ -34,13 +39,9 @@ cd aula-04-vpc-ec2
 2. Clique em **Start Lab** e aguarde o indicador ficar **verde** (🟢)
 3. Clique em **AWS Details → AWS CLI → Show** — anote os 3 valores mostrados
 
-### 0.3 Criar o script de credenciais
+### 0.3 Criar o script de credenciais no Kiro
 
-Dentro da pasta do lab, crie o arquivo `aws-creds.sh`:
-
-```bash
-nano aws-creds.sh
-```
+No Kiro, crie um novo arquivo chamado `aws-creds.sh` na raiz da pasta do projeto (botão direito na árvore de arquivos → **New File**, ou `Ctrl+N` e salve como `aws-creds.sh`).
 
 Cole o conteúdo abaixo e **substitua** pelos valores mostrados no Learner Lab:
 
@@ -58,11 +59,11 @@ export AWS_DEFAULT_REGION="us-east-1"
 echo "Credenciais AWS Academy carregadas nesta sessão."
 ```
 
-Salve (`Ctrl+O`, `Enter`, `Ctrl+X` no nano).
+Salve o arquivo (`Ctrl+S`).
 
 ### 0.4 Executar o script para carregar as variáveis
 
-Use `source` (ou `.`) para que os `export` valham no **seu terminal atual**:
+Abra o **terminal integrado do Kiro** (`Ctrl+'` ou menu Terminal → New Terminal) e use `source` (ou `.`) para que os `export` valham no terminal atual:
 
 ```bash
 source aws-creds.sh
@@ -91,6 +92,8 @@ Se retornar o ARN do role temporário (`voclabs`), está pronto. Se der `Expired
 ---
 
 ## Parte 1 — Setup do Projeto (10 min)
+
+> Crie todos os arquivos a seguir pela interface do **Kiro** (New File na árvore de arquivos), dentro da pasta `aula-04-vpc-ec2`.
 
 ### 1.1 Criar o arquivo de providers
 
