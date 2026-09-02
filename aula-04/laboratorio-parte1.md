@@ -16,49 +16,11 @@ Construir a infraestrutura de rede da TechNova do zero: uma VPC customizada com 
 
 ---
 
-## Parte 0 — Carregar Credenciais do AWS Academy via Variáveis de Ambiente (10 min)
+## Parte 0 — Estrutura do Projeto e Credenciais do AWS Academy (10 min)
 
-> As credenciais do **AWS Academy Learner Lab** são **temporárias** e **expiram entre sessões**. Em vez de gravá-las no arquivo `~/.aws/credentials`, vamos usar **variáveis de ambiente** — elas ficam ativas apenas na sessão atual do terminal e desaparecem ao fechá-lo, o que combina perfeitamente com credenciais efêmeras.
+> As credenciais do **AWS Academy Learner Lab** são **temporárias** e **expiram entre sessões**. Vamos criar um pequeno script `.sh` dentro da pasta do lab para carregar as credenciais como **variáveis de ambiente** — elas ficam ativas apenas na sessão atual do terminal e desaparecem ao fechá-lo, o que combina perfeitamente com credenciais efêmeras.
 
-### 0.1 Iniciar o Learner Lab
-
-1. Acesse o **AWS Academy** → curso → **Modules → Learner Lab**
-2. Clique em **Start Lab** e aguarde o indicador ficar **verde** (🟢)
-3. Clique em **AWS Details → AWS CLI → Show**
-
-### 0.2 Exportar as credenciais como variáveis de ambiente
-
-O Learner Lab mostra as credenciais no formato de arquivo `[default]`. Copie os **valores** e exporte no terminal:
-
-```bash
-export AWS_ACCESS_KEY_ID="ASIA_SUA_KEY_AQUI"
-export AWS_SECRET_ACCESS_KEY="SUA_SECRET_AQUI"
-export AWS_SESSION_TOKEN="SEU_TOKEN_AQUI"
-export AWS_DEFAULT_REGION="us-east-1"
-```
-
-> **Por que variáveis de ambiente?**
-> - Não persistem em disco — somem ao fechar o terminal (credenciais temporárias merecem tratamento temporário)
-> - Não sobrescrevem outras configurações AWS que você possa ter em `~/.aws/`
-> - O Terraform e o AWS CLI leem essas variáveis automaticamente, sem configuração extra
->
-> **Atenção:** As variáveis valem **apenas para o terminal atual**. Se abrir uma nova aba/janela, exporte novamente. O `aws_session_token` é obrigatório no Learner Lab e muda a cada sessão.
-
-### 0.3 Verificar
-
-```bash
-aws sts get-caller-identity
-```
-
-Se retornar o ARN do role temporário (`voclabs`), está pronto. Se der `ExpiredToken`, reinicie o lab e reexporte as variáveis com os novos valores.
-
-✅ **Checkpoint:** Credenciais do Learner Lab carregadas nas variáveis de ambiente da sessão atual.
-
----
-
-## Parte 1 — Setup do Projeto (10 min)
-
-### 1.1 Criar a estrutura de diretórios
+### 0.1 Criar a pasta do projeto
 
 ```bash
 # Na pasta do seu projeto de aula
@@ -66,7 +28,71 @@ mkdir -p aula-04-vpc-ec2
 cd aula-04-vpc-ec2
 ```
 
-### 1.2 Criar o arquivo de providers
+### 0.2 Iniciar o Learner Lab e obter as credenciais
+
+1. Acesse o **AWS Academy** → curso → **Modules → Learner Lab**
+2. Clique em **Start Lab** e aguarde o indicador ficar **verde** (🟢)
+3. Clique em **AWS Details → AWS CLI → Show** — anote os 3 valores mostrados
+
+### 0.3 Criar o script de credenciais
+
+Dentro da pasta do lab, crie o arquivo `aws-creds.sh`:
+
+```bash
+nano aws-creds.sh
+```
+
+Cole o conteúdo abaixo e **substitua** pelos valores mostrados no Learner Lab:
+
+```bash
+#!/bin/bash
+# aws-creds.sh - Credenciais temporárias do AWS Academy Learner Lab
+# Uso: source aws-creds.sh
+# ATENÇÃO: nunca versione este arquivo no Git!
+
+export AWS_ACCESS_KEY_ID="ASIA_SUA_KEY_AQUI"
+export AWS_SECRET_ACCESS_KEY="SUA_SECRET_AQUI"
+export AWS_SESSION_TOKEN="SEU_TOKEN_AQUI"
+export AWS_DEFAULT_REGION="us-east-1"
+
+echo "Credenciais AWS Academy carregadas nesta sessão."
+```
+
+Salve (`Ctrl+O`, `Enter`, `Ctrl+X` no nano).
+
+### 0.4 Executar o script para carregar as variáveis
+
+Use `source` (ou `.`) para que os `export` valham no **seu terminal atual**:
+
+```bash
+source aws-creds.sh
+```
+
+> **Por que `source` e não `./aws-creds.sh`?**
+> Executar com `./` roda o script em um **subprocesso** — as variáveis morreriam ao terminar. Com `source`, os `export` são aplicados no terminal atual e ficam disponíveis para o AWS CLI e o Terraform.
+>
+> **Por que variáveis de ambiente?**
+> - Não persistem em disco de forma permanente — valem só na sessão do terminal
+> - Não sobrescrevem outras configurações AWS que você possa ter em `~/.aws/`
+> - O Terraform e o AWS CLI leem essas variáveis automaticamente
+>
+> **Atenção:** valem **apenas para o terminal atual**. Nova aba/janela = rode `source aws-creds.sh` de novo. O `aws_session_token` é obrigatório e muda a cada sessão do lab.
+
+### 0.5 Verificar
+
+```bash
+aws sts get-caller-identity
+```
+
+Se retornar o ARN do role temporário (`voclabs`), está pronto. Se der `ExpiredToken`, reinicie o lab, atualize os valores no `aws-creds.sh` e rode `source aws-creds.sh` novamente.
+
+✅ **Checkpoint:** Pasta do projeto criada e credenciais do Learner Lab carregadas na sessão atual.
+
+---
+
+## Parte 1 — Setup do Projeto (10 min)
+
+### 1.1 Criar o arquivo de providers
 
 Crie o arquivo `providers.tf`:
 
@@ -154,6 +180,9 @@ Crie o arquivo `.gitignore`:
 *.tfvars
 .terraform.lock.hcl
 
+# Credenciais AWS Academy (NUNCA versionar)
+aws-creds.sh
+
 # Chaves SSH
 *.pem
 *.key
@@ -162,6 +191,8 @@ Crie o arquivo `.gitignore`:
 .DS_Store
 Thumbs.db
 ```
+
+> **Importante:** o `aws-creds.sh` contém suas credenciais temporárias — ele **nunca** deve ser versionado no Git. Por isso está no `.gitignore` acima.
 
 ### 1.5 Inicializar o Terraform
 
@@ -619,7 +650,7 @@ terraform output
 aws sts get-caller-identity
 ```
 
-Se der `ExpiredToken` ou `InvalidClientTokenId`, reinicie o **AWS Academy Learner Lab** (Start Lab) e reexporte as variáveis de ambiente com os novos valores (veja a Parte 0). No Learner Lab, o role `voclabs` já tem as permissões necessárias para VPC/EC2.
+Se der `ExpiredToken` ou `InvalidClientTokenId`, reinicie o **AWS Academy Learner Lab** (Start Lab), atualize os valores no `aws-creds.sh` e rode `source aws-creds.sh` novamente (veja a Parte 0). No Learner Lab, o role `voclabs` já tem as permissões necessárias para VPC/EC2.
 
 ---
 

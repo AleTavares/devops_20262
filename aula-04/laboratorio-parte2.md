@@ -344,7 +344,7 @@ O Kiro gerou recursos IAM que o Learner Lab bloqueia. Peça: "Remova os recursos
 
 ### ❌ Erro `ExpiredToken` durante o apply
 
-As credenciais do Learner Lab expiraram no meio do lab. Reinicie o lab (Start Lab) e reexporte as variáveis de ambiente (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`) com os novos valores no mesmo terminal, depois rode o `terraform apply` novamente.
+As credenciais do Learner Lab expiraram no meio do lab. Reinicie o lab (Start Lab), atualize os valores no `aws-creds.sh` e rode `source aws-creds.sh` novamente no mesmo terminal, depois rode o `terraform apply` novamente.
 
 ---
 
