@@ -1,0 +1,68 @@
+name: Avaliar PR de TF
+
+# pull_request_target roda no contexto do repositorio BASE (a disciplina),
+# entao tem acesso ao GITHUB_TOKEN e aos secrets, mesmo quando o PR vem de um fork.
+# IMPORTANTE: nunca executamos codigo do fork aqui. O script apenas LE dados
+# (via API do GitHub e da AWS) e comenta no PR. Nao ha checkout do codigo do PR.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+# Permissoes minimas: ler o PR e escrever comentarios.
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  avaliar:
+    runs-on: ubuntu-latest
+    # Environment protegido: os secrets AWS ficam vinculados a ele e a execucao
+    # exige aprovacao do reviewer definido em Settings > Environments > bedrock.
+    environment: bedrock
+    steps:
+      # Faz checkout apenas do repositorio BASE (a disciplina), no ref base.
+      # Assim pegamos os criterios TF.md e o script, sem tocar no codigo do fork.
+      - name: Checkout do repositorio base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      # Guarda de seguranca: se o PR tocar em arquivos sensiveis (.github/ ou
+      # criterios TF.md), o job aborta ANTES de instalar deps ou usar secrets.
+      # Alteracoes nesses arquivos devem passar por revisao sua (CODEOWNERS),
+      # nunca ser processadas automaticamente por um PR de aluno.
+      - name: Bloquear PR que altera arquivos sensiveis
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FILES=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename')
+          echo "Arquivos do PR:"; echo "$FILES"
+          if echo "$FILES" | grep -E '^\.github/|/TF\.md$' >/dev/null; then
+            echo "::error::PR altera arquivos protegidos (.github/ ou TF.md). Avaliacao automatica bloqueada; requer revisao manual de @AleTavares."
+            exit 1
+          fi
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install -r .github/scripts/requirements.txt
+
+      - name: Avaliar PR e comentar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # Bedrock / AWS
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # AWS_SESSION_TOKEN nao e usado: o usuario automacaotf tem chave permanente (AKIA).
+          # Se um dia usar credencial temporaria (STS), adicione aqui o secret correspondente.
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+          # us-east-2 exige inference profile (prefixo "us."); ID direto nao e invocavel on-demand.
+          BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID || 'us.anthropic.claude-haiku-4-5-20251001-v1:0' }}
+          # Liga/desliga a analise por IA. Se "false", roda so o pre-check deterministico.
+          USE_BEDROCK: ${{ vars.USE_BEDROCK || 'true' }}
+        run: python .github/scripts/avaliar_pr.py

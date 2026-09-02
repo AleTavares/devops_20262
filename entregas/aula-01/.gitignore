@@ -3,3 +3,9 @@
 .env
 node_modules/
 *.pem
+node_modules/
+.env
+*.log
+*.tfstate
+*.tfstate.backup
+*.pem
