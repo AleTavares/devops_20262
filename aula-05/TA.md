@@ -309,17 +309,6 @@ d) Armazenar as variáveis sensíveis (senhas) separadas do state
 
 ---
 
-## Gabarito
-
-| Questão | Resposta | Justificativa |
-|:-------:|:--------:|---------------|
-| 1 | C | RDS gerencia patches, backups e failover automaticamente — libera a equipe de administrar o banco e reduz risco de falhas humanas. Não é mais barato, não permite SSH, e "mais tipos de banco" não é vantagem nesse contexto. |
-| 2 | C | A AWS exige subnets em 2+ AZs para garantir resiliência: possibilitar Multi-AZ no futuro, permitir manutenção de hardware entre AZs, e garantir recovery se uma AZ falhar. |
-| 3 | B | O state remoto permite colaboração: todos os membros da equipe e o CI/CD acessam o mesmo state centralizado no S3. Sem isso, apenas quem tem o arquivo local pode rodar Terraform. |
-| 4 | C | A tabela DynamoDB serve para locking — impede dois `terraform apply` simultâneos de modificar o state ao mesmo tempo, prevenindo corrupção do arquivo. |
-
----
-
 ## Preparação para a Aula
 
 Após completar a leitura:
