@@ -22,4 +22,8 @@
 
 ## Evidência da API Rodando
 
-[Cole aqui o output do curl ou screenshot]
+felip@SHASHUMGA:~/ADS/DEVOPS/unifaat-devops-portfolio/aula-04$ curl http://$(terraform outputcurl http://$(terraform output -raw ec2_public_ip):3000
+{"status":"ok","app":"technova-api","message":"API no ar!"}
+
+felip@SHASHUMGA:~/ADS/DEVOPS/unifaat-devops-portfolio/aula-04$ curl http://$(terraform output -raw ec2_public_ip):3000/health
+{"status":"ok","app":"technova-api","message":"API no ar!"}
