@@ -19,7 +19,8 @@
 
 ## Evidência do Ambiente Rodando
 
-CONTAINER ID   IMAGE                COMMAND                  CREATED          STATUS                         PORTS                                         NAMES
-832e5b81d1f1   aula-02-api          "docker-entrypoint.s…"   19 seconds ago   Restarting (1) 2 seconds ago                                                 technova-api
-c80f3880f66a   postgres:15-alpine   "docker-entrypoint.s…"   19 seconds ago   Up 18 seconds (healthy)        0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp   technova-postgres
-97993037b965   redis:7-alpine       "docker-entrypoint.s…"   19 seconds ago   Up 18 seconds (healthy)        0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp   technova-redis
+![alt text](<evidências/docker ps.png>)
+![alt text](<evidências/curl http.png>)
+![alt text](<evidências/docker compose exec redis.png>)
+![alt text](<evidências/docker compose up -d --build.png>)
+![alt text](<evidências/docker network.png>)
