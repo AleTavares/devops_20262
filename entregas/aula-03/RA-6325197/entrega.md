@@ -6,7 +6,7 @@
 
 ## Repositório
 
-- URL: COLE_AQUI_A_URL_DO_SEU_REPOSITORIO_DE_PORTFOLIO
+https://github.com/guialvisi/unifaat-devops-portfolio
 
 ## Evidências
 
