@@ -41,22 +41,16 @@ Esse é o desafio desta aula: primeiro, adicionar a **camada de dados** com Amaz
 
 ---
 
-## Cronograma da Aula (~5 horas)
+## Cronograma da Aula
 
-| Bloco | Atividade | Duração |
-|:-----:|-----------|:-------:|
-| 1 | Revisão TA + Discussão em Grupo | 30 min |
-| 2 | Conteúdo Teórico — RDS e Banco de Dados Gerenciado | 50 min |
-| 3 | Laboratório Parte 1 — RDS com Terraform | 120 min |
-| 4 | Conteúdo Teórico — Remote State | 50 min |
-| 5 | Laboratório Parte 2 — S3 Backend + DynamoDB Lock | 120 min |
-| 6 | Encerramento + Orientação TF | 15 min |
-
----
-
-## Conteúdo Original Consolidado
-
-Esta aula consolida o conteúdo das aulas originais **Aula 08 (RDS e Banco de Dados Gerenciado)** e **Aula 09 (Remote State com S3 e DynamoDB)** em uma única aula de ~5 horas. A conexão é natural: agora que a infraestrutura está complexa (VPC + EC2 + RDS), o arquivo de state é precioso demais para ficar em um laptop. RDS adiciona a camada de dados, Remote State protege o mapa da infraestrutura.
+| Bloco | Atividade |
+|:-----:|-----------|
+| 1 | Revisão TA + Discussão em Grupo |
+| 2 | Conteúdo Teórico — RDS e Banco de Dados Gerenciado |
+| 3 | Laboratório Parte 1 — RDS com Terraform |
+| 4 | Conteúdo Teórico — Remote State |
+| 5 | Laboratório Parte 2 — S3 Backend + DynamoDB Lock |
+| 6 | Encerramento + Orientação TF |
 
 ---
 
@@ -156,8 +150,6 @@ Para detalhes completos sobre os entregáveis e critérios de avaliação, consu
 ---
 
 ## Conteúdo Teórico — Parte 1: RDS e Banco de Dados Gerenciado
-
-*Tempo estimado: ~50 minutos*
 
 ### 1. O Problema: Dados em Memória
 
@@ -278,8 +270,6 @@ psql -h technova-db.abc123xyz.us-east-1.rds.amazonaws.com \
 ---
 
 ## Conteúdo Teórico — Parte 2: Remote State
-
-*Tempo estimado: ~50 minutos*
 
 ### 1. O Problema: State Local
 
