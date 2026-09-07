@@ -4,43 +4,54 @@
 
 Proteger o state do Terraform da TechNova usando o Kiro como copiloto: criar uma Spec que descreve a necessidade de remote state, revisar os artefatos gerados, e implementar a infraestrutura de backend (S3 + DynamoDB) via workflow Spec-Driven. Ao final, o aluno terá o state migrado para o S3 e terá praticado o uso de IA como ferramenta de produtividade para IaC.
 
-**Duração:** ~120 minutos
-
 **Resultado esperado:** State do Terraform armazenado de forma segura no S3, com locking via DynamoDB, gerado com auxílio do Kiro e validado manualmente.
 
 ---
 
 ## Pré-requisitos
 
-- AWS CLI configurado (`aws sts get-caller-identity` funciona)
-- Terraform instalado (`terraform version` funciona)
-- Kiro instalado e funcional ([download](https://kiro.dev/))
+- AWS CLI e Terraform instalados (Aula 03)
+- Acesso ao **AWS Academy Learner Lab** (fornecido pelo professor)
+- Kiro instalado e funcional
 - Laboratório Parte 1 concluído (infraestrutura RDS provisionada)
-- Conexão com internet
 
-> **⚠️ Nota:** Se o Kiro não estiver disponível, o professor indicará uma alternativa equivalente.
+---
+
+## Parte 0 — Pasta do Projeto e Credenciais do AWS Academy (10 min)
+
+### 0.1 Criar a pasta e abrir no Kiro
+
+```bash
+mkdir -p aula-05-backend
+cd aula-05-backend
+git init
+
+# Abrir no Kiro
+kiro .
+```
+
+### 0.2 Carregar as credenciais do Learner Lab
+
+Reutilize o `aws-creds.sh` do Lab Parte 1 (copie para esta pasta) ou crie um novo pela interface do Kiro com os valores atualizados do **AWS Details → AWS CLI → Show**. Depois, no terminal integrado do Kiro:
+
+```bash
+source aws-creds.sh
+aws sts get-caller-identity
+```
+
+> **Lembrete:** As credenciais do Learner Lab expiram entre sessões. Se der `ExpiredToken`, reinicie o lab, atualize os valores no `aws-creds.sh` e rode `source aws-creds.sh` novamente. O `aws-creds.sh` deve estar no `.gitignore` (nunca versione credenciais).
+
+✅ **Checkpoint:** Pasta criada, aberta no Kiro e credenciais carregadas.
 
 ---
 
 ## Parte 1 — Criando a Spec no Kiro (25 minutos)
 
-### 1.1 Abrir o projeto no Kiro
-
-Crie uma pasta separada para a infraestrutura de backend:
-
-```bash
-mkdir -p ~/labs/aula-05-backend
-cd ~/labs/aula-05-backend
-git init
-```
-
-Abra a pasta `~/labs/aula-05-backend` no Kiro.
-
-### 1.2 Iniciar uma sessão Spec
+### 1.1 Iniciar uma sessão Spec
 
 No Kiro, clique em **New Session** e selecione o tipo **Spec**.
 
-### 1.3 Descrever o que você quer construir
+### 1.2 Descrever o que você quer construir
 
 Na sessão Spec, use o seguinte prompt:
 
@@ -72,7 +83,7 @@ Na sessão Spec, use o seguinte prompt:
 >    - Código separado em arquivos: main.tf, s3.tf, dynamodb.tf, outputs.tf
 > ```
 
-### 1.4 Revisar o documento de Requisitos
+### 1.3 Revisar o documento de Requisitos
 
 O Kiro irá gerar um documento de requisitos. Verifique:
 
@@ -83,7 +94,7 @@ O Kiro irá gerar um documento de requisitos. Verifique:
 
 Se algo estiver faltando, corrija antes de avançar.
 
-### 1.5 Revisar o documento de Design
+### 1.4 Revisar o documento de Design
 
 Verifique a estrutura proposta:
 
@@ -91,7 +102,7 @@ Verifique a estrutura proposta:
 - [ ] Uso de `random_id` para nome único do bucket?
 - [ ] Variáveis de entrada previstas (project_name)?
 
-### 1.6 Revisar as Tarefas de Implementação
+### 1.5 Revisar as Tarefas de Implementação
 
 Verifique se as tarefas cobrem:
 
@@ -206,7 +217,7 @@ dynamodb_table_name = "technova-terraform-locks"
 ### 4.1 Voltar ao projeto principal
 
 ```bash
-cd ~/labs/aula-05-rds
+cd ../aula-05-rds
 ```
 
 ### 4.2 Pedir ao Kiro para configurar o backend
@@ -268,8 +279,8 @@ terraform plan
 ### 5.1 Simular outro desenvolvedor
 
 ```bash
-cp -r ~/labs/aula-05-rds ~/labs/aula-05-rds-dev2
-cd ~/labs/aula-05-rds-dev2
+cp -r ../aula-05-rds ../aula-05-rds-dev2
+cd ../aula-05-rds-dev2
 rm -f terraform.tfstate terraform.tfstate.backup
 terraform init
 ```
@@ -288,13 +299,13 @@ Abra **dois terminais** simultaneamente:
 
 **Terminal 1:**
 ```bash
-cd ~/labs/aula-05-rds
+cd aula-05-rds
 terraform apply -auto-approve
 ```
 
 **Terminal 2 (executar DURANTE o apply do Terminal 1):**
 ```bash
-cd ~/labs/aula-05-rds-dev2
+cd aula-05-rds-dev2
 terraform plan
 ```
 
@@ -361,7 +372,7 @@ Registre:
 ### 7.1 Destruir infraestrutura principal
 
 ```bash
-cd ~/labs/aula-05-rds
+cd ../aula-05-rds
 terraform destroy
 ```
 
@@ -381,14 +392,14 @@ aws s3api list-object-versions \
 done
 
 # Destruir backend
-cd ~/labs/aula-05-backend
+cd ../aula-05-backend
 terraform destroy
 ```
 
 ### 7.3 Limpar diretórios temporários
 
 ```bash
-rm -rf ~/labs/aula-05-rds-dev2
+rm -rf ../aula-05-rds-dev2
 ```
 
 ### 7.4 Verificar no console AWS
@@ -420,9 +431,15 @@ terraform force-unlock <LOCK_ID>
 
 ### Problema: "AccessDenied" ao acessar S3
 
-**Causa:** Usuário IAM sem permissão no bucket.
+**Causa:** No AWS Academy Learner Lab, o role `voclabs`/`LabRole` já tem permissões amplas de S3 e DynamoDB — este erro normalmente indica que as **credenciais expiraram**.
 
-**Solução:** Verifique que tem `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` no bucket e `dynamodb:GetItem`, `dynamodb:PutItem`, `dynamodb:DeleteItem` na tabela.
+**Solução:** Reinicie o Learner Lab, atualize os valores no `aws-creds.sh` e rode `source aws-creds.sh` novamente. Depois confirme com `aws sts get-caller-identity`.
+
+### Problema: "ExpiredToken" no meio do lab
+
+**Causa:** As credenciais temporárias do Learner Lab expiraram.
+
+**Solução:** Reinicie o lab (Start Lab), atualize o `aws-creds.sh` com os novos valores e rode `source aws-creds.sh` no mesmo terminal.
 
 ### Problema: "BucketNotEmpty" ao destruir
 
