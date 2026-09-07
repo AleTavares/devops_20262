@@ -6,7 +6,7 @@ Ao final desta aula, o aluno será capaz de:
 
 1. Compreender o conceito de banco de dados gerenciado (RDS) e suas vantagens
 2. Configurar DB Subnet Groups para posicionar o RDS em subnets privadas
-3. Provisionar uma instância RDS PostgreSQL usando Terraform (db.t3.micro Free Tier)
+3. Provisionar uma instância RDS PostgreSQL usando Terraform (db.t3.micro)
 4. Conectar uma aplicação EC2 ao RDS dentro da mesma VPC
 5. Compreender a importância do terraform.tfstate e riscos do state local
 6. Configurar S3 como backend remoto para o Terraform state
@@ -133,19 +133,16 @@ Para detalhes completos sobre os entregáveis e critérios de avaliação, consu
 
 ## Pré-requisitos
 
-- **Conta AWS** criada com Free Tier ativo — [Criar conta AWS](https://aws.amazon.com/free/)
+- **Acesso ao AWS Academy Learner Lab** (fornecido pelo professor)
 - **Terraform** instalado (≥ 1.0) — [Download](https://developer.hashicorp.com/terraform/downloads)
-- **AWS CLI** instalado e configurado — [Guia](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- **AWS CLI** instalado (Aula 03)
+- **Kiro** instalado e funcional
 - **Conhecimentos das Aulas 01-04:** Git, Docker, Docker Compose, Terraform (init/plan/apply/destroy), IAM, VPC (subnets públicas/privadas, IGW, Route Tables), EC2 (AMI, instance type, security groups, user data, SSH)
-- Editor de texto (VS Code com extensão HashiCorp Terraform recomendada)
 - **Cliente SSH** (terminal Linux/Mac ou PuTTY no Windows)
 
-> **⚠️ Free Tier:** Todos os recursos desta aula são elegíveis ao AWS Free Tier:
-> - **RDS db.t3.micro:** 750 horas/mês, 20 GB storage (12 meses)
-> - **S3:** 5 GB de armazenamento gratuito (12 meses)
-> - **DynamoDB:** 25 GB de armazenamento gratuito (sempre)
+> **AWS Academy Learner Lab:** Usaremos o laboratório de aprendizagem da AWS Academy, que fornece credenciais temporárias e recursos sem custo para o aluno. As credenciais **expiram entre sessões** — sempre reinicie o lab e recarregue as credenciais (`source aws-creds.sh`) no início de cada aula. Os recursos desta aula (RDS db.t3.micro, S3, DynamoDB) estão disponíveis no ambiente do Academy.
 >
-> Lembre-se de executar `terraform destroy` ao final e deletar manualmente o bucket S3.
+> Execute `terraform destroy` ao final para manter o ambiente limpo.
 
 ---
 
@@ -199,7 +196,7 @@ Na Aula 04, colocamos a API da TechNova no EC2. Ela funciona — mas onde os dad
 
 ![RDS](img/rds.png)
 
-> **Neste curso:** Usaremos **PostgreSQL 15** por ser open source, popular, e ter excelente suporte no Free Tier.
+> **Neste curso:** Usaremos **PostgreSQL 15** por ser open source, popular, e amplamente suportado.
 
 ### 4. DB Subnet Group — Por Que 2 AZs?
 
@@ -208,7 +205,7 @@ Um **DB Subnet Group** é um grupo de subnets onde o RDS pode ser posicionado. A
 ![VPC](img/vpc.png)
 
 **Por que 2 AZs?**
-- Mesmo que você use `multi_az = false` (Free Tier), a AWS exige o DB Subnet Group em 2 AZs
+- Mesmo que você use `multi_az = false`, a AWS exige o DB Subnet Group em 2 AZs
 - Se no futuro você ativar Multi-AZ, o standby será na outra AZ
 - É um requisito de resiliência: se uma AZ cair, o banco pode migrar para outra
 - **Não é opcional** — criar DB Subnet Group com subnets em apenas 1 AZ resulta em erro
@@ -251,14 +248,13 @@ psql -h technova-db.abc123xyz.us-east-1.rds.amazonaws.com \
 
 ![Multi- AZ](img/multiaz.png)
 
-### 8. Free Tier RDS
+### 8. Configuração do RDS no Learner Lab
 
-| Recurso | Limite Gratuito | Período |
-|---------|----------------|---------|
-| RDS db.t3.micro | 750 horas/mês | 12 meses |
-| Armazenamento | 20 GB SSD (gp2) | 12 meses |
-| Backup | 20 GB | 12 meses |
-| Multi-AZ | ❌ Não incluído | — |
+| Recurso | Configuração |
+|---------|--------------|
+| Instância | db.t3.micro |
+| Armazenamento | 20 GB SSD (gp2) |
+| Multi-AZ | ❌ Não usar |
 
 > **⚠️ IMPORTANTE:**
 > - Use **db.t3.micro** (não db.t2.micro, que está depreciado para algumas engines)
@@ -369,14 +365,11 @@ terraform init -migrate-state
 # O arquivo local pode ser deletado (Terraform cria backup)
 ```
 
-### 8. Free Tier — S3 e DynamoDB
+### 8. S3 e DynamoDB no Learner Lab
 
-| Serviço | Limite Gratuito | Período |
-|---------|----------------|---------|
-| S3 | 5 GB armazenamento, 20.000 GET, 2.000 PUT | 12 meses |
-| DynamoDB | 25 GB armazenamento, 25 WCU, 25 RCU | Sempre gratuito |
+O backend usa recursos leves: um bucket S3 para o state e uma tabela DynamoDB para locking.
 
-> **Para nosso caso:** O arquivo terraform.tfstate raramente ultrapassa 100 KB. Estamos muito longe dos limites do Free Tier.
+> **Para nosso caso:** O arquivo terraform.tfstate raramente ultrapassa 100 KB e a tabela de lock usa poucos bytes por registro. O consumo é mínimo dentro do ambiente do AWS Academy.
 
 ---
 
@@ -397,20 +390,22 @@ terraform init -migrate-state
 
 ---
 
-## 💰 Free Tier — Resumo de Custos
+## Recursos no AWS Academy Learner Lab
 
-| Componente | Custo |
-|------------|-------|
-| VPC, Subnets, IGW, Route Tables | **Gratuito** (sempre) |
-| EC2 t2.micro | **Gratuito** (750h/mês, 12 meses) |
-| RDS db.t3.micro | **Gratuito** (750h/mês, 12 meses) |
-| RDS Storage 20 GB | **Gratuito** (12 meses) |
-| S3 (state file ~100 KB) | **Gratuito** (5 GB free, 12 meses) |
-| DynamoDB (lock table) | **Gratuito** (25 GB free, sempre) |
-| Multi-AZ RDS | ⚠️ Dobro do custo (**NÃO usar no lab**) |
-| NAT Gateway | ⚠️ ~$32/mês (**NÃO usar no lab**) |
+Todos os recursos desta aula são criados dentro do **AWS Academy Learner Lab**, sem custo para o aluno. Ainda assim, mantenha boas práticas de recursos:
 
-> **⚠️ Sempre execute `terraform destroy` após o Laboratório Parte 2. Depois, delete manualmente o bucket S3 e a tabela DynamoDB (pois eles foram criados fora do Terraform principal).**
+| Componente | Observação |
+|------------|-----------|
+| VPC, Subnets, IGW, Route Tables | Recursos de rede — leves |
+| EC2 t2.micro | Instância mínima |
+| RDS db.t3.micro | Instância mínima, `multi_az = false` |
+| RDS Storage 20 GB | Manter em 20 GB |
+| S3 (state file ~100 KB) | Consumo mínimo |
+| DynamoDB (lock table) | Consumo mínimo |
+| Multi-AZ RDS | ⚠️ **NÃO usar** (dobra recursos) |
+| NAT Gateway | ⚠️ **NÃO usar** |
+
+> **⚠️ Sempre execute `terraform destroy` após o Laboratório Parte 2. Depois, delete manualmente o bucket S3 e a tabela DynamoDB (pois eles foram criados fora do Terraform principal). Lembre-se também de encerrar a sessão do Learner Lab ao terminar.**
 
 ---
 
