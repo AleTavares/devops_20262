@@ -71,9 +71,9 @@ Route Table privada: apenas rota local (sem 0.0.0.0/0)
 
 | Componente | Público ou Privado | Justificativa |
 |---|---|---|
-| API (Node.js) | Público | Precisa receber requisições HTTP diretamente da internet |
-| Banco (PostgreSQL) | Privado | Só a API deve acessá-lo; não deve ter endereço alcançável de fora |
-| Cache (Redis) | Privado | Uso interno entre serviços, dado sensível/de sessão, nenhum motivo para exposição externa |
-| Load Balancer | Público | É o ponto de entrada do tráfego externo antes de distribuir para as instâncias |
-| Worker (background jobs) | Privado | Consome filas/eventos internos, não recebe requisições HTTP externas |
-| Bastion Host | Público | Única porta de entrada SSH controlada para acessar recursos privados, evitando abrir SSH direto neles |
+| API (Node.js) | Público | Precisa aceitar conexões HTTP vindas de qualquer cliente na internet; sem IP público e rota para o IGW, ninguém de fora alcançaria a porta 3000 |
+| Banco (PostgreSQL) | Privado | Só a própria API deve falar com ele — se ficasse público, o endereço vira alvo direto de scan/ataque na internet, mesmo com Security Group bem configurado |
+| Cache (Redis) | Privado | Guarda dados de sessão/cache que só fazem sentido para os serviços internos; não há motivo de negócio para receber tráfego externo, e o Redis não é seguro o suficiente por padrão para ficar exposto |
+| Load Balancer | Público | É o único ponto de entrada do tráfego externo — recebe as requisições da internet e distribui entre as instâncias que ficam atrás dele |
+| Worker (background jobs) | Privado | Processa filas e tarefas assíncronas disparadas internamente; não expõe nenhuma porta HTTP para receber tráfego de fora |
+| Bastion Host | Público | Precisa estar acessível de fora para o administrador entrar via SSH, mas serve só como salto controlado — evita abrir a porta 22 direto em cada recurso privado |
