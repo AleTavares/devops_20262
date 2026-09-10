@@ -6,8 +6,8 @@
 
 ## Repositório
 
-- URL: https://github.com/hectorbackfront/unifaat-devops-portfolio
-- Pasta da entrega: [`aula-03/`](https://github.com/hectorbackfront/unifaat-devops-portfolio/tree/master/aula-03)
+- URL: https://github.com/hectorbackfront/unifaat-devops-portifolio
+- Pasta da entrega: [`aula-03/`](https://github.com/hectorbackfront/unifaat-devops-portifolio/tree/master/aula-03)
 
 ## Evidências
 
@@ -36,7 +36,7 @@ Uso de **Condition** (`ec2:ResourceTag/Project = TechNova` no Start/Stop) e de *
 
 ## Evidência do Terraform Plan
 
-Arquivo completo: [`aula-03/terraform-plan-output.txt`](https://github.com/hectorbackfront/unifaat-devops-portfolio/blob/master/aula-03/terraform-plan-output.txt)
+Arquivo completo: [`aula-03/terraform-plan-output.txt`](https://github.com/hectorbackfront/unifaat-devops-portifolio/blob/master/aula-03/terraform-plan-output.txt)
 
 ```
 Plan: 20 to add, 0 to change, 0 to destroy.
@@ -65,6 +65,6 @@ is not authorized to perform: iam:CreateRole
 is not authorized to perform: iam:TagPolicy
 ```
 
-Log completo em [`aula-03/evidencia-apply-accessdenied.txt`](https://github.com/hectorbackfront/unifaat-devops-portfolio/blob/master/aula-03/evidencia-apply-accessdenied.txt).
+Log completo em [`aula-03/evidencia-apply-accessdenied.txt`](https://github.com/hectorbackfront/unifaat-devops-portifolio/blob/master/aula-03/evidencia-apply-accessdenied.txt).
 
 Como nenhum recurso chegou a ser criado, não houve necessidade de `terraform destroy` — o `terraform state list` retorna apenas os `data sources`, sem recursos gerenciados. Fico à disposição para rodar o `apply` caso haja outro ambiente com `IAMFullAccess` disponível.
