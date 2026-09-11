@@ -61,3 +61,29 @@
 - **Cenários reais onde isso ocorreria:** um pipeline de CI/CD rodando `terraform apply` automaticamente a cada merge, ao mesmo tempo que um desenvolvedor roda `apply` manualmente da sua máquina para testar uma mudança local; ou dois desenvolvedores no mesmo time aplicando alterações diferentes no mesmo ambiente sem avisar um ao outro.
 - **Impacto de um state corrompido:** o Terraform perde a correspondência entre o que está no código e o que existe de fato na AWS — outputs ficam inconsistentes, o próximo `plan` pode propor destruir ou recriar recursos que na verdade já estão corretos, e recursos aplicados por um dos dois "somem" do controle do Terraform mesmo continuando a existir (e a gerar custo) na conta.
 - **Como o locking resolve:** o DynamoDB garante que só uma execução de `apply` por vez consegue escrever no state (via o item de lock com `LockID`). Quem tentar rodar `apply` enquanto outro processo segura o lock recebe um erro (`Error acquiring the state lock`) e precisa esperar — assim as duas mudanças são aplicadas em sequência, sobre o state mais atualizado, em vez de uma sobrescrever silenciosamente a outra.
+
+## Parte 4 — Reflexão: Spec-Driven vs Manual
+
+> **Nota de transparência:** o laboratório pede o uso do Kiro em modo Spec para o Lab 2. Não usei o Kiro — usei o Claude Code como assistente de IA para gerar o código de `aula-05-backend/` (S3 + DynamoDB). O Lab 1 (`aula-05-rds/`, VPC + RDS + EC2) eu tentei escrever manualmente seguindo o roteiro. A comparação abaixo é entre "eu escrevendo na mão" (Lab 1) e "IA generativa gerando o código" (Lab 2, com Claude Code no lugar do Kiro) — não é uma avaliação do fluxo específico de Spec do Kiro (requisitos → design → tarefas), que não cheguei a executar.
+
+### 4.1 Comparar com o Lab Parte 1
+
+| Aspecto | Lab 1 (manual) | Lab 2 (IA-assistido, Claude no lugar do Kiro) |
+|---------|---------------|---------------------------------------------|
+| Tempo para ter o código pronto | Bem mais lento — precisei ler a documentação do provider AWS, entender cada bloco (VPC, subnets, SGs, RDS) e testar aos poucos | Rápido — o código do backend (bucket S3 + tabela DynamoDB) saiu pronto em poucos minutos |
+| Quantidade de erros de sintaxe | Tive alguns erros de digitação/referência entre recursos (ex: nome de subnet errado, atributo inexistente) que só apareciam no `terraform plan` | Nenhum erro de sintaxe — o HCL gerado já veio válido de primeira |
+| Você entendeu o que foi gerado? | Sim, bem entendido — escrevi linha por linha e errei o suficiente para entender o porquê de cada bloco | Entendi a estrutura geral (bucket versionado, encriptado, bloqueado a acesso público + tabela com partition key LockID), mas não critiquei linha a linha como fiz no Lab 1 |
+| Precisou corrigir algo do que foi gerado? | Sim, várias vezes (nomes de recursos, referências de SG, CIDRs) | Não precisei corrigir nada manualmente no código gerado |
+| Qual abordagem preferiu? | Prefiro para aprender de verdade — errar no Lab 1 foi o que me fez entender VPC/SG/RDS | Prefiro para tarefas repetitivas/conhecidas onde já sei o que validar (ex: backend S3+Dynamo é um padrão bem conhecido) |
+
+### 4.2 Quando usar Spec/IA vs Manual?
+
+- **IA generativa funciona melhor para:** infraestrutura nova e "padrão de mercado" (como o backend S3+DynamoDB do Lab 2) — é um padrão bem documentado, então a IA acerta de primeira e eu só preciso revisar, não inventar do zero.
+- **Manual é mais adequado para:** partes onde preciso realmente aprender o conceito (como fiz no Lab 1 com VPC/subnets/RDS) ou fazer ajuste fino/debugging — errar na mão foi o que fixou o aprendizado de rede e segurança.
+- **Risco de aceitar o código sem validar:** no meu caso, aceitei o backend do Claude sem revisar cada linha com o mesmo cuidado do Lab 1. O risco ficou claro na prática: o código do backend tem uma limitação real da conta do AWS Academy (bloqueio de permissão no bucket S3, ver relatório de execução) que só descobri ao tentar aplicar de verdade — se eu nunca tivesse rodado o `apply`, teria entregado um código que "parece certo" mas não funciona nessa conta.
+
+### 4.3 O que a IA acertou e errou?
+
+- **Acertou:** estrutura de arquivos separada por responsabilidade (`s3.tf`, `dynamodb.tf`, `variables.tf`, `outputs.tf`), `.gitignore` correto (`.tfstate`, `.tfvars`, `.pem` ignorados), outputs úteis (nome do bucket, ARN, nome da tabela), configuração de segurança do S3 (versionamento, encriptação KMS, bloqueio de acesso público) tecnicamente correta.
+- **Errou/Omitiu:** o código em si não tem erro — o problema é que o AWS Provider do Terraform sempre tenta ler a configuração de Object Lock do bucket S3, e a conta do AWS Academy Learner Lab bloqueia essa chamada por política organizacional (SCP). Isso não é algo que o Kiro ou o Claude poderiam ter evitado escrevendo o `.tf` de forma diferente — é uma restrição de permissão da conta, fora do controle do código.
+- **Precisou de intervenção:** sim — tive que rodar `aws s3api put-bucket-versioning/encryption/public-access-block` manualmente pela CLI para aplicar no bucket o que o Terraform não conseguiu aplicar via `apply`/`import` nessa conta. Documentei o problema e a solução no `relatorio-execucao.md`.
