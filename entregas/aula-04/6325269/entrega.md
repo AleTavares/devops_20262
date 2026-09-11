@@ -14,7 +14,7 @@
 - [x] Internet Gateway + Route Tables configurados
 - [x] Security Groups com menor privilégio
 - [x] EC2 t2.micro com User Data (API rodando)
-- [x] Instance Profile com IAM Role
+- [x] Instance Profile (LabInstanceProfile pré-provisionado)
 - [x] Tags em todos os recursos
 - [x] `terraform-plan-output.txt` com evidência do plano
 - [x] README com diagrama da arquitetura
