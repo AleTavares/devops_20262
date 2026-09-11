@@ -6,7 +6,7 @@
 
 ## Repositório
 
-- URL: https://github.com/hectorbackfront/unifaat-devops-portifolio
+- URL: https://github.com/hectorbackfront/unifaat-devops-portifolio/tree/master/aula-03
 - Pasta da entrega: [`aula-03/`](https://github.com/hectorbackfront/unifaat-devops-portifolio/tree/master/aula-03)
 
 ## Evidências
