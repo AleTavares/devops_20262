@@ -6,7 +6,7 @@
 
 ## Repositório
 
-- URL: https://github.com/emysant/unifaat-devops-portfolio
+- URL: https://github.com/leonidas-alt/unifaat-devops-portfolio.git
 
 ## Requisitos atendidos
 
