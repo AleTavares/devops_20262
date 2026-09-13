@@ -1,0 +1,37 @@
+============================================
+Evidência: terraform plan após apply
+Resultado: aprovado — nenhuma alteração pendente.
+ Data: 12/09/2026 15:27:49
+============================================
+
+
+Warning: Deprecated Parameter
+
+The parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+instead.
+Acquiring state lock. This may take a few moments...
+tls_private_key.technova: Refreshing state... [id=8a42d0adf31f8ec797d6342510c354bf84594802]
+local_sensitive_file.private_key: Refreshing state... [id=303cc2e506e5c1f29f574a268d8c514874828ae6]
+aws_key_pair.technova: Refreshing state... [id=technova-key-aula05]
+aws_vpc.main: Refreshing state... [id=vpc-0d46b611690f611c1]
+data.aws_ami.amazon_linux_2023: Reading...
+data.aws_ami.amazon_linux_2023: Read complete after 1s [id=ami-085b153e241f89f29]
+aws_internet_gateway.main: Refreshing state... [id=igw-061615660efaadadb]
+aws_subnet.private[0]: Refreshing state... [id=subnet-0d8b22bd0eb6eab8e]
+aws_subnet.private[1]: Refreshing state... [id=subnet-0f6f4002610722f6e]
+aws_subnet.public: Refreshing state... [id=subnet-01007a243e1b553ef]
+aws_security_group.ec2: Refreshing state... [id=sg-005e752ba087c053b]
+aws_route_table.public: Refreshing state... [id=rtb-04a404ed08e030613]
+aws_route_table_association.public: Refreshing state... [id=rtbassoc-01052f544caffd98d]
+aws_db_subnet_group.main: Refreshing state... [id=technova-db-subnet-group]
+aws_security_group.rds: Refreshing state... [id=sg-0becfffe878f27fbc]
+aws_db_instance.postgres: Refreshing state... [id=db-G4YZV5ZQJ2FHUO3PVZ4P5FUMFU]
+aws_instance.app: Refreshing state... [id=i-0248be3a78f7637ce]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+Observação: o aviso sobre "dynamodb_table" é depreciação do parâmetro do
+backend S3; não impediu a execução nem alterou o resultado do plan.
