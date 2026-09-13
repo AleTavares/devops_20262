@@ -4,9 +4,10 @@
 **RA:** 6325028  
 **Data:** 10/09/2026
 
-## Repositório
+## Repositório de Portfólio
 
-- URL: https://github.com/Denisemayder/devops_20262
+- URL: https://github.com/Denisemayder/unifaat-devops-portfolio
+- Pasta do projeto: `aula-04/`
 
 ## Evidências
 
@@ -28,10 +29,10 @@
 
 ## Arquivos do Projeto
 
-Os arquivos Terraform estão na pasta `aula-04-vpc-ec2/` deste repositório:
+Os arquivos Terraform estão em https://github.com/Denisemayder/unifaat-devops-portfolio/tree/main/aula-04
 
 ```
-aula-04-vpc-ec2/
+aula-04/
 ├── providers.tf       # Configuração do provider AWS
 ├── variables.tf       # Variáveis do projeto
 ├── main.tf            # VPC, subnets, IGW, Route Tables, SGs, EC2, Key Pair
