@@ -76,7 +76,33 @@ Se retornar o ARN do role temporário (`voclabs`), está pronto. Se der `Expired
 
 > Crie os arquivos a seguir pela interface do **Kiro**, dentro da pasta `infra-technova-modulos`.
 
-### Passo 1.1 — Criar .gitignore
+### Estrutura de pastas do projeto
+
+Preste atenção **em qual pasta** cada arquivo é criado. O projeto tem o **root module** (a raiz) e os **child modules** (dentro de `modules/`):
+
+```
+infra-technova-modulos/          ← ROOT MODULE (aqui você roda o terraform)
+├── providers.tf                 ← root
+├── variables.tf                 ← root (declara as variáveis que o .tfvars preenche)
+├── main.tf                      ← root (chama os módulos)
+├── outputs.tf                   ← root
+├── terraform.tfvars             ← root (valores do ambiente dev)
+├── staging.tfvars               ← root (valores do ambiente staging)
+├── aws-creds.sh                 ← root (credenciais — no .gitignore)
+└── modules/
+    ├── vpc/
+    │   ├── variables.tf         ← módulo vpc (inputs do módulo)
+    │   ├── main.tf              ← módulo vpc (recursos)
+    │   └── outputs.tf           ← módulo vpc (saídas)
+    └── security-group/
+        ├── variables.tf         ← módulo security-group
+        ├── main.tf
+        └── outputs.tf
+```
+
+> **Regra de ouro:** o `terraform.tfvars` fica no **root** e só pode conter variáveis que estão declaradas no **`variables.tf` do root** (Passo 4.1). As variáveis dentro de `modules/vpc/variables.tf` pertencem ao módulo — o root as preenche ao chamar o módulo com `module "vpc" { ... }`. Se você rodar `terraform plan` antes de criar o `variables.tf` do root, verá o aviso *"Value for undeclared variable"*.
+
+### Passo 1.1 — Criar `.gitignore` (na raiz do projeto)
 
 Crie o arquivo `.gitignore`:
 
@@ -96,10 +122,12 @@ aws-creds.sh
 .env
 ```
 
-### Passo 1.2 — Criar providers.tf
+### Passo 1.2 — Criar `providers.tf` (na raiz do projeto)
+
+Arquivo: `infra-technova-modulos/providers.tf`
 
 ```hcl
-# providers.tf
+# providers.tf (ROOT)
 
 terraform {
   required_version = ">= 1.0"
@@ -121,7 +149,9 @@ provider "aws" {
 
 ## Parte 2: Criar Módulo VPC
 
-### Passo 2.1 — modules/vpc/variables.tf
+> Os arquivos desta parte ficam em **`modules/vpc/`** — são os arquivos do **child module**, não do root.
+
+### Passo 2.1 — `modules/vpc/variables.tf`
 
 ```hcl
 # modules/vpc/variables.tf
@@ -303,7 +333,9 @@ O módulo VPC:
 
 ## Parte 3: Criar Módulo Security Group
 
-### Passo 3.1 — modules/security-group/variables.tf
+> Os arquivos desta parte ficam em **`modules/security-group/`** — child module.
+
+### Passo 3.1 — `modules/security-group/variables.tf`
 
 ```hcl
 # modules/security-group/variables.tf
@@ -442,10 +474,16 @@ O módulo Security Group:
 
 ## Parte 4: Chamar Módulos a partir do Root
 
-### Passo 4.1 — variables.tf (Root Module)
+> Os arquivos desta parte ficam na **raiz do projeto** (`infra-technova-modulos/`) — root module.
+>
+> **Atenção:** o `variables.tf` do root (Passo 4.1) é **obrigatório** — é ele que declara as variáveis que o `terraform.tfvars` vai preencher. Sem ele, o Terraform emite o aviso *"Value for undeclared variable"*.
+
+### Passo 4.1 — `variables.tf` (raiz do projeto — Root Module)
+
+Arquivo: `infra-technova-modulos/variables.tf`
 
 ```hcl
-# variables.tf
+# variables.tf (ROOT)
 
 variable "aws_region" {
   description = "Região AWS"
@@ -490,10 +528,12 @@ variable "availability_zones" {
 }
 ```
 
-### Passo 4.2 — main.tf (Root Module)
+### Passo 4.2 — `main.tf` (raiz do projeto — Root Module)
+
+Arquivo: `infra-technova-modulos/main.tf`
 
 ```hcl
-# main.tf
+# main.tf (ROOT)
 
 # ========================================
 # Módulo VPC
@@ -561,10 +601,12 @@ module "rds_sg" {
 }
 ```
 
-### Passo 4.3 — outputs.tf (Root Module)
+### Passo 4.3 — `outputs.tf` (raiz do projeto — Root Module)
+
+Arquivo: `infra-technova-modulos/outputs.tf`
 
 ```hcl
-# outputs.tf
+# outputs.tf (ROOT)
 
 output "vpc_id" {
   description = "ID da VPC"
@@ -592,11 +634,53 @@ output "rds_sg_id" {
 }
 ```
 
+### Passo 4.4 — Inicializar o Terraform
+
+Neste ponto você já tem **todos os arquivos do root** (`providers.tf`, `variables.tf`, `main.tf`, `outputs.tf`) e os **dois módulos** (`modules/vpc/` e `modules/security-group/`). Agora sim, inicialize o Terraform na **raiz do projeto**:
+
+```bash
+# Confirme que está na raiz do projeto
+cd infra-technova-modulos
+
+# Carregue as credenciais (se ainda não carregou nesta sessão)
+source aws-creds.sh
+
+# Inicialize — baixa o provider AWS e registra os módulos
+terraform init
+```
+
+**Saída esperada:**
+```
+Initializing modules...
+- api_sg in modules/security-group
+- rds_sg in modules/security-group
+- vpc in modules/vpc
+
+Initializing provider plugins...
+- Installing hashicorp/aws v5.x.x...
+
+Terraform has been successfully initialized!
+```
+
+> **`terraform init` é obrigatório antes de qualquer `plan` ou `apply`.** Rode-o sempre que adicionar/alterar módulos ou o provider. Se rodar `plan` sem `init`, o Terraform reclama que os módulos/provider não foram inicializados.
+
+### Passo 4.5 — Validar a configuração
+
+```bash
+terraform validate
+```
+
+Resultado esperado: `Success! The configuration is valid.`
+
 ---
 
 ## Parte 5: Segundo Ambiente com os Mesmos Módulos
 
-### Passo 5.1 — Criar terraform.tfvars para dev
+> Os arquivos `.tfvars` ficam na **raiz do projeto** e só podem conter variáveis declaradas no `variables.tf` do root (Passo 4.1).
+
+### Passo 5.1 — Criar `terraform.tfvars` para dev (na raiz do projeto)
+
+Arquivo: `infra-technova-modulos/terraform.tfvars`
 
 ```hcl
 # terraform.tfvars (ambiente DEV)
@@ -609,7 +693,9 @@ private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
 availability_zones   = ["us-east-1a", "us-east-1b"]
 ```
 
-### Passo 5.2 — Criar staging.tfvars
+### Passo 5.2 — Criar `staging.tfvars` (na raiz do projeto)
+
+Arquivo: `infra-technova-modulos/staging.tfvars`
 
 ```hcl
 # staging.tfvars (ambiente STAGING)
@@ -654,35 +740,15 @@ terraform apply -var-file="staging.tfvars"
 
 ## Parte 6: terraform plan/apply e Verificação
 
-### Passo 6.1 — Inicializar o projeto
+> Você já rodou `terraform init` e `terraform validate` no Passo 4.4/4.5. Se abriu um novo terminal, rode `source aws-creds.sh` antes de continuar.
 
-```bash
-terraform init
-```
-
-**Saída esperada:**
-```
-Initializing modules...
-- api_sg in modules/security-group
-- rds_sg in modules/security-group
-- vpc in modules/vpc
-
-Initializing the backend...
-
-Initializing provider plugins...
-- Finding hashicorp/aws versions matching "~> 5.0"...
-- Installing hashicorp/aws v5.x.x...
-
-Terraform has been successfully initialized!
-```
-
-> Note que o Terraform detecta os módulos e os inicializa automaticamente.
-
-### Passo 6.2 — Executar terraform plan
+### Passo 6.1 — Executar terraform plan (ambiente dev)
 
 ```bash
 terraform plan
 ```
+
+O `plan` usa automaticamente o `terraform.tfvars` (ambiente dev). Se aparecer o aviso *"Value for undeclared variable"*, significa que o `variables.tf` do root (Passo 4.1) está faltando ou incompleto — revise antes de prosseguir.
 
 **Saída esperada (resumo):**
 ```
@@ -714,7 +780,7 @@ Changes to Outputs:
 15. `module.rds_sg.aws_security_group_rule.ingress[0]` — Regra PostgreSQL
 16. `module.rds_sg.aws_security_group_rule.egress[0]` — Regra egress
 
-### Passo 6.3 — Aplicar a infraestrutura
+### Passo 6.2 — Aplicar a infraestrutura
 
 ```bash
 terraform apply
@@ -722,7 +788,7 @@ terraform apply
 
 Confirme com `yes` quando solicitado.
 
-### Passo 6.4 — Verificar os outputs
+### Passo 6.3 — Verificar os outputs
 
 ```bash
 terraform output
@@ -743,7 +809,7 @@ rds_sg_id = "sg-0xyz789ghi012"
 vpc_id = "vpc-0abc123xyz"
 ```
 
-### Passo 6.5 — Verificar no Console AWS
+### Passo 6.4 — Verificar no Console AWS
 
 1. Acesse **VPC** → Suas VPCs → Confirme `technova-dev-vpc`
 2. Acesse **VPC** → Subnets → Confirme 4 subnets (2 públicas + 2 privadas)

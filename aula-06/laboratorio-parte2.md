@@ -51,7 +51,25 @@ No Lab Parte 1, usamos `count` para criar subnets a partir de uma lista. Agora v
 
 > Crie os arquivos a seguir pela interface do **Kiro**, dentro da pasta `infra-technova-avancado`.
 
-### Passo 1.1 — providers.tf
+### Estrutura de pastas
+
+Preste atenção **em qual pasta** cada arquivo é criado:
+
+```
+infra-technova-avancado/          ← ROOT MODULE (rode o terraform aqui)
+├── providers.tf                  ← root
+├── variables.tf                  ← root (declara variáveis do .tfvars)
+├── main.tf                       ← root (chama os módulos)
+├── outputs.tf                    ← root
+├── aws-creds.sh                  ← root (no .gitignore)
+└── modules/
+    ├── vpc-dynamic/              ← child module (variables/main/outputs)
+    └── ec2/                      ← child module
+```
+
+> **Regra de ouro:** rode `terraform init` na **raiz** sempre que criar/alterar módulos, **antes** de `plan`/`apply`. Variáveis usadas no root precisam estar declaradas no `variables.tf` do root.
+
+### Passo 1.1 — `providers.tf` (raiz do projeto)
 
 ```hcl
 # providers.tf
