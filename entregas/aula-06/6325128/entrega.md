@@ -21,4 +21,24 @@
 
 ## Evidência do terraform plan
 
-[Cole aqui o output resumido do terraform plan de um dos ambientes ou screenshot]
+ + create
+  + resource "aws_instance" "this" {
+  + resource "aws_security_group" "this" {
+  + resource "aws_db_instance" "this" {
+  + resource "aws_db_subnet_group" "this" {
+  + resource "aws_security_group" "this" {
+  + resource "aws_internet_gateway" "this" {
+  + resource "aws_route_table" "public" {
+  + resource "aws_route_table_association" "public" {
+  + resource "aws_route_table_association" "public" {
+  + resource "aws_subnet" "this" {
+  + resource "aws_subnet" "this" {
+  + resource "aws_subnet" "this" {
+  + resource "aws_subnet" "this" {
+  + resource "aws_vpc" "this" {
+Plan: 14 to add, 0 to change, 0 to destroy.
+Changes to Outputs:
+  + api_instance_id   = (known after apply)
+  + api_public_ip     = (known after apply)
+  + database_endpoint = (known after apply)
+  + vpc_id            = (known after apply)
