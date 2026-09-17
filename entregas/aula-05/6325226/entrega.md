@@ -8,7 +8,7 @@
 
 - URL: https://github.com/lucaskenway/unifaat-devops-portfolio
 
-> **⚠️ Confirme:** este link precisa apontar para o seu repositório pessoal `unifaat-devops-portfolio`, **público**, com a pasta `aula-05/` contendo o código Terraform (`aula-05-backend/` e `aula-05-rds/`). Ajuste a URL acima se o nome/usuário do repositório for outro.
+A pasta `aula-05/` do portfólio contém o código Terraform organizado por responsabilidade em `aula-05-backend/` e `aula-05-rds/`, além de uma cópia consolidada (`main.tf`, `providers.tf`, `variables.tf`, `outputs.tf`, `.gitignore`) na raiz de `aula-05/`.
 
 ## Evidências
 
