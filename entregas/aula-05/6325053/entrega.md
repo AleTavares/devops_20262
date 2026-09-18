@@ -1,80 +1,34 @@
-\# Entrega — Aula 05: RDS e Remote State
+# Entrega — Aula 05: RDS e Remote State
 
+Aluno: Matheus Gabriel Correa Braga Viana
+RA: 6325053
+Data: 18/09/2026
 
+## Repositorio
 
-\*\*Aluno:\*\* Matheus Gabriel Correa Braga Viana
+URL: https://github.com/Matiasdocs/unifaat-devops-portfolio
 
-\*\*RA:\*\* 6325053
+## Evidencias
 
-\*\*Data:\*\* 18/09/2026
+[x] VPC com subnets publicas e privadas em 2 AZs
+[x] RDS PostgreSQL (db.t3.micro) nas subnets privadas
+[x] EC2 t2.micro na subnet publica, conectando ao RDS
+[x] Security Groups corretos (porta 5432 apenas da VPC)
+[x] Remote State configurado (S3 + DynamoDB)
+[x] State armazenado no S3 (evidencia abaixo)
+[x] Conexao EC2 -> RDS via psql (evidencia abaixo)
+[x] terraform destroy executado apos evidencias
 
-
-
-\## Repositório
-
-
-
-\- URL: https://github.com/Matiasdocs/unifaat-devops-portfolio
-
-
-
-\## Evidências
-
-
-
-\- \[x] VPC com subnets públicas e privadas em 2 AZs
-
-\- \[x] RDS PostgreSQL (db.t3.micro) nas subnets privadas
-
-\- \[x] EC2 t2.micro na subnet pública, conectando ao RDS
-
-\- \[x] Security Groups corretos (porta 5432 apenas da VPC)
-
-\- \[x] Remote State configurado (S3 + DynamoDB)
-
-\- \[x] State armazenado no S3 (evidência abaixo)
-
-\- \[x] Conexão EC2 → RDS via psql (evidência abaixo)
-
-\- \[x] `terraform destroy` executado após evidências
-
-
-
-\## Evidência do State no S3
-
-
-
-```text
+## Evidencia do State no S3
 
 2026-09-18 18:24:37      37185 terraform.tfstate
 
-```
-
-
-
-\## Evidência da Conexão EC2 → RDS
-
-
-
-```text
+## Evidencia da Conexao EC2 -> RDS
 
 psql (PostgreSQL) 15.19
-
-&#x20;                                             version
-
-\---------------------------------------------------------------------------------------------------
-
-&#x20;PostgreSQL 15.17 on x86\_64-pc-linux-gnu, compiled by x86\_64-pc-linux-gnu-gcc (GCC) 12.4.0, 64-bit
-
+PostgreSQL 15.17 on x86_64-pc-linux-gnu, compiled by x86_64-pc-linux-gnu-gcc (GCC) 12.4.0, 64-bit
 (1 row)
 
-```
+## Observacoes
 
-
-
-\## Observações
-
-
-
-O bucket S3 do backend foi criado via AWS CLI (não via `aws\_s3\_bucket` do Terraform), pois a política do AWS Academy Learner Lab bloqueia a chamada `s3:GetBucketObjectLockConfiguration` ao gerenciar esse recurso diretamente (mesmo problema já documentado na Aula 06). O Terraform gerencia a configuração do bucket (versionamento, criptografia, bloqueio de acesso público) e a tabela DynamoDB. Todos os 19 recursos (4 do backend + 15 do projeto principal) foram destruídos ao final.
-
+O bucket S3 do backend foi criado via AWS CLI (nao via aws_s3_bucket do Terraform), pois a politica do AWS Academy Learner Lab bloqueia a chamada s3:GetBucketObjectLockConfiguration ao gerenciar esse recurso diretamente (mesmo problema ja documentado na Aula 06). O Terraform gerencia a configuracao do bucket (versionamento, criptografia, bloqueio de acesso publico) e a tabela DynamoDB. Todos os 19 recursos (4 do backend + 15 do projeto principal) foram destruidos ao final.
