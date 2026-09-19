@@ -1,0 +1,54 @@
+============================================
+ terraform output — Aula 05: RDS + Remote State
+ Aluno: Emilly Santos de Oliveira | RA: 4023575
+ Data: 12/09/2026 15:20:25
+============================================
+
+connection_string = <sensitive>
+ec2_availability_zone = "us-east-1a"
+ec2_instance_id = "i-0248be3a78f7637ce"
+ec2_private_ip = "10.0.1.24"
+ec2_public_ip = "54.224.24.51"
+ec2_security_group_id = "sg-005e752ba087c053b"
+private_key_path = <sensitive>
+private_subnet_azs = [
+  "us-east-1a",
+  "us-east-1b",
+]
+private_subnet_ids = [
+  "subnet-0d8b22bd0eb6eab8e",
+  "subnet-0f6f4002610722f6e",
+]
+psql_connection_command = <sensitive>
+public_subnet_id = "subnet-01007a243e1b553ef"
+rds_address = "technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com"
+rds_db_name = "technova_db"
+rds_endpoint = "technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com:5432"
+rds_engine_version = "15.17"
+rds_identifier = "technova-postgres"
+rds_port = 5432
+rds_security_group_id = "sg-0becfffe878f27fbc"
+rds_test_log_command = "ssh -i ./technova-key.pem ec2-user@54.224.24.51 'cat /var/log/rds-test.log'"
+ssh_command = "ssh -i ./technova-key.pem ec2-user@54.224.24.51"
+summary = <<EOT
+=========================================
+TechNova - Aula 05: RDS + Remote State
+Aluno: Emilly Santos de Oliveira | RA: 4023575
+=========================================
+VPC:         vpc-0d46b611690f611c1 (10.0.0.0/16)
+EC2:         i-0248be3a78f7637ce - IP: 54.224.24.51
+RDS:         technova-postgres
+RDS Endpoint: technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com
+-----------------------------------------
+SSH: ssh -i technova-key.pem ec2-user@54.224.24.51
+Log: ssh acima + 'cat /var/log/rds-test.log'
+=========================================
+
+EOT
+vpc_cidr = "10.0.0.0/16"
+vpc_id = "vpc-0d46b611690f611c1"
+
+Warning: Deprecated Parameter
+
+The parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+instead.
