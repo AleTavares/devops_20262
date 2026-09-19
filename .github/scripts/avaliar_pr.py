@@ -125,8 +125,25 @@ REQUIRED_BY_AULA = {
            "README.md", ".gitignore"],
     "05": ["providers.tf", "main.tf", "variables.tf", "outputs.tf",
            "README.md", ".gitignore"],
+    "06": ["providers.tf", "main.tf", "variables.tf", "outputs.tf",
+           "README.md", ".gitignore"],
     "02": ["docker-compose.yml", "Dockerfile", "app.js", "package.json",
            ".gitignore", "ia-analise.md"],
+}
+
+# Aulas conceituais em que o codigo e entregue DENTRO do proprio PR
+# (pasta entregas/aula-XX/RA/), nao no repositorio de portfolio.
+# Nao usam AWS/Terraform. O que mais vale e o processo-spec.md.
+AULAS_CODIGO_NO_PR = {
+    "07": {
+        "obrigatorios": ["processo-spec.md", "package.json"],
+        # pelo menos um arquivo .js (server.js ou equivalente) deve existir
+        "exige_js": True,
+        "rotas_esperadas": [
+            "POST /salas", "GET /salas", "POST /reservas",
+            "DELETE /reservas", "GET /reservas",
+        ],
+    },
 }
 
 
@@ -221,6 +238,93 @@ def precheck(owner, repo, aula, token):
     return result
 
 
+# ---------------------------------------------------------------------------
+# Pre-check para aulas com codigo entregue no proprio PR (ex.: aula 07)
+# ---------------------------------------------------------------------------
+def _pr_files_in_folder(files, aula):
+    """Retorna os arquivos do PR dentro de entregas/aula-XX/ (qualquer RA)."""
+    prefix = f"entregas/aula-{aula}/"
+    return [f for f in files if f["filename"].startswith(prefix)]
+
+
+def precheck_codigo_no_pr(files, aula):
+    """
+    Valida entregas que vem no proprio PR (sem portfolio).
+    Confere presenca de arquivos obrigatorios, arquivo .js e node_modules.
+    """
+    spec = AULAS_CODIGO_NO_PR[aula]
+    result = {
+        "modo": "codigo_no_pr",
+        "pasta_entrega_encontrada": False,
+        "ra_pasta": None,
+        "arquivos_presentes": [],
+        "arquivos_faltando": [],
+        "tem_js": False,
+        "tem_processo_spec": False,
+        "node_modules_versionado": False,
+        "observacoes": [],
+    }
+    entregues = _pr_files_in_folder(files, aula)
+    if not entregues:
+        result["observacoes"].append(
+            f"Nenhum arquivo encontrado em entregas/aula-{aula}/ no PR.")
+        return result
+    result["pasta_entrega_encontrada"] = True
+
+    # tenta identificar o RA pela primeira subpasta
+    m = re.search(rf"entregas/aula-{aula}/([^/]+)/", entregues[0]["filename"])
+    if m:
+        result["ra_pasta"] = m.group(1)
+
+    basenames = [f["filename"].rsplit("/", 1)[-1] for f in entregues]
+
+    for req in spec.get("obrigatorios", []):
+        if req in basenames:
+            result["arquivos_presentes"].append(req)
+        else:
+            result["arquivos_faltando"].append(req)
+
+    result["tem_processo_spec"] = "processo-spec.md" in basenames
+    result["tem_js"] = any(n.endswith(".js") for n in basenames)
+    if spec.get("exige_js") and not result["tem_js"]:
+        result["observacoes"].append("Nenhum arquivo .js encontrado (esperado server.js ou equivalente).")
+
+    if any("/node_modules/" in f["filename"] for f in entregues):
+        result["node_modules_versionado"] = True
+        result["observacoes"].append("ATENCAO: node_modules/ versionado no PR (nao deveria).")
+
+    if not result["tem_processo_spec"]:
+        result["observacoes"].append("processo-spec.md ausente — e o item de maior peso do TF.")
+
+    return result
+
+
+def collect_pr_sources(repo, files, aula, token, max_bytes=60000):
+    """Baixa o conteudo dos arquivos entregues no PR (aula de codigo-no-PR)."""
+    h = gh_headers(token)
+    entregues = _pr_files_in_folder(files, aula)
+    blob = []
+    total = 0
+    for f in entregues:
+        name = f["filename"].rsplit("/", 1)[-1]
+        if "/node_modules/" in f["filename"]:
+            continue
+        if not (name.endswith(".js") or name.endswith(".md")
+                or name in ("package.json", ".gitignore")):
+            continue
+        raw = f.get("raw_url")
+        content = get_text(raw, h) if raw else None
+        if content is None:
+            continue
+        snippet = f"\n===== {f['filename']} =====\n{content}\n"
+        if total + len(snippet) > max_bytes:
+            blob.append(snippet[: max_bytes - total])
+            break
+        blob.append(snippet)
+        total += len(snippet)
+    return "".join(blob)
+
+
 def collect_tf_sources(owner, repo, aula, branch, token, max_bytes=60000):
     """Baixa o conteudo dos .tf, README e trecho do plan para mandar para a IA."""
     h = gh_headers(token)
@@ -255,23 +359,50 @@ def collect_tf_sources(owner, repo, aula, branch, token, max_bytes=60000):
 # Analise via Amazon Bedrock
 # ---------------------------------------------------------------------------
 def avaliar_com_bedrock(criterios, entrega_md, tf_sources, precheck_data,
-                        aula, model_id, region):
+                        aula, model_id, region, modo="portfolio"):
     import boto3
 
     client = boto3.client("bedrock-runtime", region_name=region)
 
-    system = (
-        "Voce e um professor de DevOps avaliando um Trabalho de Fixacao (TF). "
-        "Avalie SOMENTE com base nos criterios fornecidos e no codigo real do aluno. "
-        "Atribua uma nota de 0 a 1,5 (proporcional aos criterios verificaveis pelo PR). "
-        "O componente 'AWS Academy' (geralmente 20%) NAO e verificavel pelo PR: "
-        "marque-o como pendente de conferencia do professor e nao o inclua na nota automatica. "
-        "Seja direto, aponte pontos fortes e ressalvas concretas com base no codigo. "
-        "Produza um parecer de APROVACAO ou REPROVACAO pronto para colar no review do PR, "
-        "em portugues, em markdown. Se o codigo do portfolio nao existir/estiver ausente, "
-        "REPROVE por entrega nao verificavel."
-    )
-    user = f"""## Criterios do TF (aula-{aula}/TF.md)
+    if modo == "codigo_no_pr":
+        system = (
+            "Voce e um professor de DevOps avaliando um Trabalho de Fixacao (TF) conceitual "
+            "sobre decomposicao de problemas e Spec-Driven Development (aula sem AWS). "
+            "O codigo do aluno vem no proprio PR (Node.js/Express). Avalie SOMENTE com base "
+            "nos criterios fornecidos e nos arquivos reais. Atribua uma nota de 0 a 1,5. "
+            "O item de MAIOR peso e o 'processo-spec.md' (como o aluno decompos o problema, "
+            "guiou a IA e validou cada parte) — avalie sua completude e honestidade. "
+            "Verifique tambem se as rotas minimas existem no codigo (cadastrar/listar salas, "
+            "criar reserva com bloqueio de conflito de horario, cancelar e listar reservas). "
+            "Se o 'processo-spec.md' estiver ausente ou generico/copiado, reduza muito a nota. "
+            "Produza um parecer de APROVACAO ou REPROVACAO em portugues, em markdown, pronto "
+            "para o review do PR."
+        )
+        user = f"""## Criterios do TF (aula-{aula}/TF.md)
+{criterios or "(criterios nao encontrados no repositorio)"}
+
+## Resultado do pre-check deterministico
+{json.dumps(precheck_data, ensure_ascii=False, indent=2)}
+
+## Arquivos entregues no PR (codigo Node.js + processo-spec.md)
+{tf_sources or "(nenhum arquivo acessivel no PR)"}
+
+Gere o parecer final com: nota (X / 1,5), tabela de criterios (processo-spec.md,
+decomposicao, codigo funcional/rotas, validacao por etapas, reflexao), pontos fortes,
+ressalvas e um bloco de texto pronto para o review do PR."""
+    else:
+        system = (
+            "Voce e um professor de DevOps avaliando um Trabalho de Fixacao (TF). "
+            "Avalie SOMENTE com base nos criterios fornecidos e no codigo real do aluno. "
+            "Atribua uma nota de 0 a 1,5 (proporcional aos criterios verificaveis pelo PR). "
+            "O componente 'AWS Academy' (geralmente 20%) NAO e verificavel pelo PR: "
+            "marque-o como pendente de conferencia do professor e nao o inclua na nota automatica. "
+            "Seja direto, aponte pontos fortes e ressalvas concretas com base no codigo. "
+            "Produza um parecer de APROVACAO ou REPROVACAO pronto para colar no review do PR, "
+            "em portugues, em markdown. Se o codigo do portfolio nao existir/estiver ausente, "
+            "REPROVE por entrega nao verificavel."
+        )
+        user = f"""## Criterios do TF (aula-{aula}/TF.md)
 {criterios or "(criterios nao encontrados no repositorio)"}
 
 ## Resultado do pre-check deterministico
@@ -329,6 +460,32 @@ def parecer_deterministico(precheck_data, aula, ra):
     return "\n".join(linhas)
 
 
+def parecer_deterministico_codigo_no_pr(pre, aula, ra):
+    """Parecer de pre-check para aulas em que o codigo vem no proprio PR."""
+    linhas = [f"### Pre-check automatico — Aula {aula} (RA: {ra or pre.get('ra_pasta') or 'n/d'})", ""]
+    if not pre["pasta_entrega_encontrada"]:
+        linhas.append(f"- ❌ Nenhum arquivo encontrado em `entregas/aula-{aula}/SEU-RA/` no PR.")
+        linhas.append("\n**Resultado:** entrega nao verificavel. Adicione o codigo e o `processo-spec.md` na pasta da sua entrega.")
+        return "\n".join(linhas)
+    linhas.append(f"- ✅ Pasta de entrega encontrada (`entregas/aula-{aula}/{pre.get('ra_pasta') or 'RA'}/`).")
+    if pre["arquivos_presentes"]:
+        linhas.append(f"- ✅ Arquivos presentes: {', '.join(pre['arquivos_presentes'])}")
+    if pre["arquivos_faltando"]:
+        linhas.append(f"- ⚠️ Arquivos faltando: {', '.join(pre['arquivos_faltando'])}")
+    if pre["tem_processo_spec"]:
+        linhas.append("- ✅ `processo-spec.md` presente (item de maior peso).")
+    else:
+        linhas.append("- ❌ `processo-spec.md` ausente (item de maior peso do TF).")
+    if pre["tem_js"]:
+        linhas.append("- ✅ Arquivo `.js` (código do projeto) presente.")
+    else:
+        linhas.append("- ⚠️ Nenhum arquivo `.js` encontrado.")
+    if pre["node_modules_versionado"]:
+        linhas.append("- ❌ `node_modules/` versionado (adicione ao `.gitignore`).")
+    linhas.append("\n> O parecer detalhado (qualidade do `processo-spec.md`, rotas e decomposição) é gerado pela análise por IA ou revisado pelo professor.")
+    return "\n".join(linhas)
+
+
 # ---------------------------------------------------------------------------
 # Comentar no PR
 # ---------------------------------------------------------------------------
@@ -369,8 +526,35 @@ def main():
                        "Use o formato `[Aula 0X] RA: NNN - Nome`.")
         return
 
-    _, entrega_md = find_entrega_md(repo, files, base_sha, token)
     criterios = read_local_criteria(aula)
+    model_id = os.environ.get("BEDROCK_MODEL_ID",
+                              "anthropic.claude-3-5-sonnet-20240620-v1:0")
+    region = os.environ.get("AWS_REGION", "us-east-1")
+
+    # --- Caso 1: aula conceitual com codigo entregue no proprio PR (ex.: aula 07) ---
+    if aula in AULAS_CODIGO_NO_PR:
+        pre = precheck_codigo_no_pr(files, aula)
+        corpo = None
+        if use_bedrock and pre["pasta_entrega_encontrada"]:
+            try:
+                pr_sources = collect_pr_sources(repo, files, aula, token)
+                corpo = avaliar_com_bedrock(
+                    criterios, None, pr_sources, pre, aula,
+                    model_id, region, modo="codigo_no_pr")
+            except Exception as exc:
+                corpo = (parecer_deterministico_codigo_no_pr(pre, aula, ra) +
+                         f"\n\n_(analise por IA indisponivel: {exc})_")
+        else:
+            corpo = parecer_deterministico_codigo_no_pr(pre, aula, ra)
+
+        rodape = ("\n\n---\n_Avaliacao automatica gerada por GitHub Actions. "
+                  "A nota final e revisada pelo professor._")
+        upsert_comment(repo, pr_number, token, corpo + rodape)
+        print("Comentario publicado com sucesso (modo codigo-no-PR).")
+        return
+
+    # --- Caso 2: aulas com codigo no repositorio de portfolio (padrao) ---
+    _, entrega_md = find_entrega_md(repo, files, base_sha, token)
     portfolio = extract_portfolio(entrega_md)
 
     if not portfolio:
@@ -390,9 +574,7 @@ def main():
                 owner, repo_pf, aula, pre["branch"], token)
             corpo = avaliar_com_bedrock(
                 criterios, entrega_md, tf_sources, pre, aula,
-                os.environ.get("BEDROCK_MODEL_ID",
-                               "anthropic.claude-3-5-sonnet-20240620-v1:0"),
-                os.environ.get("AWS_REGION", "us-east-1"))
+                model_id, region)
         except Exception as exc:  # nao derruba o workflow; cai no deterministico
             corpo = (parecer_deterministico(pre, aula, ra) +
                      f"\n\n_(analise por IA indisponivel: {exc})_")
