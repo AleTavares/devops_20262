@@ -102,3 +102,31 @@ Plan: 19 to add, 0 to change, 0 to destroy.
 As subnets do staging usam CIDRs 10.1.1.0/24, 10.1.2.0/24, 10.1.3.0/24, 10.1.4.0/24 - provando que os mesmos modulos geram ambientes distintos apenas variando as variaveis.
 
 > Observacao: Foi executado apenas `terraform plan` (nao `apply`), conforme permitido pelo TF ("nao e obrigatorio executar terraform apply"). Nenhum recurso foi criado na AWS, portanto nao ha custo nem necessidade de destroy.
+---
+
+## Evidencia EXTRA: terraform apply REAL na AWS (ambiente dev)
+
+Alem do plan, o ambiente dev foi efetivamente aplicado na conta AWS Academy (775148702826), criando os 19 recursos, e depois destruido. Recursos confirmados via AWS CLI:
+
+```
+Apply complete! Resources: 19 added, 0 changed, 0 destroyed.
+
+Outputs:
+api_instance_id = "i-0642c42a442bc73d5"
+api_public_ip   = "3.92.42.160"
+db_endpoint     = "technova-dev-db.cxxotqeqislx.us-east-1.rds.amazonaws.com:5432"
+vpc_id          = "vpc-0748b22cd2300a1f3"
+
+VPC   : technova-dev-vpc (10.0.0.0/16)          -> criada
+Subnets: 4 (2 publicas 10.0.1-2, 2 privadas 10.0.3-4) -> criadas
+EC2   : t2.micro i-0642c42a442bc73d5 (running)  -> criada
+RDS   : db.t3.micro postgres (available)        -> criada
+```
+
+Apos capturar as evidencias:
+
+```
+Destroy complete! Resources: 19 destroyed.
+```
+
+Verificacao final: zero VPCs, EC2 e RDS technova na conta (recursos destruidos, sem custo).
