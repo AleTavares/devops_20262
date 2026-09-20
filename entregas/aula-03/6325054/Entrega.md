@@ -22,7 +22,7 @@
 
 ## Evidência do Terraform Plan
 
-![evidencia](/entregas/aula-03/6325054/Imagem%20colada.png)
+![evidencia](/entregas/aula-03/6325054/Imagem%20colada1.png)
 
 
 ## Design da Estrutura IAM
