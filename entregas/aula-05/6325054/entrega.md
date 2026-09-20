@@ -25,4 +25,4 @@
 
 ## Evidência da Conexão EC2 → RDS
 
-[psql](psql.png)
+![psql](psql.png)
