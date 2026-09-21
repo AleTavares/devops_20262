@@ -2,7 +2,7 @@
 
 **Aluno:** Leonardo Rafael Contini Costa  
 **RA:** 6325054
-**Data:** 24 de setembro
+**Data:** 21 de setembro
 
 ## Repositório
 
