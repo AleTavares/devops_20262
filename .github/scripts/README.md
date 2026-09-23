@@ -30,6 +30,12 @@ O script detecta automaticamente o tipo de entrega:
   código (Node.js) e o `processo-spec.md` vêm **na própria pasta do PR**
   (`entregas/aula-XX/RA/`). O bot valida `processo-spec.md`, `package.json` e o
   arquivo `.js`, e a IA avalia a decomposição, as rotas e a reflexão. Não usa AWS.
+- **Modo prova** (Prova do 1º Bimestre): título `[Prova Primeiro Bimestre] RA: ...`.
+  O aluno entrega só o `entrega.md` (na pasta `entregas/provaPrimeiroBi/RA/`) com o
+  link do repositório próprio `prova-primeiro-bimestre-devops`. O bot valida a
+  estrutura desse repo (raiz, `app/`, `infra/modules/vpc|security-group|ec2|rds`,
+  `docker-compose.yml`, `relatorio.md`, `.tfstate` versionado) e a IA gera parecer
+  com nota de 0 a 10. Critérios em `provas/prova-primeiro-bimestre.md`.
 
 ## Segurança
 

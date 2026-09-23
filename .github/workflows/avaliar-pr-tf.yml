@@ -37,8 +37,8 @@ jobs:
         run: |
           FILES=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename')
           echo "Arquivos do PR:"; echo "$FILES"
-          if echo "$FILES" | grep -E '^\.github/|/TF\.md$' >/dev/null; then
-            echo "::error::PR altera arquivos protegidos (.github/ ou TF.md). Avaliacao automatica bloqueada; requer revisao manual de @AleTavares."
+          if echo "$FILES" | grep -E '^\.github/|/TF\.md$|^provas/' >/dev/null; then
+            echo "::error::PR altera arquivos protegidos (.github/, TF.md ou provas/). Avaliacao automatica bloqueada; requer revisao manual de @AleTavares."
             exit 1
           fi
 
