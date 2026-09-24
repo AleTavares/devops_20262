@@ -1,12 +1,12 @@
 # Entrega — Aula 06: Terraform Modules
 
-**Aluno:** [Seu nome completo]  
-**RA:** [Seu RA]  
-**Data:** [Data da entrega]
+**Aluno:** Grazielli Monteiro
+**RA:** 6325165  
+**Data:** 24/09/2026
 
 ## Repositório
 
-- URL: https://github.com/SEU-USUARIO/unifaat-devops-portfolio
+- URL: https://github.com/grazykkj/unifaat-devops-portfolio
 
 ## Evidências
 
