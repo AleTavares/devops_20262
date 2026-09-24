@@ -1,8 +1,8 @@
 # Trabalho em Aula — Discussão Guiada
 
-## Briefing do CTO da TechNova: A Crise Dupla
+## Briefing do CTO da TechNova
 
-> **Contexto:** A equipe de Platform Engineering (vocês) foi convocada para a primeira reunião com o CTO. Ele precisa que vocês diagnostiquem os dois problemas críticos e proponham soluções concretas.
+> A equipe foi chamada para ajudar a TechNova a resolver dois problemas: perda de código e ambiente diferente em cada máquina.
 
 ---
 
@@ -29,22 +29,15 @@ Leia o trecho abaixo do relatório interno da TechNova:
 
 ### Discussão em Grupo
 
-Responda as seguintes questões em grupo (3-4 pessoas):
+Responda em grupo:
 
-**1. Diagnóstico:** Liste pelo menos 4 problemas que podem ocorrer no cenário acima sem controle de versão.
+**1. Qual problema aconteceu no cenário sem Git?**
 
-**2. Consequências:** Qual é o impacto financeiro e operacional de perder 3 dias de trabalho de uma desenvolvedora sênior?
+**2. O que isso custa para a empresa?**
 
-**3. Solução Git:** Para cada problema identificado, explique como o Git resolveria:
+**3. Como o Git ajudaria a resolver isso?**
 
-| Problema Identificado | Como o Git Resolve |
-|---|---|
-| Ex: Não saber qual versão é a correta | Existe uma branch `main` que é a fonte única de verdade |
-| | |
-| | |
-| | |
-
-**4. Prevenção:** Que regras a equipe deveria estabelecer ao adotar Git? (pense em convenções de branches, commits, etc.)
+**4. Quais regras a equipe deveria seguir ao usar Git?**
 
 ---
 
@@ -74,25 +67,24 @@ Leia o relatório de incidente da Juliana:
 
 ### Discussão em Grupo
 
-**5. Causa Raiz:** Identifique as 3 categorias de diferenças entre ambientes que causaram as falhas no relatório da Juliana.
+**5. Quais tipos de diferenças de ambiente causaram o problema?**
 
-**6. Requisitos da Solução:** O que uma solução ideal deveria garantir? Complete:
-- Isolamento: _______________
-- Reprodutibilidade: _______________
-- Portabilidade: _______________
-- Leveza: _______________
+**6. O que uma solução ideal deveria garantir?**
+- Isolamento: __________
+- Reprodutibilidade: __________
+- Portabilidade: __________
+- Leveza: __________
 
-**7. Container vs. VM:** Se alguém sugerisse "vamos dar uma VM para cada dev", quais seriam os prós e contras comparados a containers?
+**7. Container ou VM?** Complete a tabela:
 
 | Aspecto | VM | Container |
 |---|---|---|
-| Tempo de inicialização | | |
+| Inicialização | | |
 | Uso de disco | | |
 | Consumo de memória | | |
-| Facilidade de versionamento | | |
-| Densidade no servidor | | |
+| Velocidade | | |
 
-**8. A Conexão:** Como Git e Docker juntos resolvem os dois problemas da TechNova? Descreva o fluxo completo que um novo desenvolvedor seguiria para ter a API rodando.
+**8. Como Git e Docker juntos resolvem o problema da TechNova?**
 
 ---
 
@@ -107,7 +99,7 @@ Com base nas discussões, cada grupo deve redigir uma proposta de **3-5 linhas**
 3. O resultado esperado para a equipe
 
 > **Modelo:**
-> "Carlos, propomos implementar __________ para resolver __________. Com isso, a equipe da TechNova poderá __________ e nunca mais __________."
+> "Carlos, propomos implementar Git e Docker para resolver o caos de versionamento e a inconsistência de ambientes. Com isso, a equipe da TechNova poderá colaborar com mais segurança e nunca mais perder trabalho nem depender de uma máquina específica."
 
 ---
 

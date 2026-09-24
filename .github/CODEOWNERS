@@ -1,0 +1,22 @@
+# Code Owners — controle de quem pode aprovar mudancas em arquivos sensiveis.
+#
+# Qualquer PR que altere estes caminhos exige revisao/aprovacao de @AleTavares
+# antes de poder ser mergeado (quando combinado com branch protection que
+# exige "Require review from Code Owners" na branch main).
+#
+# Isso protege a automacao de avaliacao: alunos entregam por fork e nao podem
+# alterar o workflow, o script ou os criterios sem a sua aprovacao explicita.
+
+# Toda a pasta de automacao (workflows, scripts, hooks)
+/.github/                     @AleTavares
+
+# Redundante e explicito para os arquivos mais criticos
+/.github/workflows/           @AleTavares
+/.github/scripts/             @AleTavares
+/.github/CODEOWNERS           @AleTavares
+
+# Criterios de avaliacao dos trabalhos (evita adulteracao das regras de nota)
+/aula-01/TF.md                @AleTavares
+/aula-02/TF.md                @AleTavares
+/aula-03/TF.md                @AleTavares
+/aula-04/TF.md                @AleTavares

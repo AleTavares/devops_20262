@@ -15,6 +15,9 @@ Crie uma estrutura completa de IAM para a TechNova usando Terraform, demonstrand
 | **Pasta de entrega no fork** | `entregas/aula-03/RA/` (substitua RA pelo seu número de matrícula) |
 | **Conteúdo do PR** | Apenas o arquivo `entrega.md` com link do repositório + evidências |
 | **Arquivos do projeto** | No repositório `unifaat-devops-portfolio`, pasta `aula-03/` |
+| **Execução do Lab** | Realizada no **AWS Academy Learner Lab** — o professor confere a nota e o percentual de execução |
+
+> **Avaliação no AWS Academy:** Além do código entregue via PR, o professor verifica no **AWS Academy** a **nota** e o **percentual de execução** do seu laboratório. Execute o Lab completo no ambiente do Academy — a atividade prática no Learner Lab faz parte da avaliação do TF.
 
 ### Como Entregar via Pull Request
 
@@ -264,16 +267,17 @@ Abra o Pull Request no GitHub com:
 
 | # | Critério | Peso | Verificação |
 |---|----------|------|-------------|
-| 1 | PR aberto corretamente em `entregas/aula-03/RA/` | 10% | Branch e path corretos |
-| 2 | `providers.tf` com provider AWS configurado | 5% | hashicorp/aws, us-east-1 |
-| 3 | Mínimo 2 IAM groups com separação de responsabilidades | 10% | Nomes distintos, propósitos claros |
-| 4 | Mínimo 3 IAM users distribuídos entre groups | 10% | Memberships declaradas |
-| 5 | Mínimo 3 custom policies com menor privilégio | 15% | Actions específicas, Resources limitados |
-| 6 | Policies demonstram uso de Conditions ou Deny explícito | 10% | Pelo menos 1 policy com Condition ou Deny |
-| 7 | Service role para EC2 com trust policy e instance profile | 15% | assume_role_policy + policy_attachment + profile |
-| 8 | Tags obrigatórias em todos os recursos | 5% | Project, ManagedBy, Aluno, RA |
-| 9 | `terraform-plan-output.txt` com evidência do plano | 10% | Plan mostrando recursos a serem criados |
-| 10 | README.md com explicação do design (não template) | 10% | Reflexões reais sobre menor privilégio |
+| 1 | **Execução no AWS Academy** | **20%** | Nota e percentual de execução do laboratório conferidos pelo professor no AWS Academy |
+| 2 | PR aberto corretamente em `entregas/aula-03/RA/` | 5% | Branch e path corretos |
+| 3 | `providers.tf` com provider AWS configurado | 5% | hashicorp/aws, us-east-1 |
+| 4 | Mínimo 2 IAM groups com separação de responsabilidades | 10% | Nomes distintos, propósitos claros |
+| 5 | Mínimo 3 IAM users distribuídos entre groups | 5% | Memberships declaradas |
+| 6 | Mínimo 3 custom policies com menor privilégio | 15% | Actions específicas, Resources limitados |
+| 7 | Policies demonstram uso de Conditions ou Deny explícito | 10% | Pelo menos 1 policy com Condition ou Deny |
+| 8 | Service role para EC2 com trust policy e instance profile | 10% | assume_role_policy + policy_attachment + profile |
+| 9 | Tags obrigatórias em todos os recursos | 5% | Project, ManagedBy, Aluno, RA |
+| 10 | `terraform-plan-output.txt` com evidência do plano | 10% | Plan mostrando recursos a serem criados |
+| 11 | README.md com explicação do design (não template) | 5% | Reflexões reais sobre menor privilégio |
 
 **Total:** 100%
 

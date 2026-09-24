@@ -170,6 +170,31 @@ Cada TF deve ser desenvolvido no **repositório pessoal do aluno** (criado na Au
 - `node_modules/`
 - `*.pem` (chaves privadas)
 
+### Como os PRs são avaliados (IA + professor)
+
+> 🤖 **Aviso de transparência:** os Pull Requests de TF passam por uma **avaliação automática assistida por IA** antes da conferência humana.
+
+Quando você abre um PR, um workflow de **GitHub Actions** roda um avaliador que:
+
+1. Identifica a aula e o RA pelo título do PR;
+2. Lê os critérios do `TF.md` da aula e o seu `entrega.md`;
+3. Acessa o seu repositório de portfólio e verifica o código entregue
+   (arquivos obrigatórios, boas práticas, evidências);
+4. Envia esse contexto para um **LLM no Amazon Bedrock**, que gera um parecer
+   preliminar com nota e comentários, publicado como **comentário no próprio PR**.
+
+**A nota do bot é preliminar.** A avaliação final é sempre **conferida e validada
+pelo professor** — inclusive o componente de **execução no AWS Academy**, que não
+é verificável pelo PR e é checado manualmente. Em caso de divergência, prevalece
+a avaliação do professor.
+
+> 💡 **Isto é a própria disciplina em ação.** Este repositório usa, de verdade, o
+> que você vai aprender ao longo do curso: **GitHub Actions** (aula 08),
+> **PR review automatizado com IA** (aula 09), **secrets, environments e approval
+> gates** (aula 08) e **AWS Bedrock** (aulas 07, 09, 12 e 14). A automação de
+> avaliação é um exemplo vivo de CI e AIOps aplicados. O código dela fica em
+> `.github/` — sinta-se à vontade para lê-lo como referência.
+
 ## Regras de Entrega do Trabalho em Aula
 
 ### O que é

@@ -15,6 +15,9 @@ Crie uma infraestrutura VPC + EC2 Multi-AZ completa para a TechNova usando Terra
 | **Pasta de entrega no fork** | `entregas/aula-04/RA/` (substitua RA pelo seu número de matrícula) |
 | **Conteúdo do PR** | Apenas o arquivo `entrega.md` com link do repositório + evidências |
 | **Arquivos do projeto** | No repositório `unifaat-devops-portfolio`, pasta `aula-04/` |
+| **Execução do Lab** | Realizada no **AWS Academy Learner Lab** — o professor confere a nota e o percentual de execução |
+
+> **Avaliação no AWS Academy:** Além do código entregue via PR, o professor verifica no **AWS Academy** a **nota** e o **percentual de execução** do seu laboratório. Execute o Lab completo no ambiente do Academy — a atividade prática no Learner Lab faz parte da avaliação do TF.
 
 ### Como Entregar via Pull Request
 
@@ -200,12 +203,13 @@ Seu README deve conter:
 
 | Critério | Peso | Descrição |
 |----------|------|-----------|
-| Infraestrutura funcional | 30% | `terraform apply` cria tudo sem erros, API acessível |
-| Arquitetura Multi-AZ | 15% | 4 subnets em 2 AZs, design correto |
+| **Execução no AWS Academy** | **20%** | Nota e percentual de execução do laboratório conferidos pelo professor no AWS Academy |
+| Infraestrutura funcional | 25% | `terraform apply` cria tudo sem erros, API acessível |
+| Arquitetura Multi-AZ | 10% | 4 subnets em 2 AZs, design correto |
 | Security Groups | 15% | Princípio do menor privilégio aplicado corretamente |
-| User Data + EC2 | 15% | API inicia automaticamente, Instance Profile funciona |
+| User Data + EC2 | 10% | API inicia automaticamente, Instance Profile funciona |
 | Tags e organização | 10% | Todos os recursos tagueados, código organizado |
-| Evidências | 10% | plan, curl e SSH documentados |
+| Evidências | 5% | plan, curl e SSH documentados |
 | README com diagrama | 5% | Documentação clara com arquitetura visual |
 
 ---
