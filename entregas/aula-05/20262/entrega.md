@@ -6,8 +6,8 @@
 
 ## Repositório
 
-- Projeto: [unifaat-devops-portfolio](https://github.com/matheus-mantovani/unifaat-devops-portfolio)
-- Código da Aula 05: [aula-05 no branch main](https://github.com/matheus-mantovani/unifaat-devops-portfolio/tree/main/aula-05)
+- Projeto: [unifaat-devops-portfolio](https://github.com/Manntto/unifaat-devops-portfolio)
+- Código da Aula 05: [aula-05 no branch main](https://github.com/Manntto/unifaat-devops-portfolio/tree/main/aula-05)
 
 ## Evidências
 
