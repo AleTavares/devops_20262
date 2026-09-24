@@ -11,30 +11,46 @@
 ## Evidências
 
 - [x] `providers.tf` com provider AWS configurado
-- [x] `main.tf` com estrutura de users, groups e memberships documentada
-- [x] `policies.tf` com 3 custom policies (menor privilegio)
-- [x] `roles.tf` com service role documentada (bloqueada pelo AWS Academy)
+- [x] `main.tf` com 2 grupos, 3 usuários e memberships no código ativo
+- [x] `policies.tf` com 3 custom policies com tags e attachments
+- [x] `roles.tf` com service role + instance profile no código ativo
 - [x] `variables.tf` e `outputs.tf` configurados
-- [x] `terraform-plan-output.txt` com evidencia do plano
-- [x] `terraform-apply-output.txt` com evidencia da aplicacao
-- [x] `README.md` com explicacao do design e reflexao sobre menor privilegio
-- [x] `.gitignore` configurado (sem .tfstate no repositorio)
+- [x] `terraform-plan-output.txt` com Plan: 13 recursos
+- [x] `terraform-apply-output.txt` com 3 policies criadas na AWS
+- [x] `README.md` com explicação do design e reflexão sobre menor privilégio
+- [x] `.gitignore` configurado (sem .tfstate no repositório)
 
-## Evidência do Terraform Apply
+## Evidência do Terraform Plan (código ativo)
 
 ```
-aws_iam_policy.deny_destructive: Creation complete [id=arn:aws:iam::626137440679:policy/6325028-technova-deny-destructive]
-aws_iam_policy.ec2_s3_full: Creation complete [id=arn:aws:iam::626137440679:policy/6325028-technova-ec2-s3-full]
-aws_iam_policy.s3_read: Creation complete [id=arn:aws:iam::626137440679:policy/6325028-technova-s3-read]
+Plan: 13 to add, 0 to change, 0 to destroy.
 
-Outputs:
-policy_deny_destructive_arn = "arn:aws:iam::626137440679:policy/6325028-technova-deny-destructive"
-policy_ec2_s3_full_arn      = "arn:aws:iam::626137440679:policy/6325028-technova-ec2-s3-full"
-policy_s3_read_arn          = "arn:aws:iam::626137440679:policy/6325028-technova-s3-read"
+Recursos declarados:
+- aws_iam_group.developers
+- aws_iam_group.platform_eng
+- aws_iam_user.juliana / rafael / lucas
+- aws_iam_group_membership.developers / platform_eng
+- aws_iam_policy.s3_read / ec2_s3_full / deny_destructive
+- aws_iam_group_policy_attachment (3x)
+- aws_iam_role.ec2_role
+- aws_iam_role_policy.ec2_s3_policy
+- aws_iam_instance_profile.ec2_profile
 ```
 
-## Observacao
+## Evidência do Terraform Apply (policies criadas na AWS)
 
-O AWS Academy Learner Lab bloqueia iam:CreateGroup, iam:CreateUser e iam:CreateRole
-pela role voclabs. As 3 custom policies foram criadas com sucesso na AWS.
-A estrutura completa de grupos, usuarios e role esta documentada no codigo.
+```
+aws_iam_policy.deny_destructive: Creation complete
+  [id=arn:aws:iam::626137440679:policy/6325028-technova-deny-destructive]
+aws_iam_policy.ec2_s3_full: Creation complete
+  [id=arn:aws:iam::626137440679:policy/6325028-technova-ec2-s3-full]
+aws_iam_policy.s3_read: Creation complete
+  [id=arn:aws:iam::626137440679:policy/6325028-technova-s3-read]
+```
+
+## Observação
+
+O AWS Academy bloqueia iam:CreateGroup, iam:CreateUser e iam:CreateRole
+via SCP da organização (role voclabs). O código está completo e funcional —
+o terraform plan mostra todos os 13 recursos. As 3 custom policies foram
+aplicadas com sucesso na AWS comprovando a sintaxe correta.
