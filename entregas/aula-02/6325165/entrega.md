@@ -24,4 +24,4 @@ WARN[0000] /home/faat/unifaat-devops-portfolio/aula-02/docker-compose.yml: the a
 NAME           IMAGE                COMMAND                  SERVICE    CREATED          STATUS                    PORTS
 app_api        aula-02-api          "docker-entrypoint.s…"   api        27 seconds ago   Up 14 seconds (healthy)   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
 app_postgres   postgres:15-alpine   "docker-entrypoint.s…"   postgres   27 seconds ago   Up 26 seconds (healthy)   5432/tcp
-app_redis      redis:7-alpine       "docker-entrypoint.s…"   redis      27 seconds ago   Up 26 seconds (healthy)   6379/tcp
+app_redis      redis:7-alpine       "docker-entrypoint.s…"   redis      27 seconds ago   Up 26 seconds (healthy)   6379/tcp 
