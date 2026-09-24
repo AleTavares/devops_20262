@@ -42,6 +42,58 @@ jobs:
             exit 1
           fi
 
+      # Regras exclusivas da PROVA: (1) apenas 1 PR por RA e (2) imutavel apos envio.
+      # A prova e identificada pelo titulo. Se um aluno abrir um 2o PR de prova, ou
+      # alterar (novos commits) um PR de prova ja aberto, o job aborta e sinaliza.
+      - name: Regras de integridade da Prova (1 PR, imutavel)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_ACTION: ${{ github.event.action }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          # Detecta se este PR e da prova (titulo com "prova ... bimestre")
+          if ! echo "$PR_TITLE" | grep -iqE 'prova.*bimestre|primeiro *bimestre|prova *primeiro *bi'; then
+            echo "PR nao e da prova — regras de integridade nao se aplicam."
+            exit 0
+          fi
+          echo "PR de PROVA detectado: #$PR_NUMBER ($PR_TITLE)"
+
+          # Extrai o RA do titulo (RA: NNNN)
+          RA=$(echo "$PR_TITLE" | grep -oiE 'RA[: ]+[0-9]{4,}' | grep -oE '[0-9]{4,}' | head -1 || true)
+          echo "RA detectado: ${RA:-'(nao encontrado)'}"
+
+          # Regra 2 — imutavel apos envio: novos commits (synchronize) sao proibidos
+          if [ "$PR_ACTION" = "synchronize" ]; then
+            gh pr comment "$PR_NUMBER" --repo "$REPO" --body \
+              "⛔ **Prova imutável após o envio.** Este PR recebeu novos commits depois de aberto. A entrega da prova **não pode ser alterada** após o envio. Serão considerados apenas os commits presentes no momento da abertura do PR. Alterações posteriores serão desconsideradas na avaliação." || true
+            echo "::error::PR de prova alterado apos o envio (synchronize). Alteracao nao permitida."
+            exit 1
+          fi
+
+          # Regra 1 — apenas 1 PR de prova por RA
+          if [ -n "${RA:-}" ]; then
+            # Lista todos os PRs (abertos e fechados) e conta os de prova com o mesmo RA
+            OUTROS=$(gh pr list --repo "$REPO" --state all --limit 500 \
+              --json number,title \
+              --jq "[.[] | select(.title | test(\"prova.*bimestre|primeiro *bimestre\"; \"i\")) | select(.title | test(\"$RA\")) | .number] | map(select(. != $PR_NUMBER)) | .[]" || true)
+            if [ -n "$OUTROS" ]; then
+              echo "PRs de prova pre-existentes para o RA $RA: $OUTROS"
+              gh pr comment "$PR_NUMBER" --repo "$REPO" --body \
+                "⛔ **Apenas um PR de prova por aluno.** Já existe um Pull Request de prova para o RA **$RA** (PR(s): $(echo $OUTROS | tr '\n' ' ')). Este PR duplicado será desconsiderado. Se precisar corrigir a entrega, fale com o professor — a prova permite **apenas uma submissão**." || true
+              echo "::error::Ja existe PR de prova para o RA $RA. Somente 1 PR e permitido."
+              exit 1
+            fi
+          else
+            echo "::warning::Nao foi possivel extrair o RA do titulo; regra de PR unico nao aplicada. Use o formato '[Prova Primeiro Bimestre] RA: NNNN - Nome'."
+          fi
+
+          echo "Regras de integridade da prova OK: PR unico e sem alteracao pos-envio."
+
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
