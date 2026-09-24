@@ -1,4 +1,3 @@
-```markdown
 # Trabalho em Aula — Aula 05: RDS e Remote State
 
 **Aluno:** Henri da Silva Despezzi
