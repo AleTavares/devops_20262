@@ -37,6 +37,23 @@ O script detecta automaticamente o tipo de entrega:
   `docker-compose.yml`, `relatorio.md`, `.tfstate` versionado) e a IA gera parecer
   com nota de 0 a 10. Critérios em `provas/prova-primeiro-bimestre.md`.
 
+### Regras de integridade da prova
+
+Um step do workflow (`Regras de integridade da Prova`) roda **antes** da avaliação e
+aplica duas regras exclusivas dos PRs de prova (detectados pelo título):
+
+1. **Apenas 1 PR por RA** — se já existir um PR de prova (aberto ou fechado) para o
+   mesmo RA, o novo PR é bloqueado e recebe um comentário explicando. Evita múltiplas
+   submissões da mesma prova.
+2. **Imutável após o envio** — se um PR de prova receber novos commits depois de aberto
+   (evento `synchronize`), o job aborta e comenta que a prova não pode ser alterada; só
+   valem os commits presentes na abertura do PR.
+
+> Limitação: o GitHub não permite *impedir fisicamente* o push do aluno no fork dele.
+> A garantia é por **detecção + bloqueio da avaliação + registro** (comentário e falha
+> do check). Combine com o branch protection para que o PR só seja mergeado com sua
+> aprovação.
+
 ## Segurança
 
 Usamos `pull_request_target` porque PRs vindos de fork não recebem secrets com o

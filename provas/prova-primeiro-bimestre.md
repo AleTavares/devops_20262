@@ -251,6 +251,8 @@ Que checklist você aplicou antes de rodar `terraform apply` em código gerado p
 5. **AWS Academy Learner Lab:** use `LabRole`/`LabInstanceProfile`, região `us-east-1`, credenciais temporárias; **NÃO** crie IAM users/groups/roles
 6. **Execute `terraform destroy`** após capturar evidências — recursos ativos consomem créditos do Lab
 7. **`.gitignore` obrigatório** — nada de `.tfstate`, `.terraform/`, `.env` com senhas, `*.pem` no repositório
+8. **Apenas UM Pull Request por aluno** — a prova permite **uma única submissão**. Um segundo PR de prova do mesmo RA será desconsiderado automaticamente.
+9. **Entrega imutável após o envio** — depois de abrir o PR, **não faça novos commits nele**. Alterações posteriores (novos commits no PR) são bloqueadas e desconsideradas — valem apenas os commits presentes no momento da abertura. Revise tudo antes de abrir o PR.
 
 ---
 
