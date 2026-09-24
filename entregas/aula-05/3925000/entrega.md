@@ -102,3 +102,13 @@ Comando executado:
 
 aws s3 ls s3://technova-terraform-state-3925000/aula-05/
 
+## Evidências em imagens
+
+### Estado remoto no S3
+
+![Evidência do estado remoto no S3](evidencias/Captura%20de%20Tela%20%2840%29.png)
+
+### Terraform Plan
+
+![Evidência do Terraform Plan](evidencias/Captura%20de%20Tela%20%2841%29.png)
+
