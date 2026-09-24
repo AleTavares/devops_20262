@@ -19,6 +19,24 @@ abertos e comenta o parecer no próprio PR.
 > O componente **AWS Academy** não é verificável pelo PR. O bot sempre o marca
 > como pendente de conferência do professor e não o inclui na nota automática.
 
+### Dois modos de avaliação
+
+O script detecta automaticamente o tipo de entrega:
+
+- **Modo portfólio** (aulas 02–06): o código fica no repositório
+  `unifaat-devops-portfolio` do aluno; o PR traz apenas o `entrega.md` com o link.
+  O bot lê o portfólio e valida os arquivos `.tf`/Docker.
+- **Modo código-no-PR** (aula 07 e afins, listadas em `AULAS_CODIGO_NO_PR`): o
+  código (Node.js) e o `processo-spec.md` vêm **na própria pasta do PR**
+  (`entregas/aula-XX/RA/`). O bot valida `processo-spec.md`, `package.json` e o
+  arquivo `.js`, e a IA avalia a decomposição, as rotas e a reflexão. Não usa AWS.
+- **Modo prova** (Prova do 1º Bimestre): título `[Prova Primeiro Bimestre] RA: ...`.
+  O aluno entrega só o `entrega.md` (na pasta `entregas/provaPrimeiroBi/RA/`) com o
+  link do repositório próprio `prova-primeiro-bimestre-devops`. O bot valida a
+  estrutura desse repo (raiz, `app/`, `infra/modules/vpc|security-group|ec2|rds`,
+  `docker-compose.yml`, `relatorio.md`, `.tfstate` versionado) e a IA gera parecer
+  com nota de 0 a 10. Critérios em `provas/prova-primeiro-bimestre.md`.
+
 ## Segurança
 
 Usamos `pull_request_target` porque PRs vindos de fork não recebem secrets com o
@@ -126,9 +144,13 @@ sem custo de API. Útil para validar o fluxo antes de ligar o Bedrock.
 
 ## Ajustar critérios por aula
 
-Os arquivos obrigatórios por aula ficam em `REQUIRED_BY_AULA`, dentro de
-`avaliar_pr.py`. Os critérios de nota vêm de `aula-XX/TF.md`, então basta manter
-esses arquivos atualizados no repositório.
+- **Aulas com portfólio (Terraform/Docker):** os arquivos obrigatórios ficam em
+  `REQUIRED_BY_AULA`, dentro de `avaliar_pr.py`.
+- **Aulas com código no PR (Node.js, ex.: aula 07):** configure em
+  `AULAS_CODIGO_NO_PR` (arquivos obrigatórios, se exige `.js`, rotas esperadas).
+
+Os critérios de nota vêm sempre de `aula-XX/TF.md` — basta manter esses arquivos
+atualizados no repositório.
 ```
 
 Teste rápido: abra um PR de teste (ou reabra um existente) e confira o comentário do bot.
