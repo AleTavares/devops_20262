@@ -1,0 +1,25 @@
+============================================
+ Evidência: psql — versão e tabela orders
+ Host: technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com | Banco: technova_db
+ Data: 12/09/2026 15:27:33
+============================================
+
+STATUS: validacao final aprovada.
+O teste foi executado na EC2 contra o RDS e comprova a conexao,
+a versao do PostgreSQL e a existencia dos dados persistentes em orders.
+
+																							version
+---------------------------------------------------------------------------------------------------
+ PostgreSQL 15.17 on x86_64-pc-linux-gnu, compiled by x86_64-pc-linux-gnu-gcc (GCC 12.4.0), 64-bit
+(1 row)
+
+ id |        product        | quantity | unit_price |         created_at
+----+-----------------------+----------+------------+----------------------------
+	1 | Notebook TechNova Pro |        2 |    3499.90 | 2026-09-12 18:20:29.613054
+	2 | Mouse Ergonômico      |       10 |      89.90 | 2026-09-12 18:20:29.613054
+	3 | Teclado Mecânico      |        5 |     299.90 | 2026-09-12 18:20:29.613054
+	4 | Monitor 24" Full HD   |        3 |     899.90 | 2026-09-12 18:20:29.613054
+	5 | Headset USB           |        8 |      149.90 | 2026-09-12 18:20:29.613054
+(5 rows)
+
+technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com:5432 - accepting connections
