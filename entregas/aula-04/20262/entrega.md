@@ -6,8 +6,8 @@
 
 ## Repositório
 
-- Projeto: [unifaat-devops-portfolio](https://github.com/matheus-mantovani/unifaat-devops-portfolio)
-- Código da Aula 04: [aula-04 no branch main](https://github.com/matheus-mantovani/unifaat-devops-portfolio/tree/main/aula-04)
+- Projeto: [unifaat-devops-portfolio](https://github.com/Manntto/unifaat-devops-portfolio)
+- Código da Aula 04: [aula-04 no branch main](https://github.com/Manntto/unifaat-devops-portfolio/tree/main/aula-04)
 
 ## Evidências
 
@@ -17,8 +17,8 @@
 - [x] EC2 t2.micro com User Data e API Node.js 18 na porta 3000 (via systemd)
 - [x] Instance Profile: `LabInstanceProfile` do AWS Academy, sem credenciais no código
 - [x] Tags em todos os recursos que suportam tags (Name, Project, Environment, ManagedBy, Owner)
-- [x] [Plano Terraform](https://github.com/matheus-mantovani/unifaat-devops-portfolio/blob/main/aula-04/terraform-plan-output.txt)
-- [x] [README com diagrama da arquitetura](https://github.com/matheus-mantovani/unifaat-devops-portfolio/blob/main/aula-04/README.md)
+- [x] [Plano Terraform](https://github.com/Manntto/unifaat-devops-portfolio/blob/main/aula-04/terraform-plan-output.txt)
+- [x] [README com diagrama da arquitetura](https://github.com/Manntto/unifaat-devops-portfolio/blob/main/aula-04/README.md)
 - [x] `terraform destroy` executado após as evidências
 
 ## Evidência da API Rodando
