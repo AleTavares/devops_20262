@@ -12,6 +12,15 @@ let proximoIdSala = 1;
 const reservas = [];
 let proximoIdReserva = 1;
 
+// Dois intervalos colidem quando um começa antes de o outro terminar e
+// termina depois de o outro começar. Horários que apenas se encostam
+// (fim de um == início do outro) NÃO colidem.
+function temConflito(salaId, inicio, fim) {
+  return reservas.find(
+    (r) => r.salaId === salaId && inicio < new Date(r.fim) && fim > new Date(r.inicio)
+  );
+}
+
 app.get('/saude', (req, res) => {
   res.json({ status: 'ok' });
 });
@@ -51,6 +60,13 @@ app.post('/reservas', (req, res) => {
   const sala = salas.find((s) => s.id === Number(salaId));
   if (!sala) {
     return res.status(404).json({ erro: `Sala ${salaId} não encontrada.` });
+  }
+
+  const conflito = temConflito(sala.id, dataInicio, dataFim);
+  if (conflito) {
+    return res.status(409).json({
+      erro: `Conflito de horário: a sala "${sala.nome}" já está reservada por ${conflito.funcionario} de ${conflito.inicio} até ${conflito.fim} (reserva ${conflito.id}).`,
+    });
   }
 
   const reserva = {
