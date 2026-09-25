@@ -30,6 +30,29 @@ O script detecta automaticamente o tipo de entrega:
   código (Node.js) e o `processo-spec.md` vêm **na própria pasta do PR**
   (`entregas/aula-XX/RA/`). O bot valida `processo-spec.md`, `package.json` e o
   arquivo `.js`, e a IA avalia a decomposição, as rotas e a reflexão. Não usa AWS.
+- **Modo prova** (Prova do 1º Bimestre): título `[Prova Primeiro Bimestre] RA: ...`.
+  O aluno entrega só o `entrega.md` (na pasta `entregas/provaPrimeiroBi/RA/`) com o
+  link do repositório próprio `prova-primeiro-bimestre-devops`. O bot valida a
+  estrutura desse repo (raiz, `app/`, `infra/modules/vpc|security-group|ec2|rds`,
+  `docker-compose.yml`, `relatorio.md`, `.tfstate` versionado) e a IA gera parecer
+  com nota de 0 a 10. Critérios em `provas/prova-primeiro-bimestre.md`.
+
+### Regras de integridade da prova
+
+Um step do workflow (`Regras de integridade da Prova`) roda **antes** da avaliação e
+aplica duas regras exclusivas dos PRs de prova (detectados pelo título):
+
+1. **Apenas 1 PR por RA** — se já existir um PR de prova (aberto ou fechado) para o
+   mesmo RA, o novo PR é bloqueado e recebe um comentário explicando. Evita múltiplas
+   submissões da mesma prova.
+2. **Imutável após o envio** — se um PR de prova receber novos commits depois de aberto
+   (evento `synchronize`), o job aborta e comenta que a prova não pode ser alterada; só
+   valem os commits presentes na abertura do PR.
+
+> Limitação: o GitHub não permite *impedir fisicamente* o push do aluno no fork dele.
+> A garantia é por **detecção + bloqueio da avaliação + registro** (comentário e falha
+> do check). Combine com o branch protection para que o PR só seja mergeado com sua
+> aprovação.
 
 ## Segurança
 
