@@ -1,0 +1,12 @@
+{
+  "name": "reserva-salas-aula07",
+  "version": "1.0.0",
+  "description": "TF Aula 07 - API de Reserva de Salas de Reunião (Spec-Driven)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.18.2"
+  }
+}
