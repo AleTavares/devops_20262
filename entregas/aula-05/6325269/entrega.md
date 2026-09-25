@@ -104,6 +104,7 @@ projeto.
 
 O arquivo completo do projeto (`backend/` com o remote state, e a raiz de `aula-05/` com
 `main.tf`, `providers.tf`, `variables.tf`, `vpc.tf`, `rds.tf`, `ec2.tf`, `outputs.tf`, `user_data.sh`,
+`terraform.tfvars.example`,
 `terraform-plan-output.txt`, `evidencia-s3-state.txt`, `evidencia-psql.txt`, `README.md`) está
 versionado em
 [`aula-05/`](https://github.com/Sir-Jr/unifaat-devops-portfolio/tree/main/aula-05).
