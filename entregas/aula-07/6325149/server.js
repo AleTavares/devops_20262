@@ -13,6 +13,10 @@ app.get('/saude', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/salas', (req, res) => {
+  res.json(salas);
+});
+
 app.post('/salas', (req, res) => {
   const { nome } = req.body || {};
 
