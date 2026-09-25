@@ -24,6 +24,9 @@
 ```
 $ aws s3 ls s3://technova-terraform-state-54600b3e83155696/aula-05/ --recursive
 2026-09-10 22:26:35      34843 aula-05/terraform.tfstate
+
+$ terraform plan
+No changes. Your infrastructure matches the configuration.
 ```
 
 ## Evidência da Conexão EC2 → RDS
