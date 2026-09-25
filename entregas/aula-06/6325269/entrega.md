@@ -58,12 +58,37 @@ A saída completa dos dois ambientes está versionada em
 e
 [`terraform-plan-staging.txt`](https://github.com/Sir-Jr/unifaat-devops-portfolio/blob/main/aula-06/terraform-plan-staging.txt).
 
+## Evidência do terraform apply (dev)
+
+O ambiente **dev** foi aplicado no Learner Lab, conferido na AWS (EC2 `running`, RDS
+`available`) e destruído em seguida:
+
+```
+$ terraform apply
+Apply complete! Resources: 19 added, 0 changed, 0 destroyed.
+
+Outputs:
+api_instance_id = "i-006e16bd7652623e8"
+api_public_ip   = "52.207.159.125"
+db_endpoint     = "technova-dev-db.cznvwwmjmtsr.us-east-1.rds.amazonaws.com:5432"
+db_name         = "technova_dev"
+vpc_id          = "vpc-0eb0fa408363d87b3"
+
+$ terraform destroy
+Destroy complete! Resources: 19 destroyed.
+```
+
+Saídas completas em
+[`terraform-apply-dev.txt`](https://github.com/Sir-Jr/unifaat-devops-portfolio/blob/main/aula-06/terraform-apply-dev.txt)
+e
+[`terraform-destroy-dev.txt`](https://github.com/Sir-Jr/unifaat-devops-portfolio/blob/main/aula-06/terraform-destroy-dev.txt).
+
 Os arquivos do projeto (`modules/vpc`, `modules/security-group`, `modules/ec2`, `modules/rds`,
 `environments/dev`, `environments/staging` e o `README.md` com a documentação da biblioteca) estão
 em [`aula-06/`](https://github.com/Sir-Jr/unifaat-devops-portfolio/tree/main/aula-06).
 
-**Nota sobre o ambiente:** o `plan` foi executado com credenciais do AWS Academy Learner Lab. A
-key pair usada é a `vockey`, que já existe no Learner Lab, e a senha do banco é passada via
-`TF_VAR_db_password` (não fica em nenhum `.tfvars` versionado). O TF não exige `apply`, então
-nenhum recurso desta entrega foi criado na AWS. Os laboratórios Parte 1 e Parte 2 foram executados
-no Learner Lab e destruídos ao final.
+**Nota sobre o ambiente:** `plan`, `apply` e `destroy` foram executados com credenciais do AWS
+Academy Learner Lab. A key pair usada é a `vockey`, que já existe no Learner Lab, e a senha do
+banco é passada via `TF_VAR_db_password` (não fica em nenhum `.tfvars` versionado). O ambiente dev
+foi destruído logo após o `apply`, então nenhum recurso desta entrega ficou rodando na AWS. Os
+laboratórios Parte 1 e Parte 2 também foram executados no Learner Lab e destruídos ao final.
