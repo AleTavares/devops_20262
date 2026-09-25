@@ -41,6 +41,16 @@ app.post('/salas', (req, res) => {
   res.status(201).json(sala);
 });
 
+app.get('/reservas', (req, res) => {
+  const { funcionario } = req.query;
+  if (typeof funcionario !== 'string' || funcionario.trim() === '') {
+    return res.json(reservas);
+  }
+
+  const nome = funcionario.trim().toLowerCase();
+  res.json(reservas.filter((r) => r.funcionario.toLowerCase() === nome));
+});
+
 app.post('/reservas', (req, res) => {
   const { salaId, funcionario, inicio, fim } = req.body || {};
 
