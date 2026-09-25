@@ -80,6 +80,16 @@ app.post('/reservas', (req, res) => {
   res.status(201).json(reserva);
 });
 
+app.delete('/reservas/:id', (req, res) => {
+  const indice = reservas.findIndex((r) => r.id === Number(req.params.id));
+  if (indice === -1) {
+    return res.status(404).json({ erro: `Reserva ${req.params.id} não encontrada.` });
+  }
+
+  const [cancelada] = reservas.splice(indice, 1);
+  res.json({ mensagem: 'Reserva cancelada.', reserva: cancelada });
+});
+
 app.listen(PORT, () => {
   console.log(`API de Reserva de Salas rodando na porta ${PORT}`);
 });
