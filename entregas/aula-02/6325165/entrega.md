@@ -1,12 +1,12 @@
 # Entrega — Aula 02: Docker Compose + IA como Copiloto
 
-**Aluno:** Henri da Silva Despezzi  
-**RA:** 6325064 
+**Aluno:** Grazielli Monteiro de Lima  
+**RA:** 6325165
 **Data:** 20-08-2026
 
 ## Repositório
 
-- URL: https://github.com/HenriSD/unifaat-devops-portfolio
+- URL: https://github.com/grazykkj/unifaat-devops-portfolio
 
 ## Evidências
 
