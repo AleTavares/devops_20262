@@ -1,42 +1,41 @@
 # Processo Spec-Driven — Reserva de Salas | Gabriel Reis Cunha (RA 6325149)
 
-> **Ferramenta de IA:** Claude Code (modelo Sonnet 5), **não o Kiro**. O método foi o mesmo do modo Spec do Kiro (Requisitos → Design → Tarefas, com aprovação humana entre as fases), conduzido na skill `/spec` do Claude Code. Eu (Gabriel) aprovei cada fase antes de a IA seguir; a IA escreveu o código e rodou os testes.
+> **Ferramenta de IA:** Claude Code (modelo Sonnet 5), no lugar do Kiro. Usei o mesmo método do modo Spec (Requisitos → Design → Tarefas) pela skill `/spec` do Claude Code, e eu aprovava cada fase antes de ele seguir.
 
 ## 1. Como eu dividi o problema
 
-O enunciado é um problema "grande" (salas, reservas, conflito, cancelamento, consulta). Em vez de pedir tudo de uma vez, quebrei em **8 partes**, da mais simples para a mais arriscada, cada uma dependendo só das anteriores:
+Eu pedi para o Claude quebrar o problema seguindo a metodologia SDD e ele dividiu em 8 partes, que listei abaixo. Depois eu revisei se as partes faziam sentido juntas e se cobriam o que o enunciado pedia, e só então aprovei.
 
 1. Estrutura do projeto e servidor no ar
 2. Cadastrar sala (com validação)
 3. Listar salas
 4. Criar reserva (validações básicas, **sem** conflito)
-5. **Impedir conflito de horário** (isolada porque é a parte mais difícil)
+5. **Impedir conflito de horário**
 6. Cancelar reserva
 7. Listar reservas de um funcionário
 8. README e documentação
 
-O ponto principal da divisão foi **separar a criação da reserva (4) do bloqueio de conflito (5)**. Se as duas viessem juntas, um erro de teste não diria se a falha estava na validação dos dados ou na regra de sobreposição.
+O que eu mais gostei da divisão foi a criação da reserva (4) ficar separada do bloqueio de conflito (5). Assim, se algo desse errado no conflito, eu sabia que o problema não estava na validação dos dados.
 
 ## 2. Requisitos (o quê)
 
-A IA propôs a SPEC a partir do enunciado. O que ela definiu, e o que **eu decidi/aprovei**:
+O Claude propôs a SPEC a partir do enunciado. Coloquei aqui os requisitos da parte Specify:
 
 - Rotas mínimas do enunciado: `POST/GET /salas`, `POST /reservas`, `DELETE /reservas/:id`, `GET /reservas?funcionario=NOME`.
 - Códigos HTTP explícitos: 201 criado, 400 dado inválido, 404 não encontrado, **409 conflito**.
-- Fora do escopo: banco de dados, AWS, Docker, autenticação (o enunciado manda usar memória).
-- **Decisão minha (questão em aberto que a IA levantou):** o horário será um **intervalo `inicio`/`fim`**, e não um "slot" fixo. A IA recomendou por ser mais realista (conflito por sobreposição) e eu aprovei.
+- Fora do escopo: banco de dados, AWS, Docker e autenticação (o enunciado manda usar memória).
+- **Decisão minha (questão em aberto que o Claude levantou):** o horário é um **intervalo `inicio`/`fim`**, e não um horário fixo. O Claude recomendou porque é mais realista (dá para ter conflito por sobreposição) e eu aprovei.
 - **Decisão minha:** usar o Claude Code em vez do Kiro e declarar isso aqui.
 
-Na SPEC a IA também listou critérios de aceitação verificáveis (ex.: "uma segunda reserva no mesmo horário devolve 409; depois do DELETE da primeira, é aceita"). Eles viraram os testes da seção 5.
+Na SPEC o Claude também escreveu os critérios de aceitação (por exemplo: "uma segunda reserva no mesmo horário dá 409, e depois de cancelar a primeira ela é aceita"). Eles viraram os testes da seção 5.
 
 ## 3. Design (como)
 
-- **Um único `server.js`** com Express e dois arrays em memória (`salas`, `reservas`). Simplifiquei de propósito: separar em rotas/serviços/repositórios seria over-engineering para 5 rotas em memória.
+- **Um único `server.js`** com Express e dois arrays em memória (`salas`, `reservas`). Deixei simples de propósito para diminuir a chance de erro do agente, mas atendendo tudo o que foi pedido.
 - **Modelo:** sala `{id, nome}`; reserva `{id, salaId, funcionario, inicio, fim}` (datas em ISO 8601).
-- **Regra de conflito isolada** na função `temConflito(salaId, inicio, fim)`:
-  colide quando `novo.inicio < existente.fim && novo.fim > existente.inicio` na mesma sala. Horários que só **se encostam** (14–16 e 16–17) **não** colidem.
-- **Ordem das validações no `POST /reservas`:** dados (400) → sala existe (404) → conflito (409).
-- **Testes:** `curl` real contra a API rodando (sem framework de teste), como pede o TF.
+- **Regra de conflito isolada** na função `temConflito(salaId, inicio, fim)`: colide quando `novo.inicio < existente.fim && novo.fim > existente.inicio` na mesma sala. Horários que só se encostam (14–16 e 16–17) **não** colidem.
+- **Ordem das validações no `POST /reservas`:** dados (400), depois se a sala existe (404), depois conflito (409).
+- **Testes:** `curl` de verdade contra a API rodando, sem framework de teste, como pede o TF.
 
 ## 4. Tarefas (os passos pequenos)
 
@@ -51,13 +50,13 @@ Na SPEC a IA também listou critérios de aceitação verificáveis (ex.: "uma s
 | T6 | `DELETE /reservas/:id` | `feat(aula-07): cancelamento de reservas` |
 | T7 | `GET /reservas?funcionario=NOME` | `feat(aula-07): listagem de reservas por funcionário` |
 | T8 | `README.md` (como rodar, rotas, exemplos) | `docs(aula-07): README...` |
-| T9 | Este `processo-spec.md` | `docs(aula-07): processo-spec` |
+| T9 | Este `processo-spec.md` | `docs(aula-07): processo-spec...` |
 
-Um commit por tarefa, cada um só **depois** da validação por `curl` daquela tarefa.
+Fiz um commit por tarefa, sempre **depois** de testar aquela tarefa com `curl`.
 
 ## 5. Implementação e validação
 
-As saídas abaixo são reais (servidor rodando na porta 3100).
+Colei abaixo a saída de algumas tarefas. Essas saídas foram geradas pelo Claude quando ele rodou os testes da API (servidor na porta 3100), e eu revisei o resultado no final.
 
 ### T2: `POST /salas`
 
@@ -71,7 +70,7 @@ As saídas abaixo são reais (servidor rodando na porta 3100).
 # sem body
 {"erro":"O campo \"nome\" é obrigatório."} [400]
 ```
-Confirmei os dois lados: o caso válido devolve 201 e os três inválidos (ausente, só espaços, sem corpo) devolvem 400 com mensagem clara.
+**Como confirmei:** o caso válido deu 201 e os três inválidos deram 400 com mensagem clara.
 
 ### T4: `POST /reservas` (antes do conflito)
 
@@ -87,14 +86,14 @@ Confirmei os dois lados: o caso válido devolve 201 e os três inválidos (ausen
 # fim antes do início
 {"erro":"O \"fim\" deve ser posterior ao \"inicio\"."} [400]
 ```
-Nesta tarefa apareceu um problema real (ver seção 6, item 2).
+**Como confirmei:** cada tipo de dado errado caiu no código certo (400 ou 404). Nesta tarefa apareceu um erro real com as datas, explicado na seção 6.
 
-### T5: bloqueio de conflito (tarefa isolada)
+### T5: bloqueio de conflito
 
 Base: sala Alfa reservada por Ana das 14h às 16h.
 
-| Cenário | Resultado esperado | Obtido |
-|---------|--------------------|--------|
+| Cenário | Esperado | Obtido |
+|---------|----------|--------|
 | idêntica (14–16) | 409 | **409** |
 | sobreposição no início (13–15) | 409 | **409** |
 | sobreposição no fim (15–17) | 409 | **409** |
@@ -104,48 +103,39 @@ Base: sala Alfa reservada por Ana das 14h às 16h.
 | encosta no início (12–14) | 201 | **201** |
 | **outra sala**, mesmo horário | 201 | **201** |
 
-Exemplo da mensagem de erro:
 ```
 {"erro":"Conflito de horário: a sala \"Sala Alfa\" já está reservada por Ana de 2026-10-01T14:00:00.000Z até 2026-10-01T16:00:00.000Z (reserva 1)."} [409]
 ```
+**Como confirmei:** testei os casos de borda (encostar, conter, englobar e outra sala), que são onde essa regra costuma errar.
 
-### T6: `DELETE /reservas/:id` (o horário volta a ficar livre)
+### T6: `DELETE /reservas/:id`
 
 ```
-# cria reserva 1              -> [201]
-# repetir o mesmo horário     -> [409]
-# DELETE /reservas/1          -> {"mensagem":"Reserva cancelada.",...} [200]
-# DELETE de novo              -> {"erro":"Reserva 1 não encontrada."} [404]
-# DELETE id 999               -> [404]
-# horário liberado: repetir   -> {"id":2,...} [201]
+# criar reserva 1              -> [201]
+# repetir o mesmo horário      -> [409]
+# DELETE /reservas/1           -> {"mensagem":"Reserva cancelada.",...} [200]
+# DELETE de novo               -> {"erro":"Reserva 1 não encontrada."} [404]
+# repetir o horário de novo    -> {"id":2,...} [201]
 ```
-O último passo prova o requisito principal: depois de cancelar, o mesmo horário que dava 409 volta a ser aceito.
+**Como confirmei:** depois de cancelar, o mesmo horário que dava 409 voltou a ser aceito. Esse era o requisito principal do cancelamento.
 
-### T7: `GET /reservas?funcionario=NOME`
+## 6. O Claude errou em algum momento?
 
-Com reservas de Ana (2) e Bia (1): `?funcionario=Ana` devolve as 2 de Ana; `?funcionario=bia` (minúsculo) devolve a de Bia; `?funcionario=Carlos` devolve `[]`; sem parâmetro lista as 3. Depois de cancelar uma reserva de Ana, o filtro passa a mostrar só a restante.
+Errou em coisas pequenas, principalmente de interpretação, nada grave no código final. Os casos que aconteceram:
 
-### T8: o README funciona do zero
+1. **T1: teste que não mostrou nada.** O primeiro `curl` voltou vazio. Não era erro do código: o `express` demorou uns 8 segundos para carregar na primeira vez (a pasta está no `/mnt/c` do WSL) e o script de teste só esperava 1 segundo. O `curl -s` escondeu o erro de conexão. Ajustei o script para esperar a porta abrir.
+2. **T4: as datas.** O Claude supôs que a resposta devolveria o horário igual ao enviado. Mandei `14:00:00` sem fuso horário e voltou `17:00:00.000Z`, porque o JavaScript usa o fuso do servidor (UTC−3) quando não tem fuso na data. A regra de conflito continua certa, mas o resultado mudaria de máquina para máquina. Deixei simples: a mensagem de erro e o README pedem para enviar o fuso (`...Z`).
+3. **T5: erro no meu teste, não no código.** Testei o caso "contida" com `fim` igual a `inicio` (15–15), e a API respondeu 400 em vez de 409. Se eu só olhasse "deu erro, então ok", teria dado o caso por testado sem ter testado a regra. Refiz com 14:30–15:30 e deu 409.
+4. **T8: porta ocupada.** Ao testar o README, a porta 3000 já estava ocupada por outro programa (um `kubectl port-forward` do minikube) e as respostas eram 404 de outro servidor. Percebi porque o `/saude` retornou "Cannot GET". Rodei com `PORT=3100`, que o README já documenta.
 
-Copiei o projeto (sem `node_modules`) para uma pasta limpa, rodei `npm install` e executei os 6 exemplos `curl` do README exatamente como escritos. Todos responderam como documentado (201, 200, 201, 409, 200, 200).
-
-## 6. A IA errou em algum momento?
-
-Sim, em pequenos pontos. Nenhum foi uma "alucinação" grande, e acho que foi por causa da divisão em tarefas pequenas, mas os deslizes aconteceram:
-
-1. **T1: validação vazia enganosa.** O primeiro `curl` não mostrou nada. Não era bug do código: o `require('express')` levou cerca de 8 s na primeira execução (pasta em `/mnt/c` no WSL) e o script de teste só esperava 1 s. O `curl -s` escondeu o erro de conexão. Corrigi o script para esperar a porta abrir. **Lição: teste que não mostra nada não prova nada.**
-2. **T4: suposição errada sobre datas.** A IA assumiu que a resposta devolveria o horário igual ao enviado. Enviei `14:00:00` (sem fuso) e voltou `17:00:00.000Z`, porque o JavaScript interpreta data sem fuso no fuso do servidor (UTC−3). A regra de conflito continua consistente, mas o resultado dependeria da máquina. Decisão simples (KISS): sem parser próprio; a mensagem de erro e o README orientam a enviar o fuso explícito (`...Z`).
-3. **T5: erro no teste, não no código.** O caso "contida" foi escrito com `fim` igual a `inicio` (15–15), e a API respondeu 400 em vez de 409. Se eu só olhasse "deu erro, ok" teria dado o caso por validado sem testar a regra. Refiz com 14:30–15:30 e deu 409. **Lição: conferir se o erro é o erro esperado, não qualquer erro.**
-4. **T8: porta ocupada.** Ao validar o README, a porta 3000 já estava ocupada por um `kubectl port-forward` de outra atividade e as respostas eram 404 de outro servidor. Percebi porque `/saude` retornou "Cannot GET". Rodei com `PORT=3100`, que o README já documentava.
-
-Em nenhum caso o erro chegou ao código final: cada um foi pego porque a tarefa era pequena e a validação foi feita antes do commit.
+Nenhum desses erros chegou no código final, porque cada tarefa era pequena e foi testada antes do commit. A metodologia SDD ajudou bastante. Mesmo sem passar muitos detalhes, quando ela entra no harness o agente já trabalha nesse formato (spec, plano, tarefas). Uma ideia que eu tiro daqui, mas que **não testei neste TF**, é pedir para um subagente revisar só com o contexto do que deve ser entregue. Como ele não fica com as suposições do agente que implementou, tende a achar coisas que o outro deixou passar.
 
 ## 7. Reflexão
 
-**O "jeito errado" (pedir tudo de uma vez):** não cheguei a testar, então o que segue é uma expectativa, não um experimento. Acredito que o pedido "faça a API de reservas completa" traria as cinco rotas de uma vez, e um defeito na regra de sobreposição ficaria misturado com validação, ids e filtro. Com tudo pronto, um `409` errado ou ausente seria difícil de isolar. Nas tarefas pequenas, os quatro tropeços acima ficaram cada um no seu lugar.
+Não testei o "jeito errado" de verdade, então isto é o que eu espero que aconteceria. Se eu pedisse tudo de uma vez, sem o passo a passo e sem revisão, o Claude poderia assumir o que não sabe (como o modelo de horário e o comportamento das datas) e implementar o que ele acha certo. No final eu teria um código que ninguém revisou, com comportamento difícil de prever, e erros que só apareceriam depois.
 
-**O que aprendi:**
-- Isolar a parte difícil (conflito de horário) em uma tarefa própria, com casos de borda (encostar, conter, englobar, outra sala), deu confiança real na regra.
-- A validação por tarefa só vale se eu conferir **qual** resposta veio, não apenas se "funcionou".
-- A SPEC aprovada antes do código deixou as decisões (intervalo início/fim, códigos HTTP) explícitas e curtas de revisar.
-- Usar a IA como copiloto significa que eu decido e aprovo cada fase; ela executa e testa, e eu leio a saída real antes de aceitar.
+O que eu aprendi:
+- Separar a parte difícil (conflito de horário) em uma tarefa própria e testar os casos de borda me deu confiança de verdade na regra.
+- Teste só vale se eu conferir **qual** resposta veio, e não apenas se "funcionou". Foi o que salvou o caso da T5.
+- Ter a SPEC aprovada antes do código deixou as decisões (intervalo início/fim, códigos HTTP) claras e fáceis de revisar.
+- Usar a IA como copiloto é eu decidir e aprovar cada fase, enquanto ela executa e testa, e eu leio a saída real antes de aceitar.
