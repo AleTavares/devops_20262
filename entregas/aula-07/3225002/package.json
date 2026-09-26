@@ -1,0 +1,15 @@
+{
+  "name": "api-reserva-salas",
+  "version": "1.0.0",
+  "description": "API de Reserva de Salas de Reuniao da TechNova — TF da Aula 07",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "author": "Jose Henrique Teixeira Luiz — RA 3225002",
+  "license": "MIT"
+}
