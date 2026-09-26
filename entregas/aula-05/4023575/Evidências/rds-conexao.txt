@@ -1,0 +1,81 @@
+============================================
+ Evidência: Conexão EC2 → RDS PostgreSQL
+ EC2: 54.224.24.51 → RDS: technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com:5432
+ Data: 12/09/2026 15:27:30
+============================================
+
+STATUS: validacao aprovada.
+O log abaixo comprova a conexao EC2 -> RDS, a criacao da tabela orders,
+a insercao de cinco registros e a consulta dos dados.
+
+--- Teste de Conexão ao RDS ---
+                                              version                                              
+---------------------------------------------------------------------------------------------------
+ PostgreSQL 15.17 on x86_64-pc-linux-gnu, compiled by x86_64-pc-linux-gnu-gcc (GCC) 12.4.0, 64-bit
+(1 row)
+
+--- Criando tabela orders ---
+CREATE TABLE
+INSERT 0 5
+--- SELECT * FROM orders ---
+ id |        product        | quantity | unit_price |         created_at         
+----+-----------------------+----------+------------+----------------------------
+  1 | Notebook TechNova Pro |        2 |    3499.90 | 2026-09-12 18:20:29.613054
+  2 | Mouse Ergonômico      |       10 |      89.90 | 2026-09-12 18:20:29.613054
+  3 | Teclado Mecânico      |        5 |     299.90 | 2026-09-12 18:20:29.613054
+  4 | Monitor 24" Full HD   |        3 |     899.90 | 2026-09-12 18:20:29.613054
+  5 | Headset USB           |        8 |     149.90 | 2026-09-12 18:20:29.613054
+(5 rows)
+
+
+--- user-data.log (bootstrap completo) ---
+Total download size: 1.8 M
+Installed size: 7.2 M
+Downloading Packages:
+(1/2): postgresql15-private-libs-15.19-1.amzn20 3.6 MB/s | 147 kB     00:00    
+(2/2): postgresql15-15.19-1.amzn2023.0.1.x86_64  28 MB/s | 1.7 MB     00:00    
+--------------------------------------------------------------------------------
+Total                                            18 MB/s | 1.8 MB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : postgresql15-private-libs-15.19-1.amzn2023.0.1.x86_6   1/2 
+  Installing       : postgresql15-15.19-1.amzn2023.0.1.x86_64               2/2 
+  Running scriptlet: postgresql15-15.19-1.amzn2023.0.1.x86_64               2/2 
+  Verifying        : postgresql15-15.19-1.amzn2023.0.1.x86_64               1/2 
+  Verifying        : postgresql15-private-libs-15.19-1.amzn2023.0.1.x86_6   2/2 
+
+Installed:
+  postgresql15-15.19-1.amzn2023.0.1.x86_64                                      
+  postgresql15-private-libs-15.19-1.amzn2023.0.1.x86_64                         
+
+Complete!
+psql instalado: psql (PostgreSQL) 15.19
+Aguardando RDS ficar disponível...
+technova-postgres.cliz20r6oiwx.us-east-1.rds.amazonaws.com:5432 - accepting connections
+RDS disponível após 1 tentativa(s).
+--- Teste de Conexão ao RDS ---
+                                              version                                              
+---------------------------------------------------------------------------------------------------
+ PostgreSQL 15.17 on x86_64-pc-linux-gnu, compiled by x86_64-pc-linux-gnu-gcc (GCC) 12.4.0, 64-bit
+(1 row)
+
+--- Criando tabela orders ---
+CREATE TABLE
+INSERT 0 5
+--- SELECT * FROM orders ---
+ id |        product        | quantity | unit_price |         created_at         
+----+-----------------------+----------+------------+----------------------------
+  1 | Notebook TechNova Pro |        2 |    3499.90 | 2026-09-12 18:20:29.613054
+  2 | Mouse Ergonômico      |       10 |      89.90 | 2026-09-12 18:20:29.613054
+  3 | Teclado Mecânico      |        5 |     299.90 | 2026-09-12 18:20:29.613054
+  4 | Monitor 24" Full HD   |        3 |     899.90 | 2026-09-12 18:20:29.613054
+  5 | Headset USB           |        8 |     149.90 | 2026-09-12 18:20:29.613054
+(5 rows)
+
+========================================
+Bootstrap concluído! Log em /var/log/rds-test.log
+========================================

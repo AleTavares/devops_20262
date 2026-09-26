@@ -19,6 +19,41 @@ abertos e comenta o parecer no próprio PR.
 > O componente **AWS Academy** não é verificável pelo PR. O bot sempre o marca
 > como pendente de conferência do professor e não o inclui na nota automática.
 
+### Dois modos de avaliação
+
+O script detecta automaticamente o tipo de entrega:
+
+- **Modo portfólio** (aulas 02–06): o código fica no repositório
+  `unifaat-devops-portfolio` do aluno; o PR traz apenas o `entrega.md` com o link.
+  O bot lê o portfólio e valida os arquivos `.tf`/Docker.
+- **Modo código-no-PR** (aula 07 e afins, listadas em `AULAS_CODIGO_NO_PR`): o
+  código (Node.js) e o `processo-spec.md` vêm **na própria pasta do PR**
+  (`entregas/aula-XX/RA/`). O bot valida `processo-spec.md`, `package.json` e o
+  arquivo `.js`, e a IA avalia a decomposição, as rotas e a reflexão. Não usa AWS.
+- **Modo prova** (Prova do 1º Bimestre): título `[Prova Primeiro Bimestre] RA: ...`.
+  O aluno entrega só o `entrega.md` (na pasta `entregas/provaPrimeiroBi/RA/`) com o
+  link do repositório próprio `prova-primeiro-bimestre-devops`. O bot valida a
+  estrutura desse repo (raiz, `app/`, `infra/modules/vpc|security-group|ec2|rds`,
+  `docker-compose.yml`, `relatorio.md`, `.tfstate` versionado) e a IA gera parecer
+  com nota de 0 a 10. Critérios em `provas/prova-primeiro-bimestre.md`.
+
+### Regras de integridade da prova
+
+Um step do workflow (`Regras de integridade da Prova`) roda **antes** da avaliação e
+aplica duas regras exclusivas dos PRs de prova (detectados pelo título):
+
+1. **Apenas 1 PR por RA** — se já existir um PR de prova (aberto ou fechado) para o
+   mesmo RA, o novo PR é bloqueado e recebe um comentário explicando. Evita múltiplas
+   submissões da mesma prova.
+2. **Imutável após o envio** — se um PR de prova receber novos commits depois de aberto
+   (evento `synchronize`), o job aborta e comenta que a prova não pode ser alterada; só
+   valem os commits presentes na abertura do PR.
+
+> Limitação: o GitHub não permite *impedir fisicamente* o push do aluno no fork dele.
+> A garantia é por **detecção + bloqueio da avaliação + registro** (comentário e falha
+> do check). Combine com o branch protection para que o PR só seja mergeado com sua
+> aprovação.
+
 ## Segurança
 
 Usamos `pull_request_target` porque PRs vindos de fork não recebem secrets com o
@@ -126,9 +161,13 @@ sem custo de API. Útil para validar o fluxo antes de ligar o Bedrock.
 
 ## Ajustar critérios por aula
 
-Os arquivos obrigatórios por aula ficam em `REQUIRED_BY_AULA`, dentro de
-`avaliar_pr.py`. Os critérios de nota vêm de `aula-XX/TF.md`, então basta manter
-esses arquivos atualizados no repositório.
+- **Aulas com portfólio (Terraform/Docker):** os arquivos obrigatórios ficam em
+  `REQUIRED_BY_AULA`, dentro de `avaliar_pr.py`.
+- **Aulas com código no PR (Node.js, ex.: aula 07):** configure em
+  `AULAS_CODIGO_NO_PR` (arquivos obrigatórios, se exige `.js`, rotas esperadas).
+
+Os critérios de nota vêm sempre de `aula-XX/TF.md` — basta manter esses arquivos
+atualizados no repositório.
 ```
 
 Teste rápido: abra um PR de teste (ou reabra um existente) e confira o comentário do bot.

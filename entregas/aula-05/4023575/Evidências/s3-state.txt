@@ -1,0 +1,21 @@
+=== S3 STATE ===
+Bucket: technova-tfstate-4023575-05ebccce
+
+STATUS: validacao aprovada.
+O state foi localizado no prefixo aula-05/ e possui cinco versoes registradas.
+
+--- aws s3 ls s3://technova-tfstate-4023575-05ebccce/aula-05/ ---
+2026-09-12 15:20:02   56.2 KiB terraform.tfstate
+
+--- Versoes do state ---
+------------------------------------------------------------------------------
+|                             ListObjectVersions                             |
++----------------------------+----------+------------------------------------+
+|         Modificado         | Tamanho  |              Versao                |
++----------------------------+----------+------------------------------------+
+|  2026-09-12T18:20:02+00:00 |  57551   |  RtnKTO4tSuVW0lTvuo3GWTBuPPHfee0W  |
+|  2026-09-12T18:08:09+00:00 |  52067   |  eJAtPEKgnBV31m8EA6UXOkx27NVVoKjh  |
+|  2026-09-12T18:08:08+00:00 |  50644   |  b6WQNSG2n9H5KCgDZIzI3k108i.kYgVC  |
+|  2026-09-12T18:02:20+00:00 |  39047   |  hHn1UjCjLj1PjTpeDhPTs8mFp2kAP5IF  |
+|  2026-09-12T18:02:19+00:00 |  37349   |  _BWz8O4.o5JkCrNp0ZS.sompBedSlz44  |
++----------------------------+----------+------------------------------------+
