@@ -1,0 +1,10 @@
+# terraform.tfvars.example
+#
+# Copie para terraform.tfvars e ajuste os valores.
+# terraform.tfvars NUNCA deve ser commitado (contém a senha do banco) — ver .gitignore.
+
+aws_region  = "us-east-1"
+db_password = "TechNova2025Segura!"
+
+# Se já existir uma chave (ex: ~/.ssh/technova-key.pub), aponte aqui:
+# ssh_public_key_path = "~/.ssh/technova-key.pub"
