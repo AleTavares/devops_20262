@@ -133,5 +133,7 @@ Nenhum desses erros chegou no código final, porque cada tarefa era pequena e fo
 Não testei o "jeito errado" de verdade, então isto é o que eu espero que aconteceria. Se eu pedisse tudo de uma vez, sem o passo a passo e sem revisão, o Claude poderia assumir o que não sabe e implementar o que ele acha certo. No final eu teria um código que ninguém revisou, com comportamento difícil de prever, e erros que só apareceriam depois.
 
 O que eu aprendi:
-Dividir uma tarefa ggande em partes gerenciaveis ajuda muito o claude a programar.
-E que se você não souber o que está fazendo não adianta esperar que ele saiba
+
+- Dividir uma tarefa grande em partes gerenciáveis ajuda muito o Claude a programar.
+- Se você não souber o que está fazendo, não adianta esperar que ele saiba.
+
