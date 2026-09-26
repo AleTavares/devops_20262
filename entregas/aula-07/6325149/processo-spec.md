@@ -15,8 +15,6 @@ Eu pedi para o Claude quebrar o problema seguindo a metodologia SDD e ele dividi
 7. Listar reservas de um funcionário
 8. README e documentação
 
-O que eu mais gostei da divisão foi a criação da reserva (4) ficar separada do bloqueio de conflito (5). Assim, se algo desse errado no conflito, eu sabia que o problema não estava na validação dos dados.
-
 ## 2. Requisitos (o quê)
 
 O Claude propôs a SPEC a partir do enunciado. Coloquei aqui os requisitos da parte Specify:
@@ -123,19 +121,17 @@ Base: sala Alfa reservada por Ana das 14h às 16h.
 
 Errou em coisas pequenas, principalmente de interpretação, nada grave no código final. Os casos que aconteceram:
 
-1. **T1: teste que não mostrou nada.** O primeiro `curl` voltou vazio. Não era erro do código: o `express` demorou uns 8 segundos para carregar na primeira vez (a pasta está no `/mnt/c` do WSL) e o script de teste só esperava 1 segundo. O `curl -s` escondeu o erro de conexão. Ajustei o script para esperar a porta abrir.
+1. **T1: teste que não mostrou nada.** O primeiro `curl` voltou vazio. Não era erro do código: o `express` demorou para carregar na primeira vez e o `curl -s` escondeu o erro de conexão. Ajustei o script para esperar a porta abrir.
 2. **T4: as datas.** O Claude supôs que a resposta devolveria o horário igual ao enviado. Mandei `14:00:00` sem fuso horário e voltou `17:00:00.000Z`, porque o JavaScript usa o fuso do servidor (UTC−3) quando não tem fuso na data. A regra de conflito continua certa, mas o resultado mudaria de máquina para máquina. Deixei simples: a mensagem de erro e o README pedem para enviar o fuso (`...Z`).
 3. **T5: erro no meu teste, não no código.** Testei o caso "contida" com `fim` igual a `inicio` (15–15), e a API respondeu 400 em vez de 409. Se eu só olhasse "deu erro, então ok", teria dado o caso por testado sem ter testado a regra. Refiz com 14:30–15:30 e deu 409.
 4. **T8: porta ocupada.** Ao testar o README, a porta 3000 já estava ocupada por outro programa (um `kubectl port-forward` do minikube) e as respostas eram 404 de outro servidor. Percebi porque o `/saude` retornou "Cannot GET". Rodei com `PORT=3100`, que o README já documenta.
 
-Nenhum desses erros chegou no código final, porque cada tarefa era pequena e foi testada antes do commit. A metodologia SDD ajudou bastante. Mesmo sem passar muitos detalhes, quando ela entra no harness o agente já trabalha nesse formato (spec, plano, tarefas). Uma ideia que eu tiro daqui, mas que **não testei neste TF**, é pedir para um subagente revisar só com o contexto do que deve ser entregue. Como ele não fica com as suposições do agente que implementou, tende a achar coisas que o outro deixou passar.
+Nenhum desses erros chegou no código final, porque cada tarefa era pequena e foi testada antes do commit. A metodologia SDD ajudou bastante. Mesmo sem passar muitos detalhes, quando ela entra no harness o agente já trabalha nesse formato (spec, plano, tarefas).
 
 ## 7. Reflexão
 
-Não testei o "jeito errado" de verdade, então isto é o que eu espero que aconteceria. Se eu pedisse tudo de uma vez, sem o passo a passo e sem revisão, o Claude poderia assumir o que não sabe (como o modelo de horário e o comportamento das datas) e implementar o que ele acha certo. No final eu teria um código que ninguém revisou, com comportamento difícil de prever, e erros que só apareceriam depois.
+Não testei o "jeito errado" de verdade, então isto é o que eu espero que aconteceria. Se eu pedisse tudo de uma vez, sem o passo a passo e sem revisão, o Claude poderia assumir o que não sabe e implementar o que ele acha certo. No final eu teria um código que ninguém revisou, com comportamento difícil de prever, e erros que só apareceriam depois.
 
 O que eu aprendi:
-- Separar a parte difícil (conflito de horário) em uma tarefa própria e testar os casos de borda me deu confiança de verdade na regra.
-- Teste só vale se eu conferir **qual** resposta veio, e não apenas se "funcionou". Foi o que salvou o caso da T5.
-- Ter a SPEC aprovada antes do código deixou as decisões (intervalo início/fim, códigos HTTP) claras e fáceis de revisar.
-- Usar a IA como copiloto é eu decidir e aprovar cada fase, enquanto ela executa e testa, e eu leio a saída real antes de aceitar.
+Dividir uma tarefa ggande em partes gerenciaveis ajuda muito o claude a programar.
+E que se você não souber o que está fazendo não adianta esperar que ele saiba
