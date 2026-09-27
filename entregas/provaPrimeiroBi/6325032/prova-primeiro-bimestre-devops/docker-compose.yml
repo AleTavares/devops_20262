@@ -31,7 +31,7 @@ services:
   api:
     build:
       context: ./app
-      dockerfile: Dockerfile
+      dockerfile: src/Dockerfile
     container_name: reservas-api
     restart: unless-stopped
     environment:
