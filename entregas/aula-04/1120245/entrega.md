@@ -11,28 +11,20 @@
 
 ## Evidências
 
-- [x] VPC com 4 subnets (2 públicas + 2 privadas) em 2 AZs (us-east-1a e us-east-1b)
+- [x] VPC com 4 subnets (2 públicas + 2 privadas) em 2 AZs
 - [x] Internet Gateway e Route Tables configurados
-- [x] Security Groups com princípio do menor privilégio (DB SG restrito ao CIDR da VPC)
-- [x] EC2 t2.micro com User Data e API Node.js 18 na porta 3000 (via systemd)
+- [x] Security Groups com regras solicitadas pelo enunciado
+- [x] EC2 t2.micro com User Data e API Node.js 18 na porta 3000
 - [x] Instance Profile: `LabInstanceProfile` do AWS Academy, sem credenciais no código
-- [x] Tags em todos os recursos (Name, Project, Environment, ManagedBy, Owner)
+- [x] Tags nos recursos que suportam tags
 - [x] [Plano Terraform](https://github.com/Manntto/unifaat-devops-portfolio/blob/main/aula-04/terraform-plan-output.txt)
 - [x] [README com diagrama da arquitetura](https://github.com/Manntto/unifaat-devops-portfolio/blob/main/aula-04/README.md)
-- [x] `terraform destroy` executado após as evidências
+- [x] `terraform destroy` executado após as evidências; `terraform state list` retornou vazio
 
 ## Evidência da API Rodando
 
-```bash
-$ curl http://<EC2_PUBLIC_IP>:3000
-{"message":"TechNova API - Rodando na AWS!","hostname":"ip-10-0-1-xxx","node_version":"v18.20.4","environment":"production"}
+Os endpoints públicos `/`, `/health` e `/orders` foram validados após o `terraform apply`. As respostas registradas estão em [evidencia-api.json](https://github.com/Manntto/unifaat-devops-portfolio/blob/main/aula-04/evidencia-api.json).
 
-$ curl http://<EC2_PUBLIC_IP>:3000/health
-{"status":"healthy","service":"technova-api","version":"1.0.0"}
+A conexão SSH, a versão do Node.js e a identidade temporária do Instance Profile foram validadas e registradas em [evidencia-ssh.txt](https://github.com/Manntto/unifaat-devops-portfolio/blob/main/aula-04/evidencia-ssh.txt).
 
-$ curl http://<EC2_PUBLIC_IP>:3000/orders
-{"orders":[{"id":1,"product":"Widget A","status":"shipped"},{"id":2,"product":"Widget B","status":"processing"}]}
-```
-
-> Observação: no AWS Academy Learner Lab a criação de IAM Roles é bloqueada por policy.
-> A instância usa o `LabInstanceProfile` pré-existente (contém a `LabRole` com `AmazonS3ReadOnlyAccess`).
+> Observação: no AWS Academy Learner Lab, a criação de IAM Roles é bloqueada. Por isso a instância usa o `LabInstanceProfile` pré-existente. O código também documenta o modo de role dedicada para uma conta AWS comum.
