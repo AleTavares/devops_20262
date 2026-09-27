@@ -1,24 +1,24 @@
 # Entrega — Aula 04: VPC + EC2 Multi-AZ
 
-**Aluno:** [Seu nome completo]  
-**RA:** [Seu RA]  
-**Data:** [Data da entrega]
+**Aluno:** [FERNANDA TAVARES]  
+**RA:** [4025109]  
+**Data:** [10/09/2026]
 
 ## Repositório
 
-- URL: https://github.com/SEU-USUARIO/unifaat-devops-portfolio
+- URL: https://github.com/fehhnovais/unifaat-devops-portfolio
 
 ## Evidências
 
-- [ ] VPC com 4 subnets (2 públicas + 2 privadas) em 2 AZs
-- [ ] Internet Gateway + Route Tables configurados
-- [ ] Security Groups com menor privilégio
-- [ ] EC2 t2.micro com User Data (API rodando)
-- [ ] Instance Profile com IAM Role
-- [ ] Tags em todos os recursos
-- [ ] `terraform-plan-output.txt` com evidência do plano
-- [ ] README com diagrama da arquitetura
-- [ ] `terraform destroy` executado após evidências
+- [X] VPC com 4 subnets (2 públicas + 2 privadas) em 2 AZs
+- [X] Internet Gateway + Route Tables configurados
+- [X] Security Groups com menor privilégio
+- [X] EC2 t2.micro com User Data (API rodando)
+- [X] Instance Profile com IAM Role
+- [X] Tags em todos os recursos
+- [X] `terraform-plan-output.txt` com evidência do plano
+- [X] README com diagrama da arquitetura
+- [X] `terraform destroy` executado após evidências
 
 ## Evidência da API Rodando
 

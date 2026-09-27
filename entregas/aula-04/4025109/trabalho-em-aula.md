@@ -4,6 +4,7 @@
 **RA:** 4025109  
 **Data:** 08/09/2026
 
+
 ## Parte 1 — Desenhar a Arquitetura
 
 ### Diagrama da rede
