@@ -4,6 +4,7 @@
 **RA:** 4025109  
 **Data:** 03/09/2026
 
+
 ## Parte 1 — Análise de Riscos: Infraestrutura Manual
 
 ### Riscos e soluções com Terraform
