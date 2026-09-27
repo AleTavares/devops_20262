@@ -14,7 +14,7 @@ git clone --branch "${repo_branch}" --depth 1 "${repo_url}" app-reservas
 cd app-reservas/app
 
 # Constrói a imagem localmente na instância (sem registry externo)
-docker build -t api-reservas:latest .
+docker build -f src/Dockerfile -t api-reservas:latest .
 
 # Sobe o container apontando para o RDS (nunca para um Postgres local)
 docker rm -f reservas-api 2>/dev/null || true

@@ -1,5 +1,5 @@
 output "bucket_tfstate_nome" {
-  value = aws_s3_bucket.tfstate.bucket
+  value = var.bucket_tfstate_nome
 }
 
 output "tabela_lock_nome" {

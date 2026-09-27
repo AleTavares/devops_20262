@@ -1,0 +1,59 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 698B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 30B 0.1s
+#2 transferring dockerfile: 789B 0.1s done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 1.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 292B 0.1s done
+#5 DONE 0.1s
+
+#6 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#6 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 0.1s done
+#6 DONE 0.1s
+
+#7 [stage-1 5/6] COPY --chown=node:node package.json ./
+#7 CACHED
+
+#8 [deps 2/4] WORKDIR /app
+#8 CACHED
+
+#9 [stage-1 3/6] RUN chown -R node:node /app
+#9 CACHED
+
+#10 [stage-1 4/6] COPY --chown=node:node --from=deps /app/node_modules ./node_modules
+#10 CACHED
+
+#11 [deps 3/4] COPY package.json package-lock.json* ./
+#11 CACHED
+
+#12 [deps 4/4] RUN npm install --omit=dev
+#12 CACHED
+
+#13 [stage-1 6/6] COPY --chown=node:node src ./src
+#13 CACHED
+
+#14 exporting to image
+#14 exporting layers 0.0s done
+#14 exporting manifest sha256:b1a44bdf6890bd4ac68f3e35d0abca44945a325f7bea4805e243f17174cbee87 done
+#14 exporting config sha256:d248ca558594c80a058f6942e55947f80ae57fef155a3bfd383261a49538f57f done
+#14 exporting attestation manifest sha256:9b21d545a732a3462aa16a687b88857210f4418f2abc07b0d0a93b222799eb4b 0.0s done
+#14 exporting manifest list sha256:849a4d46257014839b67aeef74562197d5742a6340bc33246d1d8263eec073b6
+#14 exporting manifest list sha256:849a4d46257014839b67aeef74562197d5742a6340bc33246d1d8263eec073b6 0.2s done
+#14 naming to docker.io/library/api-reservas-api:latest
+#14 naming to docker.io/library/api-reservas-api:latest 0.1s done
+#14 unpacking to docker.io/library/api-reservas-api:latest 0.0s done
+#14 DONE 0.5s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s

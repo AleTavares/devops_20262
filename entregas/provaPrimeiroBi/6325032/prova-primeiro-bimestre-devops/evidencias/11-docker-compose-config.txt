@@ -1,0 +1,56 @@
+name: api-reservas
+services:
+  api:
+    build:
+      context: /mnt/c/Users/juninho/Desktop/Prova Devops/devops_20262/entregas/provaPrimeiroBi/6325032/prova-primeiro-bimestre-devops/app
+      dockerfile: src/Dockerfile
+    container_name: reservas-api
+    depends_on:
+      db:
+        condition: service_healthy
+        required: true
+    environment:
+      PGDATABASE: reservas
+      PGHOST: db
+      PGPASSWORD: postgres
+      PGPORT: "5432"
+      PGUSER: postgres
+      PORT: "3000"
+    networks:
+      technova-net: null
+    ports:
+      - mode: ingress
+        target: 3000
+        published: "3000"
+        protocol: tcp
+    restart: unless-stopped
+  db:
+    container_name: reservas-db
+    environment:
+      POSTGRES_DB: reservas
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres -d reservas
+      timeout: 5s
+      interval: 5s
+      retries: 10
+      start_period: 5s
+    image: postgres:16-alpine
+    networks:
+      technova-net: null
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data
+        volume: {}
+networks:
+  technova-net:
+    name: api-reservas_technova-net
+    driver: bridge
+volumes:
+  pgdata:
+    name: api-reservas-pgdata
