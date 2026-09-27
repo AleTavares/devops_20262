@@ -1,0 +1,12 @@
+{
+  "name": "tf-aula07-reserva-salas",
+  "version": "1.0.0",
+  "description": "API de Reserva de Salas - TF Aula 07 DevOps",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
