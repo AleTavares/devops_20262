@@ -1,0 +1,26 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Segredos e ambiente
+.env
+.env.*
+!.env.example
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+# .terraform.lock.hcl NÃO entra aqui — deve ser versionado para fixar o provider
+
+# Chaves e credenciais
+*.pem
+*.key
+
+# SO / editor
+.DS_Store
+*.log

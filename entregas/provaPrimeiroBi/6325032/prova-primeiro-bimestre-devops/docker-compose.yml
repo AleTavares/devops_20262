@@ -1,0 +1,50 @@
+name: api-reservas
+
+networks:
+  technova-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+    name: api-reservas-pgdata
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: reservas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PGUSER:-postgres}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-postgres}
+      POSTGRES_DB: ${PGDATABASE:-reservas}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - technova-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-postgres} -d ${PGDATABASE:-reservas}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: reservas-api
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: ${PGUSER:-postgres}
+      PGPASSWORD: ${PGPASSWORD:-postgres}
+      PGDATABASE: ${PGDATABASE:-reservas}
+    ports:
+      - "3000:3000"
+    networks:
+      - technova-net
+    depends_on:
+      db:
+        condition: service_healthy

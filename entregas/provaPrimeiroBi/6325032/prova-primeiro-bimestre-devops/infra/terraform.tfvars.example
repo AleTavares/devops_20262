@@ -1,0 +1,5 @@
+# Copie para terraform.tfvars e preencha. NUNCA versione o terraform.tfvars real.
+
+chave_ssh_nome = "minha-chave-ec2"                                    # crie em EC2 > Key Pairs
+repo_url       = "https://github.com/SEU-USUARIO/prova-primeiro-bimestre-devops.git"
+db_password    = "TrocarPorUmaSenhaForte123!"
