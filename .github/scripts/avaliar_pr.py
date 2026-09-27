@@ -83,7 +83,15 @@ def find_entrega_md(repo, files, base_sha, token):
 
 
 def detect_aula(title):
-    """Extrai o numero da aula do titulo do PR. Ex.: '[Aula 03] ...' -> '03'."""
+    """
+    Extrai o identificador da entrega a partir do titulo do PR.
+    - Prova do 1o bimestre -> 'provaPrimeiroBi'
+    - Aulas: '[Aula 03] ...' -> '03'
+    """
+    # Prova do primeiro bimestre (varias grafias aceitas no titulo)
+    if re.search(r"prova.*bimestre|primeiro\s*bimestre|prova\s*primeiro\s*bi|provaprimeirobi",
+                 title, re.IGNORECASE):
+        return "provaPrimeiroBi"
     m = re.search(r"aula[\s\-_]*0*(\d+)", title, re.IGNORECASE)
     if m:
         return f"{int(m.group(1)):02d}"
@@ -96,19 +104,32 @@ def detect_ra(title):
 
 
 def read_local_criteria(aula):
-    """Le aula-XX/TF.md do repositorio da disciplina (checkout local)."""
-    path = os.path.join(f"aula-{aula}", "TF.md")
+    """
+    Le os criterios da entrega no repositorio da disciplina (checkout local).
+    - Prova do 1o bimestre: provas/prova-primeiro-bimestre.md
+    - Aulas: aula-XX/TF.md
+    """
+    if aula == "provaPrimeiroBi":
+        path = os.path.join("provas", "prova-primeiro-bimestre.md")
+    else:
+        path = os.path.join(f"aula-{aula}", "TF.md")
     if os.path.exists(path):
         with open(path, encoding="utf-8") as fh:
             return fh.read()
     return None
 
 
-def extract_portfolio(entrega_md):
-    """Extrai owner/repo do link do portfolio dentro do entrega.md."""
+def extract_portfolio(entrega_md, aula=None):
+    """
+    Extrai owner/repo do link do repositorio do aluno no entrega.md.
+    - Prova do 1o bimestre: repo 'prova-primeiro-bimestre-devops'
+    - Aulas: repo 'unifaat-devops-portfolio'
+    """
     if not entrega_md:
         return None
-    m = re.search(r"github\.com/([\w.-]+)/(unifaat-devops-portfolio)", entrega_md)
+    repo_name = ("prova-primeiro-bimestre-devops"
+                 if aula == "provaPrimeiroBi" else "unifaat-devops-portfolio")
+    m = re.search(rf"github\.com/([\w.-]+)/({re.escape(repo_name)})", entrega_md)
     if m:
         return m.group(1), m.group(2)
     return None
@@ -125,10 +146,19 @@ REQUIRED_BY_AULA = {
            "README.md", ".gitignore"],
     "05": ["providers.tf", "main.tf", "variables.tf", "outputs.tf",
            "README.md", ".gitignore"],
-    "06": ["providers.tf", "main.tf", "variables.tf", "outputs.tf",
-           "README.md", ".gitignore"],
     "02": ["docker-compose.yml", "Dockerfile", "app.js", "package.json",
            ".gitignore", "ia-analise.md"],
+}
+
+# Aulas cuja entrega e MODULARIZADA (Terraform modules): o codigo NAO fica
+# solto na raiz de aula-XX, e sim organizado em modules/ (+ opcionalmente
+# environments/). Validamos a estrutura de pastas, nao arquivos .tf soltos.
+AULAS_MODULARES = {
+    "06": {
+        "pastas_esperadas": ["modules"],
+        "pastas_opcionais": ["environments"],
+        "raiz_recomendados": ["README.md", ".gitignore"],
+    },
 }
 
 # Aulas conceituais em que o codigo e entregue DENTRO do proprio PR
@@ -147,20 +177,158 @@ AULAS_CODIGO_NO_PR = {
 }
 
 
+# Estrutura esperada no repositorio proprio da Prova do 1o Bimestre.
+# Aqui verificamos caminhos (arquivos/pastas), pois a prova tem subpastas
+# (app/, infra/, evidencias/) em vez de arquivos .tf na raiz.
+PROVA_ESTRUTURA = {
+    "raiz_obrigatorios": ["README.md", ".gitignore", "docker-compose.yml", "relatorio.md"],
+    "pastas_obrigatorias": ["app", "infra"],
+    "infra_modulos": ["vpc", "security-group", "ec2", "rds"],
+}
+
+
+def _list_dir(owner, repo, path, branch, token):
+    """Lista o conteudo de um diretorio do repo (ou [] se nao existir)."""
+    h = gh_headers(token)
+    url = (f"{GITHUB_API}/repos/{owner}/{repo}/contents/"
+           f"{urllib.parse.quote(path)}?ref={urllib.parse.quote(branch)}")
+    listing = get_json(url, h)
+    return listing if isinstance(listing, list) else []
+
+
+def precheck_prova(owner, repo, token):
+    """
+    Pre-check para a Prova do 1o Bimestre: valida a estrutura do repositorio
+    proprio do aluno (raiz + app/ + infra/modules/*), sem exigir arquivos .tf
+    soltos na raiz. So faz leitura via API.
+    """
+    result = {
+        "modo": "prova",
+        "repo_encontrado": False,
+        "branch": None,
+        "raiz_presentes": [],
+        "raiz_faltando": [],
+        "pastas_presentes": [],
+        "pastas_faltando": [],
+        "modulos_presentes": [],
+        "modulos_faltando": [],
+        "tem_dockerfile": False,
+        "tfstate_versionado": False,
+        "observacoes": [],
+    }
+    h = gh_headers(token)
+    repo_info = get_json(f"{GITHUB_API}/repos/{owner}/{repo}", h)
+    if not repo_info:
+        result["observacoes"].append(
+            f"Repositorio da prova nao encontrado: {owner}/{repo}")
+        return result
+    result["repo_encontrado"] = True
+    branch = repo_info.get("default_branch", "main")
+    result["branch"] = branch
+
+    raiz = _list_dir(owner, repo, "", branch, token)
+    nomes_raiz = {item["name"]: item for item in raiz}
+
+    for req in PROVA_ESTRUTURA["raiz_obrigatorios"]:
+        (result["raiz_presentes"] if req in nomes_raiz
+         else result["raiz_faltando"]).append(req)
+
+    for pasta in PROVA_ESTRUTURA["pastas_obrigatorias"]:
+        if pasta in nomes_raiz and nomes_raiz[pasta].get("type") == "dir":
+            result["pastas_presentes"].append(pasta)
+        else:
+            result["pastas_faltando"].append(pasta)
+
+    # Dockerfile da API (pode estar em app/ ou app/*)
+    if "app" in result["pastas_presentes"]:
+        app_listing = _list_dir(owner, repo, "app", branch, token)
+        app_names = {i["name"] for i in app_listing}
+        if "Dockerfile" in app_names:
+            result["tem_dockerfile"] = True
+        else:
+            # procura Dockerfile na raiz como fallback
+            result["tem_dockerfile"] = "Dockerfile" in nomes_raiz
+    else:
+        result["tem_dockerfile"] = "Dockerfile" in nomes_raiz
+    if not result["tem_dockerfile"]:
+        result["observacoes"].append("Dockerfile da API nao encontrado (esperado em app/).")
+
+    # Modulos Terraform em infra/modules/
+    if "infra" in result["pastas_presentes"]:
+        mods = _list_dir(owner, repo, "infra/modules", branch, token)
+        mod_names = {i["name"] for i in mods if i.get("type") == "dir"}
+        for mod in PROVA_ESTRUTURA["infra_modulos"]:
+            (result["modulos_presentes"] if mod in mod_names
+             else result["modulos_faltando"]).append(mod)
+    else:
+        result["modulos_faltando"] = list(PROVA_ESTRUTURA["infra_modulos"])
+
+    # .tfstate versionado? (varredura leve na raiz e em infra/)
+    if any(n.endswith(".tfstate") for n in nomes_raiz):
+        result["tfstate_versionado"] = True
+    else:
+        infra_listing = _list_dir(owner, repo, "infra", branch, token)
+        if any(i["name"].endswith(".tfstate") for i in infra_listing):
+            result["tfstate_versionado"] = True
+    if result["tfstate_versionado"]:
+        result["observacoes"].append("ATENCAO: .tfstate versionado no repositorio.")
+
+    return result
+
+
+def collect_prova_sources(owner, repo, branch, token, max_bytes=60000):
+    """Coleta arquivos-chave da prova (compose, relatorio, README, alguns .tf)."""
+    h = gh_headers(token)
+    blob = []
+    total = 0
+
+    def _append(path):
+        nonlocal total
+        if total >= max_bytes:
+            return
+        h_local = gh_headers(token)
+        url = (f"{GITHUB_API}/repos/{owner}/{repo}/contents/"
+               f"{urllib.parse.quote(path)}?ref={urllib.parse.quote(branch)}")
+        data = get_json(url, h_local)
+        if isinstance(data, dict) and data.get("download_url"):
+            content = get_text(data["download_url"], h_local) or ""
+            snippet = f"\n===== {path} =====\n{content}\n"
+            if total + len(snippet) > max_bytes:
+                snippet = snippet[: max_bytes - total]
+            blob.append(snippet)
+            total += len(snippet)
+
+    for path in ("README.md", "docker-compose.yml", "relatorio.md",
+                 "infra/main.tf", "infra/providers.tf", "infra/outputs.tf"):
+        _append(path)
+    return "".join(blob)
+
+
 def find_default_branch_and_folder(owner, repo, aula, token):
     """
-    Procura a pasta aula-XX no repo do portfolio, tentando o branch default
-    e depois os demais branches. Retorna (branch, lista_de_arquivos) ou (None, None).
+    Procura a pasta aula-XX no repo do portfolio. A ordem de busca prioriza
+    SEMPRE main/master (e o branch default) antes das feature branches, para
+    nao reportar por engano que o codigo esta numa feature quando ele tambem
+    esta na main. Retorna (branch, lista_de_arquivos) ou (None, None).
     """
     h = gh_headers(token)
     repo_info = get_json(f"{GITHUB_API}/repos/{owner}/{repo}", h)
     if not repo_info:
         return None, None
-    candidates = [repo_info.get("default_branch", "main")]
+
+    default_branch = repo_info.get("default_branch", "main")
     branches = get_json(f"{GITHUB_API}/repos/{owner}/{repo}/branches", h) or []
-    for b in branches:
-        if b["name"] not in candidates:
-            candidates.append(b["name"])
+    branch_names = [b["name"] for b in branches]
+
+    # Prioridade: main -> master -> default -> demais branches (sem duplicar)
+    candidates = []
+    for preferred in ("main", "master", default_branch):
+        if preferred in branch_names and preferred not in candidates:
+            candidates.append(preferred)
+    for name in branch_names:
+        if name not in candidates:
+            candidates.append(name)
+
     for branch in candidates:
         url = (f"{GITHUB_API}/repos/{owner}/{repo}/contents/"
                f"aula-{aula}?ref={urllib.parse.quote(branch)}")
@@ -205,16 +373,46 @@ def precheck(owner, repo, aula, token):
             f"Codigo publicado no branch '{branch}', nao na main/master do portfolio.")
 
     nomes = {item["name"]: item for item in listing}
-    required = REQUIRED_BY_AULA.get(aula, [])
-    for req in required:
-        if req in nomes:
-            result["arquivos_presentes"].append(req)
-        else:
-            result["arquivos_faltando"].append(req)
 
-    # tfstate versionado?
-    if any(n.endswith(".tfstate") for n in nomes):
-        result["tfstate_versionado"] = True
+    if aula in AULAS_MODULARES:
+        # Entrega modularizada: valida pastas (modules/, environments/),
+        # nao arquivos .tf soltos na raiz.
+        spec_mod = AULAS_MODULARES[aula]
+        dirs = {item["name"] for item in listing if item.get("type") == "dir"}
+        for pasta in spec_mod["pastas_esperadas"]:
+            if pasta in dirs:
+                result["arquivos_presentes"].append(f"{pasta}/")
+            else:
+                result["arquivos_faltando"].append(f"{pasta}/")
+                result["observacoes"].append(
+                    f"Pasta '{pasta}/' nao encontrada (esperada em aula modularizada).")
+        for pasta in spec_mod.get("pastas_opcionais", []):
+            if pasta in dirs:
+                result["arquivos_presentes"].append(f"{pasta}/")
+        for rec in spec_mod.get("raiz_recomendados", []):
+            if rec in nomes:
+                result["arquivos_presentes"].append(rec)
+            else:
+                result["arquivos_faltando"].append(rec)
+    else:
+        required = REQUIRED_BY_AULA.get(aula, [])
+        for req in required:
+            if req in nomes:
+                result["arquivos_presentes"].append(req)
+            else:
+                result["arquivos_faltando"].append(req)
+
+    # tfstate versionado? (verifica raiz e, em aulas modulares, subpastas comuns)
+    tfstate_na_raiz = any(n.endswith(".tfstate") for n in nomes)
+    result["tfstate_versionado"] = tfstate_na_raiz
+    if not tfstate_na_raiz and aula in AULAS_MODULARES:
+        for sub in ("environments", "modules"):
+            if sub in {i["name"] for i in listing if i.get("type") == "dir"}:
+                sub_list = _list_dir(owner, repo, f"aula-{aula}/{sub}", branch, token)
+                if any(i["name"].endswith(".tfstate") for i in sub_list):
+                    result["tfstate_versionado"] = True
+                    break
+    if result["tfstate_versionado"]:
         result["observacoes"].append("ATENCAO: .tfstate versionado no repositorio.")
 
     # plan output vazio?
@@ -326,32 +524,58 @@ def collect_pr_sources(repo, files, aula, token, max_bytes=60000):
 
 
 def collect_tf_sources(owner, repo, aula, branch, token, max_bytes=60000):
-    """Baixa o conteudo dos .tf, README e trecho do plan para mandar para a IA."""
+    """
+    Baixa o conteudo dos .tf, README e trecho do plan para mandar para a IA.
+    Para aulas modularizadas (ex.: aula 06), desce recursivamente nas subpastas
+    (modules/, environments/) para coletar os .tf que nao ficam na raiz.
+    """
     h = gh_headers(token)
-    url = (f"{GITHUB_API}/repos/{owner}/{repo}/contents/"
-           f"aula-{aula}?ref={urllib.parse.quote(branch)}")
-    listing = get_json(url, h) or []
     blob = []
-    total = 0
-    for item in listing:
-        name = item["name"]
-        if not (name.endswith(".tf") or name in ("README.md",
-                                                 "terraform-plan-output.txt",
-                                                 ".gitignore")):
-            continue
-        dl = item.get("download_url")
-        if not dl:
-            continue
-        content = get_text(dl, h) or ""
-        if name == "terraform-plan-output.txt":
-            content = content[:4000]  # so um trecho do plan
-        snippet = f"\n===== {name} =====\n{content}\n"
-        if total + len(snippet) > max_bytes:
-            snippet = snippet[: max_bytes - total]
+    state = {"total": 0}
+    recursive = aula in AULAS_MODULARES
+    # limita profundidade para nao explodir chamadas de API
+    max_depth = 3 if recursive else 1
+
+    def _walk(path, depth):
+        if state["total"] >= max_bytes or depth > max_depth:
+            return
+        url = (f"{GITHUB_API}/repos/{owner}/{repo}/contents/"
+               f"{urllib.parse.quote(path)}?ref={urllib.parse.quote(branch)}")
+        listing = get_json(url, h) or []
+        if not isinstance(listing, list):
+            return
+        for item in listing:
+            if state["total"] >= max_bytes:
+                return
+            name = item["name"]
+            if item.get("type") == "dir":
+                # so desce em subpastas quando a aula e modular
+                if recursive:
+                    relevante = name in ("modules", "environments", "dev", "staging", "prod")
+                    if relevante or depth >= 1:
+                        _walk(item["path"], depth + 1)
+                continue
+            if not (name.endswith(".tf") or name in ("README.md",
+                                                     "terraform-plan-output.txt",
+                                                     ".gitignore", "terraform.tfvars",
+                                                     "*.tfvars") or name.endswith(".tfvars")):
+                continue
+            dl = item.get("download_url")
+            if not dl:
+                continue
+            content = get_text(dl, h) or ""
+            if name == "terraform-plan-output.txt":
+                content = content[:4000]  # so um trecho do plan
+            rotulo = item.get("path", name)
+            snippet = f"\n===== {rotulo} =====\n{content}\n"
+            if state["total"] + len(snippet) > max_bytes:
+                blob.append(snippet[: max_bytes - state["total"]])
+                state["total"] = max_bytes
+                return
             blob.append(snippet)
-            break
-        blob.append(snippet)
-        total += len(snippet)
+            state["total"] += len(snippet)
+
+    _walk(f"aula-{aula}", 0)
     return "".join(blob)
 
 
@@ -390,7 +614,46 @@ def avaliar_com_bedrock(criterios, entrega_md, tf_sources, precheck_data,
 Gere o parecer final com: nota (X / 1,5), tabela de criterios (processo-spec.md,
 decomposicao, codigo funcional/rotas, validacao por etapas, reflexao), pontos fortes,
 ressalvas e um bloco de texto pronto para o review do PR."""
+    elif modo == "prova":
+        system = (
+            "Voce e um professor de DevOps avaliando a PROVA DO 1o BIMESTRE (aulas 01 a 07). "
+            "O aluno entrega a API de Reservas (Node.js + PostgreSQL) com Docker, Docker Compose "
+            "e infraestrutura AWS modularizada (VPC, Security Group, EC2, RDS) com remote state (S3+DynamoDB), "
+            "usando AWS Academy Learner Lab (LabRole/LabInstanceProfile, sem criar IAM proprio). "
+            "Avalie SOMENTE com base nos criterios fornecidos e nos arquivos reais do repositorio. "
+            "Atribua uma nota de 0 a 10 (a prova vale 10 pontos). "
+            "Os componentes 'execucao no AWS Academy' e a nota fina do 'relatorio' dependem de "
+            "conferencia do professor — avalie o que for verificavel pelo repositorio (estrutura, "
+            "Dockerfile, docker-compose, modulos Terraform, CRUD, remote state, .gitignore) e "
+            "marque o resto como pendente de conferencia. "
+            "Se o repositorio nao existir/estiver incompleto, reduza a nota proporcionalmente. "
+            "Produza um parecer em portugues, em markdown, pronto para o review do PR."
+        )
+        user = f"""## Criterios da Prova (provas/prova-primeiro-bimestre.md)
+{criterios or "(criterios nao encontrados no repositorio)"}
+
+## Resultado do pre-check deterministico
+{json.dumps(precheck_data, ensure_ascii=False, indent=2)}
+
+## entrega.md do PR
+{entrega_md or "(entrega.md nao encontrado)"}
+
+## Arquivos-chave do repositorio da prova (README, compose, relatorio, alguns .tf)
+{tf_sources or "(nenhum arquivo acessivel no repositorio da prova)"}
+
+Gere o parecer final com: nota (X / 10), tabela de criterios (Git+Docker, Compose,
+Terraform+Modulos+Remote State, uso de IA, relatorio), pontos fortes, ressalvas e um
+bloco de texto pronto para o review do PR. Marque 'execucao no AWS Academy' como
+pendente de conferencia do professor."""
     else:
+        modular_hint = ""
+        if aula in AULAS_MODULARES:
+            modular_hint = (
+                " ATENCAO: esta e uma aula de MODULOS Terraform — a entrega e MODULARIZADA. "
+                "O codigo fica organizado em pastas 'modules/' (e frequentemente 'environments/dev' "
+                "e 'environments/staging'), NAO em arquivos .tf soltos na raiz de aula-XX. "
+                "NAO penalize a ausencia de providers.tf/main.tf na raiz — isso e o esperado e correto. "
+                "Avalie a qualidade dos modulos, a composicao entre eles e a reutilizacao entre ambientes.")
         system = (
             "Voce e um professor de DevOps avaliando um Trabalho de Fixacao (TF). "
             "Avalie SOMENTE com base nos criterios fornecidos e no codigo real do aluno. "
@@ -400,7 +663,7 @@ ressalvas e um bloco de texto pronto para o review do PR."""
             "Seja direto, aponte pontos fortes e ressalvas concretas com base no codigo. "
             "Produza um parecer de APROVACAO ou REPROVACAO pronto para colar no review do PR, "
             "em portugues, em markdown. Se o codigo do portfolio nao existir/estiver ausente, "
-            "REPROVE por entrega nao verificavel."
+            "REPROVE por entrega nao verificavel." + modular_hint
         )
         user = f"""## Criterios do TF (aula-{aula}/TF.md)
 {criterios or "(criterios nao encontrados no repositorio)"}
@@ -486,6 +749,36 @@ def parecer_deterministico_codigo_no_pr(pre, aula, ra):
     return "\n".join(linhas)
 
 
+def parecer_deterministico_prova(pre, ra):
+    """Pre-check para a Prova do 1o Bimestre (repositorio proprio do aluno)."""
+    linhas = [f"### Pre-check automatico — Prova do 1º Bimestre (RA: {ra or 'n/d'})", ""]
+    if not pre["repo_encontrado"]:
+        linhas.append("- ❌ Repositorio `prova-primeiro-bimestre-devops` nao encontrado pelo link do `entrega.md`.")
+        linhas.append("\n**Resultado:** entrega nao verificavel. Publique o repositorio (publico) e reabra.")
+        return "\n".join(linhas)
+    linhas.append(f"- ✅ Repositorio da prova encontrado (branch `{pre['branch']}`).")
+    if pre["raiz_presentes"]:
+        linhas.append(f"- ✅ Arquivos na raiz: {', '.join(pre['raiz_presentes'])}")
+    if pre["raiz_faltando"]:
+        linhas.append(f"- ⚠️ Faltando na raiz: {', '.join(pre['raiz_faltando'])}")
+    if pre["pastas_presentes"]:
+        linhas.append(f"- ✅ Pastas presentes: {', '.join(pre['pastas_presentes'])}")
+    if pre["pastas_faltando"]:
+        linhas.append(f"- ⚠️ Pastas faltando: {', '.join(pre['pastas_faltando'])}")
+    if pre["tem_dockerfile"]:
+        linhas.append("- ✅ Dockerfile da API presente.")
+    else:
+        linhas.append("- ⚠️ Dockerfile da API nao encontrado (esperado em `app/`).")
+    if pre["modulos_presentes"]:
+        linhas.append(f"- ✅ Modulos Terraform: {', '.join(pre['modulos_presentes'])}")
+    if pre["modulos_faltando"]:
+        linhas.append(f"- ⚠️ Modulos faltando em `infra/modules/`: {', '.join(pre['modulos_faltando'])}")
+    if pre["tfstate_versionado"]:
+        linhas.append("- ❌ `.tfstate` versionado (nao deveria estar no repo).")
+    linhas.append("\n> ⚠️ Componentes **AWS Academy** (execucao no Learner Lab) e **relatorio** sao conferidos pelo professor. O parecer detalhado e gerado pela analise por IA ou pela revisao manual.")
+    return "\n".join(linhas)
+
+
 # ---------------------------------------------------------------------------
 # Comentar no PR
 # ---------------------------------------------------------------------------
@@ -522,8 +815,9 @@ def main():
     ra = detect_ra(title)
     if not aula:
         upsert_comment(repo, pr_number, token,
-                       "Nao consegui identificar a aula pelo titulo do PR. "
-                       "Use o formato `[Aula 0X] RA: NNN - Nome`.")
+                       "Nao consegui identificar a entrega pelo titulo do PR. "
+                       "Use `[Aula 0X] RA: NNN - Nome` ou, para a prova, "
+                       "`[Prova Primeiro Bimestre] RA: NNN - Nome`.")
         return
 
     criterios = read_local_criteria(aula)
@@ -553,9 +847,40 @@ def main():
         print("Comentario publicado com sucesso (modo codigo-no-PR).")
         return
 
-    # --- Caso 2: aulas com codigo no repositorio de portfolio (padrao) ---
+    # --- Caso 2: Prova do 1o Bimestre (repositorio proprio prova-primeiro-bimestre-devops) ---
+    if aula == "provaPrimeiroBi":
+        _, entrega_md = find_entrega_md(repo, files, base_sha, token)
+        portfolio = extract_portfolio(entrega_md, aula)
+        if not portfolio:
+            pre = {"repo_encontrado": False,
+                   "observacoes": ["Link do repositorio da prova nao encontrado no entrega.md."]}
+            upsert_comment(repo, pr_number, token,
+                           parecer_deterministico_prova(pre, ra))
+            return
+        owner, repo_pf = portfolio
+        pre = precheck_prova(owner, repo_pf, token)
+        corpo = None
+        if use_bedrock and pre["repo_encontrado"]:
+            try:
+                prova_sources = collect_prova_sources(
+                    owner, repo_pf, pre["branch"], token)
+                corpo = avaliar_com_bedrock(
+                    criterios, entrega_md, prova_sources, pre, aula,
+                    model_id, region, modo="prova")
+            except Exception as exc:
+                corpo = (parecer_deterministico_prova(pre, ra) +
+                         f"\n\n_(analise por IA indisponivel: {exc})_")
+        else:
+            corpo = parecer_deterministico_prova(pre, ra)
+        rodape = ("\n\n---\n_Avaliacao automatica gerada por GitHub Actions. "
+                  "A nota final e revisada pelo professor, incluindo a execucao no AWS Academy._")
+        upsert_comment(repo, pr_number, token, corpo + rodape)
+        print("Comentario publicado com sucesso (modo prova).")
+        return
+
+    # --- Caso 3: aulas com codigo no repositorio de portfolio (padrao) ---
     _, entrega_md = find_entrega_md(repo, files, base_sha, token)
-    portfolio = extract_portfolio(entrega_md)
+    portfolio = extract_portfolio(entrega_md, aula)
 
     if not portfolio:
         pre = {"portfolio_encontrado": False, "pasta_aula_encontrada": False,
