@@ -24,7 +24,7 @@ resource "aws_security_group" "ec2" {
   }
 
   egress {
-    description = "Todo tráfego de saída"
+    description = "Todo trafego de saida"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -40,7 +40,7 @@ resource "aws_security_group" "rds" {
   vpc_id      = var.vpc_id
 
   egress {
-    description = "Todo tráfego de saída"
+    description = "Todo trafego de saida"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

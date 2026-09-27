@@ -8,13 +8,11 @@ terraform {
     }
   }
 
-  # Backend remoto: crie o bucket e a tabela ANTES (pasta infra/backend/),
-  # depois preencha os valores abaixo e rode `terraform init`.
   backend "s3" {
-    bucket         = "SUBSTITUA-bucket-tfstate-6325032"
+    bucket         = "prova-primeiro-bimestre-tfstate-6325032"
     key            = "prova-primeiro-bimestre/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "SUBSTITUA-tf-locks-6325032"
+    dynamodb_table = "prova-primeiro-bimestre-tf-locks-6325032"
     encrypt        = true
   }
 }
