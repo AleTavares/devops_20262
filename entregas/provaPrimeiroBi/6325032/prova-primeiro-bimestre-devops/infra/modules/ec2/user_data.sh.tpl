@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 
 # Amazon Linux 2023: instala Docker e Git
 dnf update -y
@@ -11,7 +11,7 @@ usermod -aG docker ec2-user
 cd /opt
 rm -rf app-reservas
 git clone --branch "${repo_branch}" --depth 1 "${repo_url}" app-reservas
-cd app-reservas/app
+cd /opt/app-reservas/entregas/provaPrimeiroBi/6325032/prova-primeiro-bimestre-devops/app
 
 # Constrói a imagem localmente na instância (sem registry externo)
 docker build -f src/Dockerfile -t api-reservas:latest .
