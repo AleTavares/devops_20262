@@ -8,7 +8,7 @@ Preparar o aluno para a aula presencial através de leitura teórica sobre **Ama
 
 ---
 
-## Parte 1 — Amazon RDS: Banco de Dados Gerenciado (~35 min)
+## Parte 1 — Amazon RDS: Banco de Dados Gerenciado
 
 ### 1.1 O Problema: Dados em Memória no EC2
 
@@ -18,9 +18,13 @@ Na Aula 04, provisionamos um EC2 com a API da TechNova rodando. A aplicação fu
 - Se a instância for terminada → dados perdidos para sempre
 - Se o Auto Scaling substituir a instância → dados perdidos
 
+![Dados em memória no EC2](img/EC2TEcnova.png)
+
 **Pergunta crítica:** "Se eu criar um pedido agora e reiniciar o servidor, o pedido ainda vai existir?" Resposta: **Não.**
 
-Para uma aplicação de produção, isso é inaceitável. Precisamos de um banco de dados **externo e persistente** — que sobrevive independentemente do EC2.
+**Analogia:** guardar dados na memória RAM do EC2 é como anotar pedidos num quadro branco. Enquanto o servidor está ligado, tudo funciona. Mas basta apagar o quadro (reiniciar/terminar a instância) e todo o histórico some. Um banco de dados persistente é como um livro-caixa: os registros ficam gravados independentemente de quem está no balcão.
+
+Para uma aplicação de produção, isso é inaceitável. Precisamos de um banco de dados **externo e persistente** — que sobrevive independentemente do EC2. É a separação entre a **camada de aplicação** (EC2, efêmera) e a **camada de dados** (banco, durável).
 
 ### 1.2 Self-Managed Database vs Managed Database (RDS)
 
@@ -48,18 +52,44 @@ Existem duas abordagens para ter um banco de dados na AWS:
 | Tempo de setup | ~1 hora manual | ~10 minutos com Terraform |
 | Esforço operacional | Alto | Baixo |
 
-**Conclusão:** Para 95% dos casos, RDS é a melhor escolha. Use self-managed apenas quando precisar de controle total sobre o servidor do banco.
+![Comparação Self-Managed vs RDS](img/analiseRDS.png)
+
+> <!-- IMAGEM A GERAR: img/self-vs-managed.png
+> PROMPT: Ilustração comparativa lado a lado, fundo claro (#F5F7FA), estilo flat design.
+> ESQUERDA (fundo cinza claro): título "Self-Managed" com um ícone de servidor EC2 e um DBA
+> sobrecarregado, com etiquetas ao redor: "instalar", "patch", "backup manual", "monitorar", "failover manual".
+> DIREITA (fundo verde claro): título "Amazon RDS (Managed)" com ícone de banco de dados e um selo AWS,
+> etiquetas: "patches automáticos", "backup diário", "CloudWatch", "failover Multi-AZ".
+> Uma seta larga do lado esquerdo (cansativo) para o direito (tranquilo). Paleta: #1B3A5C, #F58220, #27AE60.
+> Dimensões: 1280x720px. -->
+
+**Conclusão:** Para 95% dos casos, RDS é a melhor escolha. Use self-managed apenas quando precisar de controle total sobre o servidor do banco (versões customizadas, extensões específicas, requisitos de compliance).
 
 ### 1.3 O que é Amazon RDS?
 
-Amazon RDS (Relational Database Service) é um serviço gerenciado que facilita a configuração, operação e escalabilidade de bancos de dados relacionais na nuvem. Engines suportadas:
+Amazon RDS (Relational Database Service) é um serviço gerenciado que facilita a configuração, operação e escalabilidade de bancos de dados relacionais na nuvem. A AWS assume a responsabilidade sobre a infraestrutura do banco (o "undifferentiated heavy lifting"), e você foca no que gera valor: o schema e as queries.
+
+![Amazon RDS](img/rds.png)
+
+Engines suportadas:
 
 - **PostgreSQL** (usaremos este)
 - MySQL
 - MariaDB
 - Oracle
 - SQL Server
-- Aurora (engine proprietária AWS, compatível com MySQL/PostgreSQL)
+- Aurora (engine proprietária AWS, compatível com MySQL/PostgreSQL, com performance superior)
+
+**Modelo de responsabilidade compartilhada no RDS:**
+
+| Camada | Quem cuida |
+|--------|-----------|
+| Hardware, rede, energia do data center | AWS |
+| Sistema operacional e patches | AWS |
+| Engine do banco (PostgreSQL) e updates | AWS |
+| Backup, failover e monitoramento | AWS |
+| Schema, tabelas, índices | **Você** |
+| Queries, usuários do banco, dados | **Você** |
 
 ### 1.4 Conceitos-Chave do RDS
 
@@ -77,8 +107,11 @@ Amazon RDS (Relational Database Service) é um serviço gerenciado que facilita 
 **Multi-AZ:**
 - Cria uma réplica standby em outra AZ automaticamente
 - Failover automático em ~60 segundos se o primário falhar
+- A aplicação continua usando o **mesmo endpoint** — a AWS redireciona internamente
 - **Custo:** dobro (paga por 2 instâncias)
 - **NÃO usaremos no curso** (não é Free Tier)
+
+![Multi-AZ Deployment](img/multiaz.png)
 
 **Backups Automáticos:**
 - RDS faz backup diário automaticamente (janela configurável)
@@ -88,6 +121,8 @@ Amazon RDS (Relational Database Service) é um serviço gerenciado que facilita 
 ### 1.5 Por Que 2 AZs no DB Subnet Group?
 
 Quando você cria um DB Subnet Group, precisa de subnets em pelo menos 2 AZs:
+
+![DB Subnet Group](img/subnet.png)
 
 ```
 DB Subnet Group "technova-db-subnet":
@@ -106,9 +141,25 @@ Motivos:
 O RDS deve ficar em **subnet privada** (sem acesso à internet):
 
 - Security Group permite **apenas porta 5432** (PostgreSQL)
-- Origem: apenas o CIDR da VPC ou o Security Group do EC2
+- Origem: apenas o Security Group do EC2 (não o CIDR inteiro, quando possível) — assim só a aplicação acessa o banco
 - Não exponha RDS à internet (0.0.0.0/0) — **jamais!**
 - `publicly_accessible = false` (padrão no Terraform)
+
+> <!-- IMAGEM A GERAR: img/rds-seguranca.png
+> PROMPT: Diagrama de arquitetura de rede AWS, fundo claro (#F5F7FA), estilo flat.
+> Mostrar uma VPC (retângulo grande) com: internet à esquerda ligada a um Internet Gateway,
+> uma SUBNET PÚBLICA (verde) contendo um ícone de EC2 com a API, e uma SUBNET PRIVADA (azul)
+> contendo um ícone de banco de dados RDS. Uma seta da API para o RDS rotulada "porta 5432".
+> Um cadeado sobre o RDS e um "X" vermelho na conexão direta internet→RDS (bloqueada).
+> Security Group destacado ao redor do RDS permitindo apenas o EC2. Paleta: #1B3A5C, #F58220, #27AE60, vermelho para bloqueio.
+> Dimensões: 1280x720px. -->
+
+**Padrão de segurança em camadas (defense in depth):**
+1. RDS em subnet privada (isolamento de rede)
+2. Security Group restringindo porta e origem (firewall)
+3. `publicly_accessible = false` (sem IP público)
+4. Credenciais fora do código (variáveis/secrets)
+5. Encriptação em repouso e em trânsito
 
 ### 1.7 Connection String
 
@@ -151,11 +202,13 @@ Docker PostgreSQL é ótimo para **desenvolvimento local**. Para produção na A
 
 ---
 
-## Parte 2 — Remote State: Protegendo o State do Terraform (~25 min)
+## Parte 2 — Remote State: Protegendo o State do Terraform
 
 ### 2.1 O Cenário do Laptop Roubado
 
 Rafael, desenvolvedor da TechNova, provisionou toda a infraestrutura (VPC, EC2, RDS) usando Terraform no seu laptop. O arquivo `terraform.tfstate` — com o mapeamento completo da infraestrutura — ficou salvo localmente.
+
+![Cenário do laptop roubado](img/laptopRoubado.png)
 
 Na sexta-feira, seu laptop foi roubado. Na segunda-feira, a equipe descobriu:
 
@@ -165,7 +218,7 @@ Na sexta-feira, seu laptop foi roubado. Na segunda-feira, a equipe descobriu:
 - `terraform destroy` não funciona (não sabe o que destruir)
 - Recursos órfãos na AWS gerando custo sem controle
 
-**Lição:** O `terraform.tfstate` é tão importante quanto o próprio código Terraform.
+**Lição:** O `terraform.tfstate` é tão importante quanto o próprio código Terraform. Perder o state ≠ perder o código — é perder o **mapa** de tudo que existe na nuvem.
 
 ### 2.2 O que é terraform.tfstate?
 
@@ -190,6 +243,8 @@ Sem o state, o Terraform é "cego" — não sabe o que existe na nuvem.
 
 ### 2.4 Solução: S3 + DynamoDB
 
+![Solução: S3 + DynamoDB](img/solucaoState.png)
+
 **S3 Bucket** armazena o state:
 - Centralizado (toda equipe acessa)
 - Versionado (histórico de mudanças, rollback)
@@ -200,6 +255,10 @@ Sem o state, o Terraform é "cego" — não sabe o que existe na nuvem.
 - Quando alguém roda `terraform apply`, um lock é criado
 - Outra pessoa tentando rodar ao mesmo tempo é bloqueada
 - Previne corrupção por escrita simultânea
+
+![Locking com DynamoDB](img/remoteStateDynamo.png)
+
+**Analogia do locking:** é como a chave de um banheiro de avião. Enquanto alguém está dentro (rodando `apply`), a porta fica travada com "ocupado". Quem chega tem que esperar liberar. Sem esse controle, dois `apply` simultâneos escreveriam no mesmo state ao mesmo tempo, corrompendo o mapa da infraestrutura.
 
 ### 2.5 Configuração do Backend S3
 

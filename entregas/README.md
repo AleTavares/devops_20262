@@ -89,11 +89,16 @@ entregas/
 ├── aula-02/
 │   └── ...
 ├── ...
-└── aula-15/
-    └── ...
+├── aula-15/
+│   └── ...
+└── provaPrimeiroBi/    ← Prova do 1º Bimestre
+    └── 12345/          ← RA do aluno
+        └── entrega.md  ← link do repositório da prova + evidências
 ```
 
 Cada aluno cria uma pasta com seu **RA** (Registro Acadêmico) dentro da pasta da aula correspondente.
+
+> **Prova do 1º Bimestre:** a entrega vai em `entregas/provaPrimeiroBi/SEU-RA/entrega.md`, com o link do repositório `prova-primeiro-bimestre-devops`. Consulte as regras em [`provas/prova-primeiro-bimestre.md`](../provas/prova-primeiro-bimestre.md).
 
 ---
 

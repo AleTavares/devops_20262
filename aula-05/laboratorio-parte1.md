@@ -4,33 +4,90 @@
 
 Adicionar a camada de dados persistentes à infraestrutura da TechNova: provisionar um banco de dados PostgreSQL gerenciado (Amazon RDS) em subnets privadas, e conectar o EC2 ao banco para provar que os dados sobrevivem a reinicializações.
 
-**Duração:** ~120 minutos
-
 **Resultado esperado:** Uma instância RDS PostgreSQL acessível apenas pelo EC2 dentro da VPC, com dados persistentes.
 
 ---
 
 ## Pré-requisitos
 
-- AWS CLI configurado (`aws sts get-caller-identity` funciona)
-- Terraform instalado (`terraform version` funciona)
+- AWS CLI e Terraform instalados (Aula 03)
+- Acesso ao **AWS Academy Learner Lab** (fornecido pelo professor)
+- Kiro instalado e funcional
 - Conhecimento de VPC, subnets e EC2 (Aula 04)
-- Editor de texto preparado
 
-> **⚠️ Atenção:** A criação do RDS leva **5-10 minutos**. Isso é normal — o `terraform apply` ficará esperando nesse passo. Use esse tempo para revisar o código ou ler a documentação.
+> **Atenção:** A criação do RDS leva **5-10 minutos**. Isso é normal — o `terraform apply` ficará esperando nesse passo. Use esse tempo para revisar o código ou ler a documentação.
+
+---
+
+## Parte 0 — Estrutura do Projeto e Credenciais do AWS Academy (10 min)
+
+> As credenciais do **AWS Academy Learner Lab** são **temporárias** e **expiram entre sessões**. Vamos criar um script `.sh` dentro da pasta do lab para carregar as credenciais como **variáveis de ambiente** — elas ficam ativas apenas na sessão atual do terminal.
+
+### 0.1 Criar a pasta do projeto e abrir no Kiro
+
+```bash
+mkdir -p aula-05-rds
+cd aula-05-rds
+
+# Abrir a pasta no Kiro
+kiro .
+```
+
+> A partir daqui, criaremos todos os arquivos pela interface do **Kiro** (New File na árvore de arquivos). Use o terminal apenas para rodar comandos.
+
+### 0.2 Iniciar o Learner Lab e obter as credenciais
+
+1. Acesse o **AWS Academy** → curso → **Modules → Learner Lab**
+2. Clique em **Start Lab** e aguarde o indicador ficar **verde** (🟢)
+3. Clique em **AWS Details → AWS CLI → Show** — anote os 3 valores mostrados
+
+### 0.3 Criar o script de credenciais no Kiro
+
+No Kiro, crie o arquivo `aws-creds.sh` na raiz da pasta. Cole o conteúdo abaixo e **substitua** pelos valores do Learner Lab:
+
+```bash
+#!/bin/bash
+# aws-creds.sh - Credenciais temporárias do AWS Academy Learner Lab
+# Uso: source aws-creds.sh
+# ATENÇÃO: nunca versione este arquivo no Git!
+
+export AWS_ACCESS_KEY_ID="ASIA_SUA_KEY_AQUI"
+export AWS_SECRET_ACCESS_KEY="SUA_SECRET_AQUI"
+export AWS_SESSION_TOKEN="SEU_TOKEN_AQUI"
+export AWS_DEFAULT_REGION="us-east-1"
+
+echo "Credenciais AWS Academy carregadas nesta sessão."
+```
+
+### 0.4 Executar o script para carregar as variáveis
+
+No terminal integrado do Kiro (`Ctrl+'`), use `source` para que os `export` valham na sessão atual:
+
+```bash
+source aws-creds.sh
+```
+
+> **Por que `source` e não `./aws-creds.sh`?** Com `./`, o script roda em um subprocesso e as variáveis morreriam ao terminar. Com `source`, os `export` valem no terminal atual — o Terraform e o AWS CLI leem essas variáveis automaticamente.
+>
+> **Atenção:** valem apenas para o terminal atual. Nova aba = rode `source aws-creds.sh` de novo. O `aws_session_token` muda a cada sessão do lab.
+
+### 0.5 Verificar
+
+```bash
+aws sts get-caller-identity
+```
+
+Se retornar o ARN do role temporário (`voclabs`), está pronto. Se der `ExpiredToken`, reinicie o lab, atualize os valores no `aws-creds.sh` e rode `source aws-creds.sh` novamente.
+
+✅ **Checkpoint:** Pasta criada, aberta no Kiro e credenciais do Learner Lab carregadas.
 
 ---
 
 ## Parte 1 — Setup do Projeto (10 min)
 
-### 1.1 Criar diretório do lab
+> Crie todos os arquivos a seguir pela interface do **Kiro** (New File), dentro da pasta `aula-05-rds`.
 
-```bash
-mkdir -p ~/labs/aula-05-rds
-cd ~/labs/aula-05-rds
-```
-
-### 1.2 Criar arquivo providers.tf
+### 1.1 Criar arquivo providers.tf
 
 ```hcl
 # providers.tf
@@ -51,7 +108,7 @@ provider "aws" {
 }
 ```
 
-### 1.3 Criar arquivo variables.tf
+### 1.2 Criar arquivo variables.tf
 
 ```hcl
 # variables.tf
@@ -93,7 +150,7 @@ variable "db_name" {
 }
 ```
 
-### 1.4 Criar arquivo terraform.tfvars
+### 1.3 Criar arquivo terraform.tfvars
 
 ```hcl
 # terraform.tfvars
@@ -102,9 +159,9 @@ aws_region  = "us-east-1"
 db_password = "TechNova2025Segura!"
 ```
 
-> **⚠️ IMPORTANTE:** Adicione `terraform.tfvars` ao `.gitignore`! Ele contém a senha do banco.
+> **⚠️ IMPORTANTE:** O `terraform.tfvars` contém a senha do banco — está no `.gitignore` abaixo.
 
-### 1.5 Criar .gitignore
+### 1.4 Criar .gitignore
 
 ```
 # .gitignore
@@ -112,10 +169,19 @@ db_password = "TechNova2025Segura!"
 *.tfstate
 *.tfstate.backup
 terraform.tfvars
+.terraform.lock.hcl
+
+# Credenciais AWS Academy (NUNCA versionar)
+aws-creds.sh
+
+# Chaves SSH
 *.pem
+*.key
 ```
 
-### 1.6 Inicializar Terraform
+> **Importante:** o `aws-creds.sh` e o `terraform.tfvars` contêm segredos — nunca devem ser versionados.
+
+### 1.5 Inicializar Terraform
 
 ```bash
 terraform init
@@ -389,7 +455,7 @@ data "aws_ami" "amazon_linux" {
 # Key Pair (use sua chave existente ou crie uma nova)
 resource "aws_key_pair" "main" {
   key_name   = "${var.project_name}-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = file("~/.ssh/technova-key.pub")
 
   tags = {
     Name    = "${var.project_name}-key"
@@ -455,7 +521,11 @@ resource "aws_instance" "api" {
 }
 ```
 
-> **Nota sobre Key Pair:** Se você não tem `~/.ssh/id_rsa.pub`, gere com `ssh-keygen -t rsa -b 4096`. Alternativamente, crie o key pair manualmente no console AWS e use `key_name = "nome-existente"` sem o recurso `aws_key_pair`.
+> **Nota sobre Key Pair:** Se você ainda não gerou a chave `technova-key` (Aula 04), crie com:
+> ```bash
+> ssh-keygen -t rsa -b 4096 -f ~/.ssh/technova-key -N ""
+> chmod 400 ~/.ssh/technova-key
+> ```
 
 ### 6.2 Testar conexão EC2 → RDS
 
@@ -463,7 +533,7 @@ Após o `terraform apply` completar:
 
 ```bash
 # 1. Conectar ao EC2 via SSH
-ssh -i ~/.ssh/id_rsa ec2-user@<IP_PUBLICO_EC2>
+ssh -i ~/.ssh/technova-key ec2-user@<IP_PUBLICO_EC2>
 
 # 2. Testar conexão ao RDS (de dentro do EC2)
 psql -h <RDS_ENDPOINT> -U technova_admin -d technova -p 5432
@@ -525,7 +595,7 @@ exit
 aws ec2 reboot-instances --instance-ids <INSTANCE_ID>
 
 # Esperar ~1 minuto, reconectar
-ssh -i ~/.ssh/id_rsa ec2-user@<IP_PUBLICO_EC2>
+ssh -i ~/.ssh/technova-key ec2-user@<IP_PUBLICO_EC2>
 
 # Reconectar ao RDS
 psql -h <RDS_ENDPOINT> -U technova_admin -d technova -p 5432
