@@ -2,7 +2,7 @@
 
 **Aluno:** João Pedro Paulino Ferreira
 **RA:** 6325175
-**Data:** 15/09/2026
+**Data:** 25/09/2026
 
 ## Repositório
 
@@ -12,183 +12,185 @@
 
 * [x] VPC com subnets públicas e privadas em 2 AZs
 * [x] RDS PostgreSQL (`db.t3.micro`) nas subnets privadas
-* [ ] EC2 `t2.micro` conectando ao RDS
-* [x] Security Groups configurados para o acesso ao PostgreSQL
-* [x] Remote State configurado com S3 + DynamoDB
-* [x] State armazenado no S3
-* [ ] Conexão EC2 → RDS via `psql`
-* [x] `terraform destroy` executado após as evidências
-
-## Infraestrutura Provisionada
-
-A infraestrutura foi provisionada utilizando Terraform na região `us-east-1`.
-
-Foram configurados:
-
-* VPC `10.0.0.0/16`;
-* duas subnets públicas, distribuídas em duas Availability Zones;
-* duas subnets privadas, distribuídas em duas Availability Zones;
-* Internet Gateway;
-* tabela de rotas para as subnets públicas;
-* EC2 `t2.micro` em subnet pública;
-* RDS PostgreSQL 15 `db.t3.micro` em subnets privadas;
-* DB Subnet Group;
-* Security Groups para EC2 e RDS;
-* banco de dados PostgreSQL `technova`;
-* bucket S3 para armazenamento do Terraform State;
-* DynamoDB para locking do Terraform State.
-
-O RDS foi configurado como privado, com:
-
-* `publicly_accessible = false`;
-* `multi_az = false`;
-* armazenamento de 20 GB;
-* tipo `gp2`;
-* armazenamento criptografado;
-* porta `5432`.
+* [x] EC2 `t2.micro` na subnet pública, conectando ao RDS
+* [x] Security Groups configurados para comunicação entre EC2 e RDS
+* [x] Remote State configurado (S3 + DynamoDB)
+* [x] State armazenado no S3 (evidência abaixo)
+* [x] Conexão EC2 → RDS via `psql` (evidência abaixo)
+* [x] Persistência de dados no PostgreSQL
+* [x] `terraform plan` validado após o provisionamento
+* [x] `terraform destroy` executado após a coleta das evidências
 
 ## Evidência do State no S3
 
-O Remote State foi configurado utilizando o bucket:
-
-`technova-terraform-state-6325175`
-
-O arquivo de estado foi armazenado em:
-
-`aula-05/terraform.tfstate`
-
-A existência do State no S3 foi validada com:
+A existência do Terraform State no Amazon S3 foi validada utilizando o comando:
 
 ```bash
-aws s3 ls s3://technova-terraform-state-6325175/aula-05/
+aws s3 ls s3://technova-terraform-state-6325175-2026/aula-05/
 ```
 
-Resultado observado:
+Resultado:
 
 ```text
-2026-09-15 01:31:21 42105 terraform.tfstate
+2026-09-25 16:43:03      37357 terraform.tfstate
 ```
 
-O versionamento do bucket também foi habilitado e validado:
+Esse resultado comprova que o Terraform State está armazenado no bucket S3 configurado para o Remote State.
 
-```json
-{
-    "Status": "Enabled"
-}
+![alt text](20.png)
+
+## Evidência da Conexão EC2 → RDS
+
+Após acessar a instância EC2 por SSH, foi utilizado o cliente PostgreSQL para estabelecer uma conexão com o RDS:
+
+```bash
+psql -h technova-postgres.cbfbmdyrlxrw.us-east-1.rds.amazonaws.com \
+     -U technova_admin \
+     -d technova \
+     -p 5432
 ```
 
-O bloqueio de acesso público foi validado com os quatro controles habilitados:
+A conexão foi estabelecida com sucesso:
 
-```json
-{
-    "BlockPublicAcls": true,
-    "IgnorePublicAcls": true,
-    "BlockPublicPolicy": true,
-    "RestrictPublicBuckets": true
-}
+```text
+psql (15.19, server 15.17)
+SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384, compression: off)
+Type "help" for help.
+
+technova=>
 ```
 
-**Evidência:** screenshot contendo os comandos de validação do bucket S3, versionamento e bloqueio de acesso público.![alt text](<S3 state.png>)
+![alt text](22.png)
+
+![alt text](24.png)
+
+A conexão comprova a comunicação entre a EC2, localizada na subnet pública, e o RDS PostgreSQL, localizado nas subnets privadas, utilizando a porta `5432`.
+
+## Evidência da Persistência de Dados
+
+Após estabelecer a conexão com o RDS, foi criada uma tabela e inserido um registro:
+
+```sql
+CREATE TABLE IF NOT EXISTS alunos (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+```
+
+```sql
+INSERT INTO alunos (nome)
+VALUES ('João Pedro');
+```
+
+O registro foi inserido com sucesso:
+
+```text
+CREATE TABLE
+
+INSERT 0 1
+
+ id |    nome
+----+------------
+  1 | João Pedro
+(1 row)
+```
+
+![alt text](25.png)
+
+Após encerrar a conexão e estabelecer uma nova conexão com o banco, foi executada a consulta:
+
+```sql
+SELECT * FROM alunos;
+```
+
+O registro permaneceu disponível:
+
+```text
+ id |    nome
+----+------------
+  1 | João Pedro
+(1 row)
+```
+
+![alt text](26.png)
+
+Essa evidência comprova a persistência dos dados no RDS PostgreSQL.
 
 ## Evidência do Terraform Plan
 
-Após a configuração do Remote State, foi executado:
+Após o provisionamento da infraestrutura, foi executado:
 
 ```bash
 terraform plan
 ```
 
-O Terraform atualizou o estado dos recursos e apresentou:
+Resultado:
 
 ```text
 No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
 ```
 
-Isso confirma que a infraestrutura existente estava de acordo com a configuração Terraform no momento da validação.
+![alt text](27.png)
 
-**Evidência:** screenshot do `terraform plan` com o resultado `No changes. Your infrastructure matches the configuration.`![alt text](<Terra Plan.png>)
+O resultado demonstra que a infraestrutura provisionada estava de acordo com a configuração declarada no Terraform.
 
-## Evidência da Conexão EC2 → RDS
+## Recursos Implementados
 
-A EC2 foi provisionada em subnet pública e o RDS em subnet privada.
+A infraestrutura da Aula 05 foi composta por:
 
-O Security Group do RDS foi configurado para permitir PostgreSQL na porta `5432` a partir da VPC:
-
-```text
-10.0.0.0/16
-```
-
-Entretanto, a conexão SSH com a EC2 não foi concluída devido a problemas de autenticação da chave pública. Por consequência, não foi possível executar a conexão utilizando `psql` a partir da EC2.
-
-Portanto, a conexão EC2 → RDS **não foi marcada como concluída**, pois não houve evidência prática da conexão.
-
-## Persistência de Dados
-
-A validação de persistência de dados também não foi realizada, pois dependia da conexão EC2 → RDS e da execução de operações no PostgreSQL.
-
-Por esse motivo, não foi apresentada uma evidência de persistência que não tenha sido efetivamente executada.
-
-## Terraform Destroy
-
-Após a coleta das evidências, foi executado:
-
-```bash
-terraform destroy
-```
-
-O Terraform identificou:
-
-
-
-```text
-Plan: 0 to add, 0 to change, 19 to destroy.
-```
-
-A infraestrutura foi destruída, incluindo:
-
-* EC2;
-* RDS PostgreSQL;
+* VPC `10.0.0.0/16`;
+* duas subnets públicas;
+* duas subnets privadas;
+* duas Availability Zones;
+* Internet Gateway;
+* EC2 `t2.micro`;
+* RDS PostgreSQL 15 `db.t3.micro`;
 * DB Subnet Group;
 * Security Groups;
-* subnets;
-* tabela de rotas;
-* Internet Gateway;
-* VPC;
-* Key Pair;
-* tabela DynamoDB de locking.
+* Amazon S3 para Remote State;
+* DynamoDB para State Locking.
 
-O bucket S3 do Remote State permaneceu existente, pois havia sido retirado do gerenciamento direto do Terraform devido à limitação de permissões encontrada no ambiente AWS Academy.
+## Remote State
 
-Ao final do `terraform destroy`, ocorreu uma mensagem de erro relacionada à liberação do state lock:
+O Terraform State foi configurado utilizando o bucket:
 
 ```text
-Error: Error releasing the state lock
-ResourceNotFoundException:
-Requested resource not found
+technova-terraform-state-6325175-2026
 ```
 
-A tabela DynamoDB utilizada para o locking já havia sido destruída durante o próprio `terraform destroy`. Dessa forma, o Terraform não conseguiu realizar a etapa final de liberação do lock porque o recurso de locking já não existia.
-
-Apesar dessa mensagem final, os recursos de infraestrutura foram efetivamente destruídos, conforme indicado pelas mensagens de conclusão, incluindo:
+Com o seguinte caminho:
 
 ```text
-aws_instance.api: Destruction complete
-aws_db_instance.postgres: Destruction complete
-aws_vpc.main: Destruction complete
+aula-05/terraform.tfstate
 ```
 
-**Evidência:** screenshot/log da execução do `terraform destroy`.![alt text](destroy.png)
+O backend utiliza:
 
-## Ajustes e Limitações
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "technova-terraform-state-6325175-2026"
+    key            = "aula-05/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "technova-terraform-lock-6325175-2026"
+  }
+}
+```
 
-Durante a atividade, foi encontrada uma limitação de permissões do ambiente AWS Academy relacionada ao gerenciamento de uma configuração de Object Lock do bucket S3.
+O locking do State utiliza a tabela DynamoDB:
 
-Como workaround, o bucket utilizado para o Remote State foi mantido fora do gerenciamento direto pelo Terraform, enquanto suas configurações necessárias foram aplicadas e validadas separadamente.
+```text
+technova-terraform-lock-6325175-2026
+```
 
-O versionamento do bucket foi habilitado utilizando AWS CLI.
+## Conclusão
 
-Também foi mantido o uso do DynamoDB para locking conforme solicitado no exercício. O Terraform apresentou um aviso informando que o parâmetro `dynamodb_table` está depreciado em versões futuras, recomendando `use_lockfile`. A configuração foi mantida porque o uso do DynamoDB fazia parte dos requisitos desta atividade.
+A atividade da Aula 05 foi concluída com a implementação de uma infraestrutura AWS utilizando Terraform, incluindo RDS PostgreSQL, EC2, VPC, subnets públicas e privadas, Security Groups e Remote State.
 
-A conexão SSH com a EC2 não foi concluída devido a problemas de autenticação da chave pública. Consequentemente, não foi possível realizar a validação prática da conexão EC2 → RDS e da persistência de dados.
+Foram realizadas as validações da comunicação entre EC2 e RDS, da persistência de dados no PostgreSQL, do armazenamento do Terraform State no S3 e da consistência da infraestrutura por meio do `terraform plan`.
 
-Todas as limitações encontradas foram registradas nesta entrega.
+Após a coleta das evidências, a infraestrutura principal foi removida utilizando `terraform destroy`.

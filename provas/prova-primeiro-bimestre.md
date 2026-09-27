@@ -253,6 +253,7 @@ Que checklist você aplicou antes de rodar `terraform apply` em código gerado p
 7. **`.gitignore` obrigatório** — nada de `.tfstate`, `.terraform/`, `.env` com senhas, `*.pem` no repositório
 8. **Apenas UM Pull Request por aluno** — a prova permite **uma única submissão**. Um segundo PR de prova do mesmo RA será desconsiderado automaticamente.
 9. **Entrega imutável após o envio** — depois de abrir o PR, **não faça novos commits nele**. Alterações posteriores (novos commits no PR) são bloqueadas e desconsideradas — valem apenas os commits presentes no momento da abertura. Revise tudo antes de abrir o PR.
+10. **O Pull Request deve ser aberto no dia da prova** — construa a solução na semana anterior, mas **abra o PR somente no dia da prova**, presencialmente. PRs abertos antes da data da prova serão desconsiderados. Isso evita problemas de submissão antecipada e garante que todos entreguem no mesmo momento.
 
 ---
 
