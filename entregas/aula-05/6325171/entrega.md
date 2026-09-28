@@ -1,149 +1,60 @@
 # Entrega - Aula 05: RDS e Remote State
 
-**Aluno:** Nicolas Jesus e Silva  
+**Aluno:** Nicolas de Jesus Silva
 **RA:** 6325171  
-**Data:** 17/09/2026
+**Data:** 19/09/2026
 
 ## Repositorio
 
 - URL: https://github.com/NxcolasDev/unifaat-devops-portfolio
 - Pasta: `aula-05/`
+- Branch de desenvolvimento: `feature/aula-05-rds-remote-state`
 
 ## Evidencias
 
-- [x] VPC `10.0.0.0/16` com uma subnet publica e duas subnets privadas em duas AZs
-- [x] Internet Gateway e Route Table publica
-- [x] RDS PostgreSQL 15 `db.t3.micro` nas subnets privadas
-- [x] RDS com `publicly_accessible = false`, encriptacao e `multi_az = false`
+- [x] VPC com uma subnet publica e duas privadas em duas AZs
+- [x] RDS PostgreSQL `db.t3.micro` privado e criptografado
 - [x] EC2 `t2.micro` na subnet publica
-- [x] Security Group do RDS permitindo porta 5432 somente do EC2
-- [x] Security Group do EC2 com SSH e API conforme necessidade
-- [x] Bucket S3 de remote state com versionamento, encriptacao e bloqueio de acesso publico
-- [x] Tabela DynamoDB com chave `LockID` do tipo String e `PAY_PER_REQUEST`
-- [x] Backend S3 configurado e state armazenado remotamente
-- [x] Conexao EC2 -> RDS validada com `psql`
-- [x] Dados de teste persistentes consultados no RDS
-- [x] `terraform plan` sem mudancas apos a aplicacao
-- [x] `terraform destroy` executado e recursos temporarios removidos
+- [x] Security Group do RDS aceitando PostgreSQL somente do SG da EC2
+- [x] Remote State em S3 com criptografia, versionamento e bloqueio de acesso publico
+- [x] DynamoDB `nxcolasdev-technova-locks` ativo para locking
+- [x] `user_data.sh` entregue com cliente PostgreSQL
+- [x] State remoto confirmado no S3
+- [x] SSH na EC2 confirmado
+- [x] Conexao EC2 -> RDS via `psql` confirmada
+- [x] Dados persistentes consultados na tabela `orders`
+- [x] `terraform plan` posterior ao apply sem alteracoes
+- [x] `terraform destroy` concluido: 13 recursos destruidos
 
-## Arquivos no portfolio
+## Mapa das evidencias
 
-Os arquivos tecnicos estao no repositorio pessoal, em `aula-05/`:
+| Arquivo | Evidencia |
+|---|---|
+| `evidencias/01-plan-inicial-13-recursos.png` | Plan inicial com 13 recursos para criar. |
+| `evidencias/02-conexao-psql-e-criacao-tabela.png` | Cliente PostgreSQL e criacao da tabela. |
+| `evidencias/03-remote-state-s3-listagem.png` | `terraform.tfstate` armazenado no bucket S3. |
+| `evidencias/04-s3-seguranca-e-criptografia.png` | Versionamento, criptografia e Public Access Block do S3. |
+| `evidencias/05-dynamodb-lock-ativo.png` | Tabela DynamoDB de locking ativa com chave `LockID`. |
+| `evidencias/06-terraform-state-list.png` | Recursos controlados pelo state remoto. |
+| `evidencias/07-plan-sem-alteracoes.png` | Plan posterior ao apply sem mudanças. |
+| `evidencias/08-ssh-ec2-e-select-version.png` | SSH na EC2 e `SELECT version()` do PostgreSQL. |
+| `evidencias/09-dados-persistentes-orders.png` | Consulta dos dados persistidos em `orders`. |
+| `evidencias/10-destroy-complete-13-recursos.png` | Destroy concluído com 13 recursos destruídos. |
 
-- `providers.tf`, `variables.tf`, `vpc.tf`, `security.tf`, `rds.tf`, `ec2.tf` e `outputs.tf`
-- `terraform-plan-output.txt` com o plano de criacao
-- `terraform-plan-no-changes.txt` com o plano apos a aplicacao
-- `README.md` com arquitetura, seguranca e comandos
-- `.gitignore` sem state, variaveis, credenciais ou chaves privadas
+## Arquivos Terraform
 
-Nao foram incluidos `terraform.tfvars`, `aws-creds.sh`, `.tfstate`, `.terraform/`, `*.pem` ou senhas.
+- `backend/`: bootstrap do bucket S3 e da tabela DynamoDB.
+- `providers.tf`: provider AWS e backend S3 remoto.
+- `main.tf`: arquivo coordenador da configuração.
+- `vpc.tf`: VPC, subnets, Internet Gateway e rotas.
+- `security.tf`: Security Groups da EC2 e do RDS.
+- `rds.tf`: subnet group e instância PostgreSQL.
+- `ec2.tf`: AMI, key pair e instância EC2.
+- `user_data.sh`: instalação do cliente PostgreSQL no primeiro boot.
+- `outputs.tf` e `variables.tf`: valores exportados e parâmetros.
 
-## Evidencia do State no S3
+## Observacao
 
-Bucket: `nxcolasdev-technova-state-f105195a`  
-Caminho: `aula-05/terraform.tfstate`
+A infraestrutura foi aplicada, validada com SSH e `psql`, conferida com plan sem alterações e destruída ao final. Senhas, estados Terraform, chaves privadas e credenciais AWS não fazem parte do repositório.
 
-```text
-2026-09-17 14:17:50      36811 terraform.tfstate
-```
-
-Configuracoes verificadas:
-
-```json
-{
-    "Status": "Enabled"
-}
-```
-
-```json
-{
-    "ServerSideEncryptionConfiguration": {
-        "Rules": [
-            {
-                "ApplyServerSideEncryptionByDefault": {
-                    "SSEAlgorithm": "AES256"
-                }
-            }
-        ]
-    }
-}
-```
-
-```json
-{
-    "PublicAccessBlockConfiguration": {
-        "BlockPublicAcls": true,
-        "IgnorePublicAcls": true,
-        "BlockPublicPolicy": true,
-        "RestrictPublicBuckets": true
-    }
-}
-```
-
-Tabela DynamoDB de locking:
-
-```text
-Name: nxcolasdev-technova-locks
-Status: ACTIVE
-BillingMode: PAY_PER_REQUEST
-KeySchema: LockID (HASH)
-```
-
-## Evidencia da Conexao EC2 -> RDS
-
-Instancia EC2: `i-03aff7c0fecb9a402`  
-IP publico: `3.84.44.19`  
-Endpoint RDS: `nxcolasdev-technova-db.cotyxuvtwdcw.us-east-1.rds.amazonaws.com:5432`
-
-```text
-PostgreSQL 15.17 on x86_64-pc-linux-gnu
-SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384)
-```
-
-## Evidencia dos Dados Persistentes
-
-Tabela `orders` criada no RDS e consultada a partir da EC2:
-
-```text
- id | customer_name |       product       | quantity |  total
-----+---------------+---------------------+----------+---------
-  1 | Maria Silva   | Laptop TechNova Pro |        1 | 4599.90
-  2 | Joao Santos   | Monitor 27          |        2 | 2398.00
-  3 | Ana Costa     | Teclado Mecanico    |        3 |  897.00
-```
-
-Após o reboot da EC2, os mesmos três registros foram consultados novamente com sucesso, comprovando que os dados permanecem no RDS.
-
-## Evidencia do Terraform Plan
-
-Após a aplicação, o Terraform confirmou que a infraestrutura está sincronizada:
-
-```text
-No changes. Your infrastructure matches the configuration.
-```
-
-Recursos registrados no state remoto:
-
-```text
-aws_db_instance.main
-aws_db_subnet_group.main
-aws_instance.api
-aws_internet_gateway.main
-aws_key_pair.main
-aws_route_table.public
-aws_route_table_association.public
-aws_security_group.ec2
-aws_security_group.rds
-aws_subnet.private_a
-aws_subnet.private_b
-aws_subnet.public
-aws_vpc.main
-```
-
-## Evidencia do Reboot da EC2
-
-O primeiro acesso SSH logo após o reboot retornou temporariamente `Connection refused`, enquanto a instancia ainda inicializava. Após aguardar e repetir a conexao, o acesso SSH funcionou e a consulta dos três pedidos retornou os mesmos dados. Isso comprova a persistencia independente no RDS.
-
-## Observacao de Execucao
-
-As evidencias acima foram obtidas apos executar `terraform validate`, `terraform plan`, `terraform apply`, a conexao SSH/`psql`, a consulta dos dados apos reboot e a verificacao do state remoto. O cleanup ainda esta pendente: executar `terraform destroy` na infraestrutura principal, esvaziar as versoes do bucket S3 e destruir o projeto `backend/`. Nenhuma credencial AWS ou senha foi incluida neste arquivo.
+Este arquivo deve ser copiado para `entregas/aula-05/6325171/entrega.md` no fork da disciplina.
