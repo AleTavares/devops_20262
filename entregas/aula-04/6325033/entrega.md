@@ -1,110 +1,142 @@
-# Entrega — Aula 04: VPC + EC2 Multi-AZ
+# Entrega Aula 04 - Terraform e AWS
 
-**Aluno:** Renan Dias
+## Aluno
 
-**RA:** 6325033
-
-**Data:** 07/09/2026
-
----
+- Nome: Renan Dias
+- RA: 6325033
+- Data: 19/09/2026
 
 ## Repositório
 
-- URL: https://github.com/diazrenan/unifaat-devops-portfolio
+https://github.com/diazrenan/unifaat-devops-portfolio
 
-- Pasta do projeto: `aula-04/`
+## Estrutura da entrega
 
----
+A infraestrutura da Aula 04 foi implementada utilizando Terraform e está organizada diretamente no diretório `aula-04/` do repositório de portfólio.
 
-## Evidências
+A entrega contém:
 
-- [x] VPC `10.0.0.0/16` com 4 subnets (2 públicas + 2 privadas) distribuídas em 2 AZs
+- Configuração do provider AWS
+- VPC e subnets Multi-AZ
+- Internet Gateway e tabela de rotas pública
+- Security Groups
+- Key Pair
+- Instância EC2
+- User Data
+- Outputs do Terraform
+- Evidências de execução
+- README com documentação e diagrama da arquitetura
 
-- [x] Internet Gateway + Route Table pública configurados
+## Checklist da atividade
 
-- [x] Security Groups configurados (API: 22/3000; DB: 5432 apenas da VPC)
+- [x] VPC criada com CIDR `10.0.0.0/16`
+- [x] DNS Support e DNS Hostnames habilitados
+- [x] 4 subnets criadas: 2 públicas e 2 privadas
+- [x] Subnets distribuídas em 2 Availability Zones
+- [x] Subnets públicas com atribuição automática de IP público
+- [x] Internet Gateway configurado
+- [x] Route Table pública configurada com rota `0.0.0.0/0` para o Internet Gateway
+- [x] As duas subnets públicas associadas à Route Table pública
+- [x] Subnets privadas sem rota direta para a Internet
+- [x] Security Group da API configurado
+- [x] Porta SSH `22` configurada no Security Group da API
+- [x] Porta `3000` configurada no Security Group da API
+- [x] Security Group do banco criado
+- [x] Porta `5432` restrita ao CIDR da VPC no Security Group do banco
+- [x] Instância EC2 `t2.micro` criada
+- [x] Amazon Linux 2023 utilizado
+- [x] User Data configurado
+- [x] Node.js 18 instalado automaticamente pela User Data
+- [x] API TechNova executando na porta `3000`
+- [x] Instance Profile `LabInstanceProfile` utilizado
+- [x] Key Pair configurado via Terraform
+- [x] Tags aplicadas aos recursos
+- [x] Evidência do `terraform plan` gerada
+- [x] README com diagrama da arquitetura
+- [x] API testada via HTTP
+- [x] Acesso SSH testado
+- [x] `terraform destroy` executado ao final da atividade
 
-- [x] EC2 `t2.micro` com User Data e API Node.js rodando na porta 3000
+## API
 
-- [x] Instance Profile com IAM Role (`LabInstanceProfile` / `LabRole` — AWS Academy Learner Lab)
+A API foi executada na instância EC2 durante a validação da infraestrutura.
 
-- [x] Tags de identificação nos recursos
+URL utilizada nos testes:
 
-- [x] `terraform plan` executado e validado
+http://44.204.141.114:3000
 
-- [x] README com diagrama da arquitetura Multi-AZ
+Endpoints testados:
 
-- [x] API validada através de `curl`
+- `/`
+- `/health`
+- `/orders`
 
-- [x] Acesso SSH + validação da IAM Role realizados
+### Resultado dos testes
 
-> **Nota sobre IAM:** O AWS Academy Learner Lab não permitiu a criação de uma nova IAM Role através do Terraform (`iam:CreateRole`). Por isso, foi utilizado o `LabInstanceProfile`, que referencia a `LabRole` disponibilizada pelo próprio ambiente AWS Academy.
+O endpoint `/` retornou o status da aplicação.
 
----
+O endpoint `/health` confirmou que o serviço estava saudável.
 
-## Infraestrutura
+O endpoint `/orders` retornou dados de exemplo da API.
 
-**VPC:** `10.0.0.0/16`
+Após a conclusão dos testes, a infraestrutura foi destruída com `terraform destroy`, conforme solicitado na atividade.
 
-**VPC ID:** `vpc-06d35920d676b976f`
+## Evidências geradas
 
-### Subnets públicas
+### Terraform Plan
 
-- `10.0.1.0/24` — `subnet-074a9069144b9ed8b`
-- `10.0.3.0/24` — `subnet-08a86df42986c573d`
-
-### Subnets privadas
-
-- `10.0.2.0/24` — `subnet-061d6183eb3091148`
-- `10.0.4.0/24` — `subnet-0fab233b5b9aa89ff`
-
-A infraestrutura foi distribuída entre duas Availability Zones, mantendo duas subnets públicas e duas privadas.
-
----
-
-## Security Groups
+- `evidencia-plan.txt`
+- `terraform-plan-output.txt`
 
 ### API
 
-**Security Group:** `sg-0bc99eaf599a76751`
+- `evidencia-api.json`
 
-- TCP 22 — `0.0.0.0/0` — acesso SSH
-- TCP 3000 — `0.0.0.0/0` — acesso à API
+### SSH
 
-### DB
+- `evidencia-ssh.txt`
 
-**Security Group:** `sg-03440bab5c0a78571`
+## Links diretos do código Terraform
 
-- TCP 5432 — `10.0.0.0/16` — acesso PostgreSQL somente dentro da VPC
+- [providers.tf](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/providers.tf)
+- [main.tf](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/main.tf)
+- [variables.tf](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/variables.tf)
+- [outputs.tf](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/outputs.tf)
+- [key_pair.tf](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/key_pair.tf)
+- [user_data.sh](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/user_data.sh)
+- [.gitignore](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/.gitignore)
 
----
+## Links diretos das evidências
 
-## EC2
+- [terraform-plan-output.txt](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/terraform-plan-output.txt)
+- [evidencia-plan.txt](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/evidencia-plan.txt)
+- [evidencia-api.json](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/evidencia-api.json)
+- [evidencia-ssh.txt](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/evidencia-ssh.txt)
 
-Foi utilizada uma instância `t2.micro` em uma subnet pública.
+## Documentação
 
-A configuração da aplicação foi realizada automaticamente através do `user_data.sh`.
+- [README.md](https://github.com/diazrenan/unifaat-devops-portfolio/blob/feature/aula-04-terraform/aula-04/README.md)
 
-**IP público:** `34.234.96.233`
+## Observação sobre o AWS Academy
 
-**API:** `http://34.234.96.233:3000`
+A infraestrutura foi desenvolvida com Terraform e executada no AWS Academy Learner Lab.
 
-A aplicação utiliza Node.js e disponibiliza os endpoints `/` e `/health`.
+O projeto utiliza o Instance Profile `LabInstanceProfile`, disponibilizado pelo ambiente AWS Academy, para a instância EC2.
 
----
+A utilização desse Instance Profile evita a criação de uma nova Role IAM dentro do ambiente controlado do Learner Lab.
 
-## Evidência da API Rodando
+## Organização do projeto
 
-Resposta do:
+Os arquivos Terraform e as evidências estão diretamente no diretório:
 
-```bash
-curl http://34.234.96.233:3000
-```
+`aula-04/`
 
-v18.20.8
+Não há mais uma pasta intermediária `aula-04/terraform/`.
 
-{
-"UserId": "AROASFPYGPBXNFG5IKIBC:i-0d185689dee91ca32",
-"Account": "149233760366",
-"Arn": "arn:aws:sts::149233760366:assumed-role/LabRole/i-0d185689dee91ca32"
-}
+Essa organização foi realizada para facilitar a avaliação do código e das evidências diretamente no repositório de portfólio.
+
+## Conclusão
+
+A infraestrutura proposta para a Aula 04 foi implementada com Terraform, validada no AWS Academy Learner Lab e documentada no README do projeto.
+
+Foram realizados testes da API, acesso SSH e validação da infraestrutura, seguidos da execução do `terraform destroy` ao final da atividade.
