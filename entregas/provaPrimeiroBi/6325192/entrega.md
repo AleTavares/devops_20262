@@ -8,7 +8,7 @@
 ## Repositório do Projeto
 
 - Repositório: https://github.com/iHawlKz7/prova-primeiro-bimestre-devops
-- Commit final validado: `67bd51c`
+- Commit final validado do projeto: `67bd51c`
 
 ## Checklist da Entrega
 
@@ -62,11 +62,11 @@
 
 Arquivo:
 
-    evidencias/docker-clone-final.txt
+- [evidencias/docker-clone-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/docker-clone-final.txt)
 
-A versão final foi validada a partir de um clone novo do repositório.
+A validação em clone novo foi executada quando o repositório estava no commit `d7e7092`.
 
-Foram confirmados:
+Nesse teste foram confirmados:
 
 - scripts com permissão de execução;
 - build Docker;
@@ -78,12 +78,27 @@ Foram confirmados:
 - DELETE;
 - HTTP 404 após a exclusão.
 
+Entre `d7e7092` e o commit final `67bd51c`, não houve alteração em:
+
+- `app/`;
+- `docker-compose.yml`;
+- infraestrutura Terraform;
+- `.env.example`.
+
+As mudanças posteriores ficaram concentradas nos scripts de deploy/destroy, documentação e evidências.
+
 ### Docker
 
 Arquivos:
 
-    evidencias/docker-build.txt
-    evidencias/compose-ps.txt
+- [evidencias/docker-build.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/docker-build.txt)
+- [evidencias/compose-ps.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/compose-ps.txt)
+
+`compose-ps.txt` registra uma validação inicial do ambiente Docker Compose.
+
+A validação final dos dois serviços saudáveis está registrada em:
+
+- [evidencias/docker-clone-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/docker-clone-final.txt)
 
 A API utiliza Dockerfile multi-stage e executa como usuário não-root.
 
@@ -93,7 +108,7 @@ O ambiente Docker Compose contém API e PostgreSQL, volume persistente, rede pr�
 
 Arquivo:
 
-    evidencias/aws-deploy-final.txt
+- [evidencias/aws-deploy-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/aws-deploy-final.txt)
 
 O deploy final criou a infraestrutura através do Terraform.
 
@@ -105,11 +120,13 @@ Resultado do healthcheck:
 
     {"status":"ok","database":"connected"}
 
+O plano de criação da infraestrutura também está registrado dentro dessa evidência.
+
 ### CRUD AWS e persistência
 
 Arquivo:
 
-    evidencias/aws-api-final.txt
+- [evidencias/aws-api-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/aws-api-final.txt)
 
 Foram validadas na EC2 as operações:
 
@@ -136,7 +153,7 @@ Resultado registrado:
 
 Arquivo:
 
-    evidencias/terraform-plan-final.txt
+- [evidencias/terraform-plan-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/terraform-plan-final.txt)
 
 Depois do deploy e dos testes foi executado novamente `terraform plan` utilizando os mesmos parâmetros.
 
@@ -150,7 +167,7 @@ Isso confirmou que a infraestrutura implantada correspondia ao código Terraform
 
 Arquivo:
 
-    evidencias/backend-final.txt
+- [evidencias/backend-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/backend-final.txt)
 
 Foram verificados:
 
@@ -197,7 +214,7 @@ Nenhum usuário, grupo ou role IAM próprio foi criado.
 
 Arquivo:
 
-    evidencias/destroy-final.txt
+- [evidencias/destroy-final.txt](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/evidencias/destroy-final.txt)
 
 A infraestrutura principal foi destruída pelo Terraform.
 
@@ -214,7 +231,6 @@ Depois da destruição foi confirmado:
     DynamoDB removido.
     Bucket S3 removido.
     Destroy completo: todos os recursos removidos
-    DESTROY AWS: OK
 
 Assim, nenhum recurso utilizado pela prova permaneceu ativo no Learner Lab.
 
@@ -222,7 +238,7 @@ Assim, nenhum recurso utilizado pela prova permaneceu ativo no Learner Lab.
 
 Arquivo:
 
-    relatorio.md
+- [relatorio.md](https://github.com/iHawlKz7/prova-primeiro-bimestre-devops/blob/67bd51c/relatorio.md)
 
 O relatório responde às quatro questões solicitadas e documenta:
 
