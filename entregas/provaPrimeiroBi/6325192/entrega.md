@@ -1,8 +1,8 @@
 # Entrega — Prova do Primeiro Bimestre (DevOps)
 
-**Aluno:** Emar Cristian Silva Teruo Ito  
-**RA:** 6325192  
-**Data da entrega:** 28/09/2026  
+**Aluno:** Emar Cristian Silva Teruo Ito
+**RA:** 6325192
+**Data da entrega:** 28/09/2026
 **Ferramenta de IA utilizada:** ChatGPT
 
 ## Repositório do Projeto
