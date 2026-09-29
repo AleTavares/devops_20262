@@ -683,15 +683,21 @@ footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="19">
 <h1 id="sintaxe-yaml-de-workflows">Sintaxe YAML de Workflows</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-yaml"><span class="hljs-comment"># .github/workflows/ci.yml</span>
-<span class="hljs-attr">name:</span> <span class="hljs-string">CI</span> <span class="hljs-string">Pipeline</span>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-yaml"><span class="hljs-comment"># .github/workflows/ci-aula08.yml  (na raiz do unifaat-devops-portfolio)</span>
+<span class="hljs-attr">name:</span> <span class="hljs-string">CI</span> <span class="hljs-string">Pipeline</span> <span class="hljs-string">—</span> <span class="hljs-string">Aula</span> <span class="hljs-number">08</span>
 
 <span class="hljs-attr">on:</span>
   <span class="hljs-attr">push:</span>
     <span class="hljs-attr">branches:</span> [<span class="hljs-string">main</span>, <span class="hljs-string">develop</span>]
+    <span class="hljs-attr">paths:</span> [<span class="hljs-string">&#x27;aula-08/technova-api/**&#x27;</span>]
   <span class="hljs-attr">pull_request:</span>
     <span class="hljs-attr">branches:</span> [<span class="hljs-string">main</span>]
-  <span class="hljs-attr">workflow_dispatch:</span>           <span class="hljs-comment"># Permite execução manual</span>
+    <span class="hljs-attr">paths:</span> [<span class="hljs-string">&#x27;aula-08/technova-api/**&#x27;</span>]
+  <span class="hljs-attr">workflow_dispatch:</span>
+
+<span class="hljs-attr">defaults:</span>
+  <span class="hljs-attr">run:</span>
+    <span class="hljs-attr">working-directory:</span> <span class="hljs-string">aula-08/technova-api</span>
 
 <span class="hljs-attr">jobs:</span>
   <span class="hljs-attr">lint:</span>

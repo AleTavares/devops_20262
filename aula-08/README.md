@@ -61,7 +61,7 @@ Esse é o desafio desta aula: construir um pipeline CI completo que **pega tudo*
 - **npm** instalado (vem com Node.js)
 - **Git** configurado com autenticação no GitHub (SSH ou HTTPS token)
 - **Kiro** instalado e funcional
-- **Repositório `technova-api`** no GitHub com aplicação Express básica (criada no Módulo 1)
+- **Repositório `unifaat-devops-portfolio`** no GitHub com aplicação Express básica (criada no Módulo 1)
 - **Conhecimentos das Aulas 01-07:** Git, Docker, Docker Compose, Kiro, Terraform (modules, remote state), IAM, VPC, EC2, RDS, IA para IaC
 
 > **GitHub Actions é gratuito para repositórios públicos** — minutos ilimitados. Todos os labs desta aula podem ser feitos em repositórios públicos sem custo algum.
@@ -350,7 +350,7 @@ describe('GET /api/orders', () => {
 **Status Badges** mostram o estado do pipeline no README:
 
 ```markdown
-![CI](https://github.com/SEU-USUARIO/technova-api/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/SEU-USUARIO/unifaat-devops-portfolio/actions/workflows/ci.yml/badge.svg)
 ```
 
 ---

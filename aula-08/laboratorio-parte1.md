@@ -20,7 +20,7 @@ Construir um pipeline CI completo para a TechNova API usando GitHub Actions. Ao 
 - [ ] Node.js ≥ 18 instalado (`node --version`)
 - [ ] npm instalado (`npm --version`)
 - [ ] Git configurado com autenticação no GitHub
-- [ ] Repositório `technova-api` no GitHub (pode ser novo)
+- [ ] Repositório `unifaat-devops-portfolio` no GitHub (pode ser novo)
 
 > **Repositório público = GitHub Actions gratuito (minutos ilimitados para repos públicos)**
 
@@ -30,12 +30,12 @@ Construir um pipeline CI completo para a TechNova API usando GitHub Actions. Ao 
 
 ### 1.1 Criar/Atualizar o repositório
 
-Se ainda não tem o repositório `technova-api`, crie:
+Se ainda não tem o repositório `unifaat-devops-portfolio`, crie:
 
 ```bash
-mkdir technova-api
-cd technova-api
-git init
+cd unifaat-devops-portfolio
+mkdir -p aula-08/technova-api
+cd aula-08/technova-api
 ```
 
 ### 1.2 Configurar package.json
@@ -324,25 +324,35 @@ npm run build
 
 ### 2.1 Criar a estrutura de diretórios
 
-O GitHub Actions procura workflows em `.github/workflows/`:
+O GitHub Actions procura workflows em `.github/workflows/` **na raiz do `unifaat-devops-portfolio`** (não dentro de `aula-08/`):
 
 ```bash
+# Na raiz do unifaat-devops-portfolio
 mkdir -p .github/workflows
 ```
 
 ### 2.2 Criar o workflow CI
 
-Crie o arquivo `.github/workflows/ci.yml`:
+Crie o arquivo `.github/workflows/ci-aula08.yml`:
 
 ```yaml
-name: CI Pipeline
+name: CI Pipeline — Aula 08
 
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'aula-08/technova-api/**'
+      - '.github/workflows/ci-aula08.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'aula-08/technova-api/**'
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: aula-08/technova-api
 
 jobs:
   lint:
@@ -358,6 +368,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: aula-08/technova-api/package-lock.json
 
       - name: Instalar dependências
         run: npm ci
@@ -372,7 +383,7 @@ jobs:
 git add .
 git commit -m "feat: adicionar configuração de CI com ESLint"
 git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/technova-api.git
+# (repositório unifaat-devops-portfolio já existe — apenas faça push na branch)
 git push -u origin main
 ```
 
@@ -385,7 +396,7 @@ git push -u origin main
 5. O job `lint` deve ficar verde ✅
 
 > **⚠️ Se falhar:** Leia a mensagem de erro. Erros comuns:
-> - `npm ci` falha → verifique se `package-lock.json` está commitado
+> - `npm ci` falha → verifique se `aula-08/technova-api/package-lock.json` está commitado
 > - ESLint errors → corrija o código localmente e faça novo push
 
 ---
@@ -435,7 +446,7 @@ Atualize o job `lint` para ter melhor output:
 
 ### 4.1 Adicionar job test ao workflow
 
-Edite `.github/workflows/ci.yml` e adicione o job `test` após o job `lint`:
+Edite `.github/workflows/ci-aula08.yml` e adicione o job `test` após o job `lint`:
 
 ```yaml
   test:
@@ -452,6 +463,7 @@ Edite `.github/workflows/ci.yml` e adicione o job `test` após o job `lint`:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: aula-08/technova-api/package-lock.json
 
       - name: Instalar dependências
         run: npm ci
@@ -464,7 +476,7 @@ Edite `.github/workflows/ci.yml` e adicione o job `test` após o job `lint`:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: aula-08/technova-api/coverage/
           retention-days: 14
 ```
 
@@ -486,7 +498,7 @@ O step `Upload coverage report`:
 ### 4.4 Commit e push
 
 ```bash
-git add .github/workflows/ci.yml
+git add .github/workflows/ci-aula08.yml
 git commit -m "feat: adicionar job de testes com coverage"
 git push
 ```
@@ -515,7 +527,7 @@ Adicione o job `build` ao workflow:
         uses: actions/checkout@v4
 
       - name: Build da imagem Docker
-        run: docker build -t technova-api:${{ github.sha }} .
+        run: docker build -t technova-api:${{ github.sha }} aula-08/technova-api/
 
       - name: Verificar imagem criada
         run: docker images technova-api
@@ -545,7 +557,7 @@ O job `build` depende de **ambos** lint e test:
 ### 5.4 Commit e push
 
 ```bash
-git add .github/workflows/ci.yml
+git add .github/workflows/ci-aula08.yml
 git commit -m "feat: adicionar job de build Docker ao pipeline"
 git push
 ```
@@ -556,17 +568,26 @@ git push
 
 ### 6.1 Workflow final completo
 
-Verifique que seu `.github/workflows/ci.yml` está assim:
+Verifique que seu `.github/workflows/ci-aula08.yml` está assim:
 
 ```yaml
-name: CI Pipeline
+name: CI Pipeline — Aula 08
 
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'aula-08/technova-api/**'
+      - '.github/workflows/ci-aula08.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'aula-08/technova-api/**'
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: aula-08/technova-api
 
 jobs:
   lint:
@@ -582,6 +603,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: aula-08/technova-api/package-lock.json
 
       - name: Instalar dependências
         run: npm ci
@@ -603,6 +625,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: aula-08/technova-api/package-lock.json
 
       - name: Instalar dependências
         run: npm ci
@@ -615,7 +638,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: aula-08/technova-api/coverage/
           retention-days: 14
 
   build:
@@ -628,7 +651,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build da imagem Docker
-        run: docker build -t technova-api:${{ github.sha }} .
+        run: docker build -t technova-api:${{ github.sha }} aula-08/technova-api/
 
       - name: Verificar imagem criada
         run: docker images technova-api
@@ -649,7 +672,7 @@ Crie ou atualize o `README.md` na raiz do projeto:
 ```markdown
 # TechNova API
 
-![CI Pipeline](https://github.com/SEU-USUARIO/technova-api/actions/workflows/ci.yml/badge.svg)
+![CI Pipeline — Aula 08](https://github.com/SEU-USUARIO/unifaat-devops-portfolio/actions/workflows/ci-aula08.yml/badge.svg)
 
 API de gestão de pedidos da TechNova.
 
@@ -806,7 +829,7 @@ Verifique se o `Dockerfile` está na raiz do projeto e se `package.json` está c
 ### Workflow não aparece na aba Actions
 
 Verifique:
-- O arquivo está em `.github/workflows/ci.yml` (caminho exato)
+- O arquivo está em `.github/workflows/ci-aula08.yml` (caminho exato)
 - O YAML não tem erros de indentação
 - O branch está correto (push para main)
 
@@ -823,7 +846,7 @@ Ao final desta parte do laboratório, verifique:
 
 - [ ] `.eslintrc.json` configurado e lint passando localmente
 - [ ] Testes escritos e passando localmente (`npm test`)
-- [ ] `.github/workflows/ci.yml` com 3 jobs (lint, test, build)
+- [ ] `.github/workflows/ci-aula08.yml` com 3 jobs (lint, test, build)
 - [ ] Job `test` depende de `lint` (`needs: lint`)
 - [ ] Job `build` depende de ambos (`needs: [lint, test]`)
 - [ ] Pipeline executou com sucesso no GitHub (todos verdes)

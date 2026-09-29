@@ -133,15 +133,21 @@ Developer faz commit → Push/PR → GitHub Actions executa automaticamente:
 # Sintaxe YAML de Workflows
 
 ```yaml
-# .github/workflows/ci.yml
-name: CI Pipeline
+# .github/workflows/ci-aula08.yml  (na raiz do unifaat-devops-portfolio)
+name: CI Pipeline — Aula 08
 
 on:
   push:
     branches: [main, develop]
+    paths: ['aula-08/technova-api/**']
   pull_request:
     branches: [main]
-  workflow_dispatch:           # Permite execução manual
+    paths: ['aula-08/technova-api/**']
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: aula-08/technova-api
 
 jobs:
   lint:

@@ -381,8 +381,11 @@ Responda as questões abaixo para verificar sua compreensão. Traga suas respost
 **O que dispara a execução de um workflow do GitHub Actions?**
 
 a) O workflow é executado automaticamente a cada 5 minutos pelo GitHub
+
 b) Eventos configurados no campo `on:` do YAML, como push, pull_request ou workflow_dispatch
+
 c) O desenvolvedor precisa clicar em "Run" na UI do GitHub para cada execução
+
 d) O workflow só executa quando um administrador do repositório faz deploy
 
 ### Questão 2
@@ -390,8 +393,11 @@ d) O workflow só executa quando um administrador do repositório faz deploy
 **Qual é a função da keyword `needs` em um workflow multi-stage?**
 
 a) Define quais secrets o job precisa para executar
+
 b) Indica quais runners são necessários para o job
+
 c) Cria dependência entre jobs — o job só executa se os jobs listados em `needs` passarem
+
 d) Define quantas vezes o job deve ser executado (retry count)
 
 ### Questão 3
@@ -399,8 +405,11 @@ d) Define quantas vezes o job deve ser executado (retry count)
 **Onde devem ser armazenadas credenciais AWS (access key e secret key) para uso em GitHub Actions?**
 
 a) No arquivo `.env` commitado no repositório, pois o GitHub mascara automaticamente
+
 b) Como variáveis de ambiente definidas no `runs-on` do job
+
 c) Em GitHub Secrets (Settings → Secrets), referenciadas com `${{ secrets.NAME }}`
+
 d) Diretamente no YAML do workflow, em um campo `credentials:`
 
 ### Questão 4
@@ -408,8 +417,11 @@ d) Diretamente no YAML do workflow, em um campo `credentials:`
 **Qual é o propósito de environments com approval gates no GitHub Actions?**
 
 a) Acelerar o pipeline fazendo jobs rodarem em paralelo
+
 b) Garantir que deploys para ambientes sensíveis (como produção) requeiram aprovação humana antes de executar
+
 c) Permitir que secrets sejam visíveis nos logs para debugging
+
 d) Criar cópias do repositório em diferentes servidores
 
 ---
@@ -424,7 +436,7 @@ d) Criar cópias do repositório em diferentes servidores
 - [ ] Li toda a Parte 2 (Secrets Management)
 - [ ] Respondi as 4 questões de múltipla escolha
 - [ ] Anotei dúvidas para discutir em aula
-- [ ] Tenho conta GitHub ativa com um repositório `technova-api`
+- [ ] Tenho conta GitHub ativa com um repositório `unifaat-devops-portfolio`
 - [ ] Tenho Node.js (≥18) e npm instalados (`node --version`, `npm --version`)
 - [ ] Entendo que GitHub Actions é gratuito para repos públicos
 - [ ] Refleti: já commitei credenciais no código alguma vez? Como prevenir?
