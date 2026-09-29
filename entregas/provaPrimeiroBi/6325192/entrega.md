@@ -2,65 +2,116 @@
 
 **Aluno:** Emar Cristian Silva Teruo Ito  
 **RA:** 6325192  
-**Data:** 01/10/2026
+**Data da entrega:** 28/09/2026  
 **Ferramenta de IA utilizada:** ChatGPT
 
 ## Repositório do Projeto
 
-- URL: https://github.com/iHawlKz7/prova-primeiro-bimestre-devops
+- Repositório: https://github.com/iHawlKz7/prova-primeiro-bimestre-devops
+- Commit final validado: `67bd51c`
 
-## Checklist de Evidências
+## Checklist da Entrega
 
-- [x] Repositório público com README (nome + RA) e .gitignore
-- [x] Mínimo de 6 commits com Conventional Commits + feature branch
-- [x] API com **CRUD completo** de reservas (POST, GET, GET/:id, PUT, DELETE) + /health
-- [x] Rotas de CRUD gravando no **banco PostgreSQL** (não em memória)
-- [x] Dockerfile funcional da API de Reservas
-- [x] docker-compose.yml (API + PostgreSQL) subindo com um comando
-- [x] Terraform modularizado (vpc, security-group, ec2, rds)
-- [x] **RDS PostgreSQL provisionado** nas subnets privadas (banco da API na nuvem)
-- [x] Remote State configurado (S3 + DynamoDB)
-- [x] Uso de LabRole/LabInstanceProfile (sem criar IAM próprio)
-- [x] terraform validate e terraform plan sem erros
-- [x] relatorio.md completo (4 questões)
-- [x] terraform destroy executado após evidências
+- [x] Repositório público com README contendo nome e RA
+- [x] `.gitignore` configurado para `node_modules`, `.env`, Terraform State e chaves
+- [x] Mais de 6 commits utilizando Conventional Commits
+- [x] Desenvolvimento utilizando feature branch e merge
+- [x] API Node.js/Express com CRUD completo de reservas
+- [x] `POST /reservas`
+- [x] `GET /reservas`
+- [x] `GET /reservas/:id`
+- [x] `PUT /reservas/:id`
+- [x] `DELETE /reservas/:id`
+- [x] `GET /health`
+- [x] Persistência das reservas em PostgreSQL
+- [x] Dockerfile multi-stage com execução como usuário não-root
+- [x] `.dockerignore`
+- [x] Docker Compose com API e PostgreSQL
+- [x] Volume nomeado para persistência
+- [x] Rede bridge própria
+- [x] Healthcheck do PostgreSQL
+- [x] Healthcheck da API
+- [x] `depends_on` aguardando banco saudável
+- [x] Terraform modularizado em `vpc`, `security-group`, `ec2` e `rds`
+- [x] VPC com subnets públicas e privadas em duas AZs
+- [x] EC2 `t2.micro` em subnet pública
+- [x] RDS PostgreSQL `db.t3.micro` em subnets privadas
+- [x] `publicly_accessible = false`
+- [x] `storage_encrypted = true`
+- [x] Porta 5432 do RDS permitida somente a partir do Security Group da EC2
+- [x] Uso de `LabInstanceProfile`
+- [x] Nenhum IAM próprio criado
+- [x] Remote State utilizando S3
+- [x] Versionamento e criptografia do bucket
+- [x] Bloqueio de acesso público do S3
+- [x] DynamoDB para locking
+- [x] `terraform validate` executado com sucesso
+- [x] `terraform plan` final sem alterações
+- [x] CRUD validado localmente
+- [x] CRUD validado na AWS
+- [x] Persistência validada após reiniciar somente a API
+- [x] HTTP 404 validado após exclusão
+- [x] Infraestrutura destruída após coleta das evidências
+- [x] S3 e DynamoDB também removidos
+- [x] `relatorio.md` com as quatro questões solicitadas
+- [x] Uso de IA e validação das sugestões documentados
 
-## Evidências
+## Evidências Finais
 
-### Docker Build
+### Validação em clone novo
 
 Arquivo:
+
+    evidencias/docker-clone-final.txt
+
+A versão final foi validada a partir de um clone novo do repositório.
+
+Foram confirmados:
+
+- scripts com permissão de execução;
+- build Docker;
+- Docker Compose;
+- healthcheck do PostgreSQL;
+- healthcheck da API;
+- CRUD completo;
+- persistência após reiniciar somente a API;
+- DELETE;
+- HTTP 404 após a exclusão.
+
+### Docker
+
+Arquivos:
 
     evidencias/docker-build.txt
-
-O build da imagem da API foi executado com sucesso.
-
-### Docker Compose
-
-Arquivo:
-
     evidencias/compose-ps.txt
 
-Resultado validado:
+A API utiliza Dockerfile multi-stage e executa como usuário não-root.
 
-    reservas-api   Up
-    reservas-db    Up (healthy)
+O ambiente Docker Compose contém API e PostgreSQL, volume persistente, rede própria e healthchecks.
 
-A API e o PostgreSQL foram executados utilizando Docker Compose, rede própria, volume persistente e healthcheck do banco.
-
-### API Local e AWS
+### Deploy AWS
 
 Arquivo:
 
-    evidencias/aws-api.txt
+    evidencias/aws-deploy-final.txt
 
-Health check validado na AWS:
+O deploy final criou a infraestrutura através do Terraform.
+
+O script aguardou a aplicação ficar saudável antes de declarar o deploy concluído.
+
+Resultado do healthcheck:
+
+    HTTP/1.1 200 OK
 
     {"status":"ok","database":"connected"}
 
-O CRUD completo também foi testado na EC2 utilizando o RDS PostgreSQL.
+### CRUD AWS e persistência
 
-Foram validadas as operações:
+Arquivo:
+
+    evidencias/aws-api-final.txt
+
+Foram validadas na EC2 as operações:
 
     POST /reservas
     GET /reservas
@@ -69,60 +120,72 @@ Foram validadas as operações:
     DELETE /reservas/:id
     GET /health
 
-Após a exclusão de uma reserva, uma nova busca pelo mesmo ID retornou HTTP 404, conforme esperado.
+Depois do UPDATE, somente o container da API foi reiniciado através do AWS Systems Manager.
 
-### Terraform Validate
+A reserva permaneceu disponível após o restart, comprovando a persistência no RDS PostgreSQL.
 
-Resultado:
+Depois do DELETE, uma nova busca pelo ID retornou:
 
-    Success! The configuration is valid.
+    HTTP_STATUS=404
 
-### Terraform Plan
+Resultado registrado:
 
-Arquivos:
+    CRUD AWS + RESTART + PERSISTENCIA: OK
 
-    evidencias/terraform-plan.txt
-    evidencias/terraform-plan-final.txt
-
-A infraestrutura foi planejada utilizando Terraform e módulos separados para:
-
-    vpc
-    security-group
-    ec2
-    rds
-
-No provisionamento inicial foram planejados os recursos necessários para VPC, subnets públicas e privadas, Internet Gateway, Route Table, Security Groups, EC2 e RDS PostgreSQL.
-
-### Terraform Outputs
+### Terraform Plan final
 
 Arquivo:
 
-    evidencias/terraform-output.txt
+    evidencias/terraform-plan-final.txt
 
-Foram gerados outputs para:
+Depois do deploy e dos testes foi executado novamente `terraform plan` utilizando os mesmos parâmetros.
 
-    api_url
-    ec2_public_ip
-    rds_endpoint
+Resultado:
+
+    No changes. Your infrastructure matches the configuration.
+
+Isso confirmou que a infraestrutura implantada correspondia ao código Terraform versionado.
+
+### Remote State
+
+Arquivo:
+
+    evidencias/backend-final.txt
+
+Foram verificados:
+
+- S3 Versioning habilitado;
+- criptografia AES256;
+- Public Access Block habilitado;
+- tags do projeto;
+- objeto `prova/terraform.tfstate`;
+- DynamoDB em estado `ACTIVE`;
+- chave de locking `LockID`.
+
+Resultado registrado:
+
+    BACKEND REMOTO: OK
 
 ### RDS PostgreSQL
 
 O RDS foi provisionado com:
 
-    engine PostgreSQL
-    instance class db.t3.micro
+    engine = PostgreSQL
+    instance_class = db.t3.micro
     publicly_accessible = false
     storage_encrypted = true
 
-O banco foi colocado nas subnets privadas.
+O banco foi criado nas subnets privadas.
 
-A porta 5432 do RDS foi liberada apenas para o Security Group utilizado pela EC2.
+A porta 5432 foi permitida somente a partir do Security Group da EC2.
 
-A conexão entre a API e o RDS foi validada utilizando SSL.
+A aplicação utilizou conexão SSL com o RDS durante a validação na AWS.
 
 ### EC2
 
-A aplicação foi executada em uma EC2 t2.micro.
+A aplicação foi executada em:
+
+    EC2 t2.micro
 
 Foi utilizado:
 
@@ -130,67 +193,50 @@ Foi utilizado:
 
 Nenhum usuário, grupo ou role IAM próprio foi criado.
 
-A API ficou acessível externamente pela porta 3000 durante a validação.
-
-### Remote State
-
-O Terraform State foi armazenado remotamente utilizando:
-
-    Amazon S3
-    DynamoDB
-
-O bucket S3 foi validado com:
-
-    Versionamento habilitado
-    Criptografia AES256
-    Bloqueio de acesso público
-    Tags do projeto
-
-O DynamoDB foi utilizado para locking do Terraform State.
-
-### Histórico Git
+### Destroy final
 
 Arquivo:
 
-    evidencias/git-history.txt
+    evidencias/destroy-final.txt
 
-O projeto possui feature branch, merge e commits seguindo Conventional Commits, incluindo tipos como:
+A infraestrutura principal foi destruída pelo Terraform.
 
-    feat
-    fix
-    docs
-    chore
+Resultado:
 
-### Relatório de IA
+    Destroy complete! Resources: 14 destroyed.
+
+Depois da destruição foi confirmado:
+
+    State principal vazio.
+    EC2 removida/terminada.
+    RDS removido.
+    VPC removida.
+    DynamoDB removido.
+    Bucket S3 removido.
+    Destroy completo: todos os recursos removidos
+    DESTROY AWS: OK
+
+Assim, nenhum recurso utilizado pela prova permaneceu ativo no Learner Lab.
+
+## Relatório
 
 Arquivo:
 
     relatorio.md
 
-O relatório contém as quatro questões solicitadas, cada uma com no mínimo 10 linhas de conteúdo.
+O relatório responde às quatro questões solicitadas e documenta:
 
-Ferramenta de IA utilizada:
+- a jornada das Aulas 01 a 07;
+- o uso do ChatGPT como copiloto;
+- situações em que a IA ajudou;
+- sugestões da IA que precisaram ser corrigidas;
+- arquitetura e segurança;
+- limitações do AWS Academy Learner Lab;
+- processo de validação;
+- responsabilidade pela conferência dos resultados.
 
-    ChatGPT
+## Observação Final
 
-O relatório também documenta situações em que a IA ajudou e situações em que sugestões precisaram ser corrigidas durante a execução real no AWS Academy.
+Todas as evidências citadas acima estão versionadas no repositório público do projeto.
 
-### Destroy
-
-Arquivo:
-
-    evidencias/destroy.txt
-
-Resultado da infraestrutura principal:
-
-    Destroy complete! Resources: 14 destroyed.
-
-Resultado do backend:
-
-    DynamoDB backend: destruído
-    Bucket S3 backend: destruído
-    Terraform state principal: vazio
-
-Após a coleta das evidências, todos os recursos utilizados na AWS foram removidos.
-
-Todas as evidências também estão anexadas dentro da pasta "evidencias" na raíz do projeto.
+A infraestrutura AWS foi destruída somente depois da coleta e validação das evidências finais.
