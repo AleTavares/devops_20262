@@ -1,6 +1,5 @@
 ### Discussão em Grupo
 
-
 **1. Diagnóstico:**
 
 Alguns problemas que podem acontecer:

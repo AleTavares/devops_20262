@@ -4,6 +4,7 @@
 **RA:** 4025109  
 **Data:** 02/09/2026
 
+
 ## Parte 1 — Análise do Problema Multi-Container
 
 ### Problemas do Rafael (com classificação)
