@@ -29,6 +29,35 @@
 
 Arquivos completos e prints em [`evidencias/`](https://github.com/rafadical/prova-primeiro-bimestre-devops/tree/main/evidencias). Os blocos abaixo são **linhas copiadas sem edição** desses arquivos (trechos selecionados).
 
+### Git — Conventional Commits, feature branches e merge --no-ff (`git-log.txt`)
+
+```text
+## $ git rev-list --count main
+43
+## $ git log main --format=%s | grep -vcE "^(feat|fix|docs|chore|refactor|test|style|ci|build|perf)(\(.+\))?: "   (commits fora do padrão)
+0
+## $ git log main --merges --oneline
+21cad05 chore: merge da feature/relatorio-formatacao na main
+0083dc9 chore: merge da feature/historico-final na main
+1c6ac78 chore: merge da feature/ajustes-auditoria na main
+6cccba5 chore: merge da feature/documentacao na main
+502a457 chore: merge da feature/infra-terraform na main
+8520941 chore: merge da feature/api-reservas na main
+## $ git log main --graph --oneline
+*   8520941 chore: merge da feature/api-reservas na main
+|\  
+| * 7ecd832 docs: adiciona evidência do docker compose ps
+| * b678a7b feat: adiciona Docker Compose com API e PostgreSQL
+| * cf6e9cb docs: adiciona evidências de build e execução do container
+| * 93a505f feat: adiciona Dockerfile multi-stage com usuário não-root
+| * eb7002a feat: implementa CRUD de reservas e health check
+| * 24f0dcd feat: adiciona conexão com PostgreSQL e criação da tabela reservas
+| * 396e93a chore: inicializa projeto Node da API com express e pg
+|/  
+* c8d5b07 docs: adiciona README com nome, RA e descrição do projeto
+* ec42ede chore: adiciona .gitignore para Node, Terraform e segredos
+```
+
 ### Docker — build e execução como usuário não-root (`docker-build.txt`, `docker-run.txt`)
 
 ```text
