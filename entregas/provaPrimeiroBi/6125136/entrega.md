@@ -1,15 +1,8 @@
-<!--
-Cópia de referência. A entrega oficial é feita copiando este conteúdo
-(a partir do título "# Entrega...") para `entrega.md` dentro do SEU FORK
-do repositório da disciplina, na pasta `entregas/provaPrimeiroBi/6125136/`.
-O PR só pode ser aberto no dia da prova.
--->
-
 # Entrega — Prova do Primeiro Bimestre (DevOps)
 
 **Aluno:** Hector Marcelo Pedroso dos Santos
 **RA:** 6125136
-**Data:** [preencher no dia da prova]
+**Data:** 01/10/2026
 **Ferramenta de IA utilizada:** Claude (via Claude Code)
 
 ---
