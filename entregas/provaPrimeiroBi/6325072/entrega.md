@@ -2,7 +2,7 @@
 
 **Aluno:** Leandro Duarte
 **RA:** 6325072
-**Data:** [PREENCHER NO DIA DA PROVA]
+**Data:** 2026-10-01
 **Ferramenta de IA utilizada:** Kiro (Spec-Driven Development)
 
 ## Repositório do Projeto
