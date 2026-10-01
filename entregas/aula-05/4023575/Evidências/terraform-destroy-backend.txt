@@ -1,0 +1,181 @@
+[0m[1mrandom_id.bucket_suffix: Refreshing state... [id=BevMzg][0m
+[0m[1mterraform_data.s3_bucket: Refreshing state... [id=c1028916-9f94-2b34-d8b9-6df8ba172bb7][0m
+[0m[1maws_s3_bucket_public_access_block.terraform_state: Refreshing state... [id=technova-tfstate-4023575-05ebccce][0m
+[0m[1maws_s3_bucket_versioning.terraform_state: Refreshing state... [id=technova-tfstate-4023575-05ebccce][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.terraform_state: Refreshing state... [id=technova-tfstate-4023575-05ebccce][0m
+[0m[1maws_dynamodb_table.terraform_lock: Refreshing state... [id=technova-terraform-lock][0m
+[0m[1maws_s3_bucket_policy.terraform_state: Refreshing state... [id=technova-tfstate-4023575-05ebccce][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [31m-[0m destroy[0m
+
+Terraform will perform the following actions:
+
+[1m  # aws_dynamodb_table.terraform_lock[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "aws_dynamodb_table" "terraform_lock" {
+      [31m-[0m[0m arn                         = "arn:aws:dynamodb:us-east-1:766767743325:table/technova-terraform-lock" [90m-> null[0m[0m
+      [31m-[0m[0m billing_mode                = "PAY_PER_REQUEST" [90m-> null[0m[0m
+      [31m-[0m[0m deletion_protection_enabled = false [90m-> null[0m[0m
+      [31m-[0m[0m hash_key                    = "LockID" [90m-> null[0m[0m
+      [31m-[0m[0m id                          = "technova-terraform-lock" [90m-> null[0m[0m
+      [31m-[0m[0m name                        = "technova-terraform-lock" [90m-> null[0m[0m
+      [31m-[0m[0m read_capacity               = 0 [90m-> null[0m[0m
+      [31m-[0m[0m stream_enabled              = false [90m-> null[0m[0m
+      [31m-[0m[0m table_class                 = "STANDARD" [90m-> null[0m[0m
+      [31m-[0m[0m tags                        = {
+          [31m-[0m[0m "Name"    = "technova-terraform-lock"
+          [31m-[0m[0m "Purpose" = "terraform-state-lock"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m tags_all                    = {
+          [31m-[0m[0m "Aula"        = "05"
+          [31m-[0m[0m "Environment" = "development"
+          [31m-[0m[0m "ManagedBy"   = "Terraform"
+          [31m-[0m[0m "Name"        = "technova-terraform-lock"
+          [31m-[0m[0m "Owner"       = "4023575"
+          [31m-[0m[0m "Project"     = "TechNova"
+          [31m-[0m[0m "Purpose"     = "terraform-state-lock"
+        } [90m-> null[0m[0m
+      [31m-[0m[0m write_capacity              = 0 [90m-> null[0m[0m
+        [90m# (3 unchanged attributes hidden)[0m[0m
+
+      [31m-[0m[0m attribute {
+          [31m-[0m[0m name = "LockID" [90m-> null[0m[0m
+          [31m-[0m[0m type = "S" [90m-> null[0m[0m
+        }
+
+      [31m-[0m[0m point_in_time_recovery {
+          [31m-[0m[0m enabled                 = false [90m-> null[0m[0m
+          [31m-[0m[0m recovery_period_in_days = 0 [90m-> null[0m[0m
+        }
+
+      [31m-[0m[0m ttl {
+          [31m-[0m[0m enabled        = false [90m-> null[0m[0m
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+    }
+
+[1m  # aws_s3_bucket_policy.terraform_state[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "aws_s3_bucket_policy" "terraform_state" {
+      [31m-[0m[0m bucket = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m id     = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m policy = jsonencode(
+            {
+              [31m-[0m[0m Statement = [
+                  [31m-[0m[0m {
+                      [31m-[0m[0m Action    = "s3:*"
+                      [31m-[0m[0m Condition = {
+                          [31m-[0m[0m Bool = {
+                              [31m-[0m[0m "aws:SecureTransport" = "false"
+                            }
+                        }
+                      [31m-[0m[0m Effect    = "Deny"
+                      [31m-[0m[0m Principal = "*"
+                      [31m-[0m[0m Resource  = [
+                          [31m-[0m[0m "arn:aws:s3:::technova-tfstate-4023575-05ebccce",
+                          [31m-[0m[0m "arn:aws:s3:::technova-tfstate-4023575-05ebccce/*",
+                        ]
+                      [31m-[0m[0m Sid       = "DenyHTTP"
+                    },
+                ]
+              [31m-[0m[0m Version   = "2012-10-17"
+            }
+        ) [90m-> null[0m[0m
+    }
+
+[1m  # aws_s3_bucket_public_access_block.terraform_state[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "aws_s3_bucket_public_access_block" "terraform_state" {
+      [31m-[0m[0m block_public_acls       = true [90m-> null[0m[0m
+      [31m-[0m[0m block_public_policy     = true [90m-> null[0m[0m
+      [31m-[0m[0m bucket                  = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m id                      = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m ignore_public_acls      = true [90m-> null[0m[0m
+      [31m-[0m[0m restrict_public_buckets = true [90m-> null[0m[0m
+    }
+
+[1m  # aws_s3_bucket_server_side_encryption_configuration.terraform_state[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
+      [31m-[0m[0m bucket                = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m id                    = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+
+      [31m-[0m[0m rule {
+          [31m-[0m[0m bucket_key_enabled = true [90m-> null[0m[0m
+
+          [31m-[0m[0m apply_server_side_encryption_by_default {
+              [31m-[0m[0m sse_algorithm     = "AES256" [90m-> null[0m[0m
+                [90m# (1 unchanged attribute hidden)[0m[0m
+            }
+        }
+    }
+
+[1m  # aws_s3_bucket_versioning.terraform_state[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "aws_s3_bucket_versioning" "terraform_state" {
+      [31m-[0m[0m bucket                = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m id                    = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+        [90m# (1 unchanged attribute hidden)[0m[0m
+
+      [31m-[0m[0m versioning_configuration {
+          [31m-[0m[0m status     = "Enabled" [90m-> null[0m[0m
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+    }
+
+[1m  # random_id.bucket_suffix[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "random_id" "bucket_suffix" {
+      [31m-[0m[0m b64_std     = "BevMzg==" [90m-> null[0m[0m
+      [31m-[0m[0m b64_url     = "BevMzg" [90m-> null[0m[0m
+      [31m-[0m[0m byte_length = 4 [90m-> null[0m[0m
+      [31m-[0m[0m dec         = "99339470" [90m-> null[0m[0m
+      [31m-[0m[0m hex         = "05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m id          = "BevMzg" [90m-> null[0m[0m
+    }
+
+[1m  # terraform_data.s3_bucket[0m will be [1m[31mdestroyed[0m
+[0m  [31m-[0m[0m resource "terraform_data" "s3_bucket" {
+      [31m-[0m[0m id     = "c1028916-9f94-2b34-d8b9-6df8ba172bb7" [90m-> null[0m[0m
+      [31m-[0m[0m input  = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+      [31m-[0m[0m output = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+    }
+
+[1mPlan:[0m [0m0 to add, 0 to change, 7 to destroy.
+
+Changes to Outputs:
+  [31m-[0m[0m backend_config_snippet = <<-EOT
+        backend "s3" {
+          bucket         = "technova-tfstate-4023575-05ebccce"
+          key            = "aula-05/terraform.tfstate"
+          region         = "us-east-1"
+          encrypt        = true
+          dynamodb_table = "technova-terraform-lock"
+        }
+    EOT [90m-> null[0m[0m
+  [31m-[0m[0m bucket_name            = "technova-tfstate-4023575-05ebccce" [90m-> null[0m[0m
+  [31m-[0m[0m bucket_region          = "us-east-1" [90m-> null[0m[0m
+  [31m-[0m[0m dynamodb_table_arn     = "arn:aws:dynamodb:us-east-1:766767743325:table/technova-terraform-lock" [90m-> null[0m[0m
+  [31m-[0m[0m dynamodb_table_name    = "technova-terraform-lock" [90m-> null[0m[0m
+[0m[1m
+Do you really want to destroy all resources?[0m
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  [1mEnter a value:[0m [0m
+[0m[1maws_s3_bucket_versioning.terraform_state: Destroying... [id=technova-tfstate-4023575-05ebccce][0m[0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.terraform_state: Destroying... [id=technova-tfstate-4023575-05ebccce][0m[0m
+[0m[1maws_s3_bucket_policy.terraform_state: Destroying... [id=technova-tfstate-4023575-05ebccce][0m[0m
+[0m[1maws_dynamodb_table.terraform_lock: Destroying... [id=technova-terraform-lock][0m[0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.terraform_state: Destruction complete after 1s[0m
+[0m[1maws_s3_bucket_policy.terraform_state: Destruction complete after 1s[0m
+[0m[1maws_s3_bucket_public_access_block.terraform_state: Destroying... [id=technova-tfstate-4023575-05ebccce][0m[0m
+[0m[1maws_s3_bucket_versioning.terraform_state: Destruction complete after 2s[0m
+[0m[1maws_s3_bucket_public_access_block.terraform_state: Destruction complete after 1s[0m
+[0m[1mterraform_data.s3_bucket: Destroying... [id=c1028916-9f94-2b34-d8b9-6df8ba172bb7][0m[0m
+[0m[1mterraform_data.s3_bucket: Provisioning with 'local-exec'...[0m[0m
+[0m[1mterraform_data.s3_bucket (local-exec):[0m [0mExecuting: ["/bin/sh" "-c" "aws s3 rm \"s3://technova-tfstate-4023575-05ebccce\" --recursive 2>/dev/null || true\naws s3api delete-bucket --bucket \"technova-tfstate-4023575-05ebccce\" 2>/dev/null || true\n"]
+[0m[1mterraform_data.s3_bucket (local-exec):[0m [0mdelete: s3://technova-tfstate-4023575-05ebccce/aula-05/terraform.tfstate
+[0m[1mterraform_data.s3_bucket: Destruction complete after 3s[0m
+[0m[1mrandom_id.bucket_suffix: Destroying... [id=BevMzg][0m[0m
+[0m[1mrandom_id.bucket_suffix: Destruction complete after 0s[0m
+[0m[1maws_dynamodb_table.terraform_lock: Destruction complete after 8s[0m
+[0m[1m[32m
+Destroy complete! Resources: 7 destroyed.[0m
