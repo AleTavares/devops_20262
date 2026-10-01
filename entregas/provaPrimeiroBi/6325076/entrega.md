@@ -27,32 +27,14 @@
 
 ## Evidências
 
-### Docker Compose
+As evidências estão documentadas no repositório do projeto, incluindo:
 
-- evidencias/compose-config.txt
-- evidencias/compose-ps.txt
-- evidencias/docker-build.txt
-
-### API no AWS
-
-- evidencias/aws-health.txt
-- evidencias/aws-post.txt
-- evidencias/aws-get.txt
-- evidencias/aws-get-id.txt
-- evidencias/aws-put.txt
-- evidencias/aws-get-after-delete.txt
-
-### Terraform
-
-- evidencias/terraform-validate.txt
-- evidencias/terraform-plan.txt
-
-### Relatório
-
-- elatorio.md
-
-## Observações
-
-A infraestrutura AWS foi utilizada durante a realização das evidências e posteriormente destruída com 	erraform destroy, conforme solicitado na prova.
-
-O projeto completo, incluindo código da API, Docker, Docker Compose, Terraform, evidências e relatório, está disponível no repositório informado acima.
+- Configuração e execução do Docker Compose
+- Status dos containers
+- Build da imagem Docker
+- Testes do CRUD local e na AWS
+- Teste do endpoint /health
+- Terraform validate
+- Terraform plan
+- Infraestrutura AWS provisionada
+- Infraestrutura AWS destruída após as evidências
