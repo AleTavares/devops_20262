@@ -1,24 +1,31 @@
-# Checklist de Entrega - Prova DevOps
+# Entrega — Prova do Primeiro Bimestre (DevOps)
 
-**Aluno(a):** Grazielli Monteiro
-**RA:** "6325165"
-**Repositório GitHub:** https://github.com/grazykkj/prova-primeiro-bimestre-devops
+**Aluno:** Grazielli Monteiro  
+**RA:** 6325165
+**Data:** 01/10/2026
+**Ferramenta de IA utilizada:** Gemini
 
----
+## Repositório do Projeto
 
-## Checklist do Projeto
+- URL: https://github.com/grazykkj/prova-primeiro-bimestre-devops
 
-- [x] **Parte 1 - Versionamento Git e Organização:** Repositório Git com `.gitignore`, README na raiz e histórico com Conventional Commits.
-- [x] **Parte 2 - Dockerfile:** Multi-stage build para Node.js com usuário não-root (`USER node`) e `.dockerignore`.
-- [x] **Parte 3 - Docker Compose:** Containers de API e PostgreSQL com volume nomeado (`pgdata`), rede isolada (`reservas_net`) e healthcheck.
-- [x] **Parte 4 - Terraform IaC:** Módulos para VPC (2 AZs), Security Groups (menor privilégio), EC2 (`LabInstanceProfile`) e RDS (`db.t3.micro` privado).
-- [x] **Remote State:** Arquivos de backend em `infra/backend/` configurados para S3 + DynamoDB.
-- [x] **Evidências:** Pasta `evidencias/` contendo `compose-ps.txt`, `docker-build.txt` e `terraform-plan.txt`.
-- [x] **Documentação:** Arquivos `relatorio.md` e `entrega.md` completos.
+## Checklist de Evidências
 
----
+- [x] Repositório público com README (nome + RA) e .gitignore
+- [x] Mínimo de 6 commits com Conventional Commits + feature branch
+- [x] API com **CRUD completo** de reservas (POST, GET, GET/:id, PUT, DELETE) + /health
+- [x] Rotas de CRUD gravando no **banco PostgreSQL** (não em memória)
+- [x] Dockerfile funcional da API de Reservas
+- [x] docker-compose.yml (API + PostgreSQL) subindo com um comando
+- [x] Terraform modularizado (vpc, security-group, ec2, rds)
+- [x] **RDS PostgreSQL provisionado** nas subnets privadas (banco da API na nuvem)
+- [x] Remote State configurado (S3 + DynamoDB)
+- [x] Uso de LabRole/LabInstanceProfile (sem criar IAM próprio)
+- [x] terraform validate e terraform plan sem erros
+- [x] relatorio.md completo (4 questões)
+- [x] terraform destroy executado após evidências
 
-Os arquivos completos com os logs de execução e validação da infraestrutura e dos contêineres estão salvos no diretório `/evidencias` do repositório principal:
+## Evidências
 
 - `evidencias/docker-build.txt` (Build do container da API)
 - `evidencias/compose-ps.txt` (Status dos contêineres ativos localmente)
