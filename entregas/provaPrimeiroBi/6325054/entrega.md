@@ -27,4 +27,4 @@
 
 ## Evidências
 
-![Evidências](Evidências)
+[Evidências](Evidências) (Explicadas no README do repositório.)
