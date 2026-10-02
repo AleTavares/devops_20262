@@ -1,0 +1,168 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Configurar projeto e estrutura base": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046297
+      },
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952054578
+      },
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952170881
+      }
+    ],
+    "2.1 Implementar estruturas de dados e funções utilitárias": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046352
+      },
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952175002
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953302221
+      }
+    ],
+    "3.1 Implementar `POST /salas` — criar sala": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046423
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953305639
+      }
+    ],
+    "3.2 Implementar `GET /salas` — listar salas": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046527
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953306143
+      }
+    ],
+    "4. Checkpoint — Salas funcionando": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046567
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953320258
+      }
+    ],
+    "5.1 Implementar `POST /reservas` — criar reserva": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046601
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953323670
+      }
+    ],
+    "5.2 Implementar `DELETE /reservas/:id` — cancelar reserva": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046635
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953324471
+      }
+    ],
+    "5.3 Implementar `GET /reservas` — listar (com filtro opcional por funcionário)": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046668
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953324908
+      }
+    ],
+    "6. Checkpoint final — Todos os requisitos funcionando": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046699
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953328466
+      }
+    ],
+    "7.1 Criar `README.md` com instruções de instalação e execução": [
+      {
+        "executionId": "7e1e6e58-1a64-43c7-b5c1-4f66cce16f7a",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790952046731
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953332666
+      },
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953464850
+      }
+    ],
+    "2. Implementar Repositório em Memória e utilitários": [
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953302292
+      }
+    ],
+    "3. Implementar endpoints de Salas": [
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953306225
+      }
+    ],
+    "5. Implementar endpoints de Reservas": [
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953324979
+      }
+    ],
+    "7. Criar documentação e arquivos de entrega": [
+      {
+        "executionId": "adec674b-3e39-401e-8517-4572f3668901",
+        "chatSessionId": "sess_dc41f104-14a8-4484-aac4-907e7138da5a",
+        "timestamp": 1790953464895
+      }
+    ]
+  }
+}
