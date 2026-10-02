@@ -4,6 +4,7 @@
 **RA:** 4025109  
 **Data:** 08/09/2026
 
+
 ## Parte 1 — Desenhar a Arquitetura
 
 ### Diagrama da rede
@@ -76,3 +77,5 @@ Manter todos os componentes em subnets públicas poderia fazer o sistema funcion
 Para um ambiente de produção, o uso de pelo menos duas subnets públicas e duas privadas, distribuídas em zonas de disponibilidade diferentes, melhora a disponibilidade. O NAT Gateway permite que recursos privados baixem patches sem ficarem publicamente acessíveis.
 
 > A arquitetura proposta separa o tráfego público dos dados e serviços internos, permitindo crescimento futuro e uma implementação mais segura com Terraform.
+
+

@@ -8,7 +8,6 @@
 
 - URL: https://github.com/fehhnovais/unifaat-devops-portfolio
 - Pasta do projeto: `aula-03/`
-- Branch: `main`
 
 ## Evidências
 
