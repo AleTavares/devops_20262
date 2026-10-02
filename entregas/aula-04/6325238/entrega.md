@@ -1,12 +1,12 @@
 # Entrega — Aula 04: VPC + EC2 Multi-AZ
 
-**Aluno:** [FERNANDA TAVARES]  
-**RA:** [4025109]  
-**Data:** [10/09/2026]
+**Aluno:** [Yuri Sanches]  
+**RA:** [6325238]  
+**Data:** [24/09/26]
 
 ## Repositório
 
-- URL: https://github.com/fehhnovais/unifaat-devops-portfolio
+- URL: https://github.com/Dooooc/unifaat-devops-portfolio
 
 ## Evidências
 
@@ -22,5 +22,4 @@
 
 ## Evidência da API Rodando
 
-[Cole aqui o output do curl ou screenshot]
-
+[Evidencias no portfolio]

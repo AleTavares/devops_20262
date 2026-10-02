@@ -1,16 +1,15 @@
-# Aula 04 — Terraform VPC + EC2 Multi-AZ
+﻿# Aula 04 — Terraform VPC + EC2 Multi-AZ
 
 **Aluno:** Carollini Godoy  
 **RA:** 3925000  
 **Disciplina:** DevOps  
 **Projeto:** TechNova
 
-## 1. Repositório do projeto
+## Repositório de portfólio
 
-**Repositório de portfólio:**  
 https://github.com/caroll143/unifaat-devops-portfolio
 
-## 2. Entrega
+## Entrega
 
 Implementação da infraestrutura da TechNova utilizando Terraform, incluindo:
 
@@ -28,13 +27,13 @@ Implementação da infraestrutura da TechNova utilizando Terraform, incluindo:
 * Instalação e execução da API TechNova via User Data;
 * Outputs de infraestrutura e acesso à aplicação.
 
-## 3. Evidências
+## Evidências
 
 * `aula-04/evidencia-plan.txt` — resultado do Terraform Plan.
 * `aula-04/evidencia-api.json` — testes da API e do endpoint `/health`.
 * `aula-04/evidencia-ssh.txt` — evidência do acesso SSH à EC2.
 
-## 4. Validação
+## Validação
 
 A infraestrutura foi validada com:
 
