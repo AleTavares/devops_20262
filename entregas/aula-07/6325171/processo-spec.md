@@ -1,146 +1,111 @@
-﻿# Processo Spec-Driven — Aula 07 | Nicolas de Jesus Silva (RA 6325171)
+# Processo Spec-Driven — Reserva de Salas | Nicolas de Jesus Silva (RA 6325171)
 
-## 1. Problema
+## 1. Como eu dividi o problema
 
-O objetivo era construir uma API simples para gerenciar reservas de salas usando Node.js + Express. O desafio principal não era apenas codificar endpoints, mas organizar a solução em etapas claras, evitando que a implementação ficasse confusa ou incompleta.
+O problema foi quebrado em partes menores para reduzir risco de erro e facilitar a validação por etapas:
 
-## 2. Requisitos
+1. Criar a base da API com Express e endpoints mínimos
+2. Implementar o cadastro de salas
+3. Implementar a listagem de salas
+4. Implementar a criação de reservas
+5. Validar a regra de conflito de horário por sala
+6. Implementar a listagem de reservas por funcionário
+7. Implementar o cancelamento de reserva
+8. Validar os endpoints com testes e comandos curl
 
-Os requisitos mínimos definidos foram:
+Essa divisão foi importante porque o sistema completo poderia facilmente gerar inconsistências se tudo fosse pedido de uma vez.
 
-- cadastrar salas com nome obrigatório
-- listar salas
-- criar reservas vinculando sala, funcionário, data e horário
-- impedir reservas duplicadas na mesma sala no mesmo horário
-- listar reservas por funcionário
+## 2. Requisitos (o quê)
+
+Os requisitos principais que o sistema precisava atender foram:
+
+- cadastrar uma sala com nome obrigatório
+- listar salas disponíveis
+- registrar uma reserva vinculada a uma sala e a um funcionário
+- impedir conflitos em mesmo horário e sala
 - cancelar reservas existentes
-- validar o funcionamento da API com testes e cURL
+- consultar reservas por funcionário
 
-## 3. Design
+Foi necessário ajustar a ideia inicial para manter a solução simples e funcional, sem banco de dados e sem excesso de complexidade.
 
-A solução foi pensada em memória, com duas estruturas principais:
+## 3. Design (como)
 
-- `salas`: armazena as salas cadastradas
-- `reservas`: armazena as reservas criadas
+O design foi pensado em memória, usando duas estruturas principais:
 
-A regra de negócio está centralizada na rota `POST /reservas`, que:
+- `salas`: guarda as salas cadastradas
+- `reservas`: guarda as reservas criadas
 
-1. valida se a sala informada existe
-2. verifica se já existe uma reserva na mesma sala para a mesma data e horário
-3. rejeita a operação com status `409` em caso de conflito
+A lógica de negócio foi centralizada na rota `POST /reservas`, onde é verificado se a sala existe e se já existe um conflito para o mesmo horário na mesma sala. Essa abordagem mantém o código simples e fácil de testar.
 
-Esse desenho mantém a API simples, fácil de testar e adequado ao objetivo da aula.
+## 4. Tarefas (os passos pequenos)
 
-## 4. Divisão em etapas (Spec-Driven)
-
-1. Criar a estrutura base do projeto Node.js
-2. Configurar o `package.json` e scripts
+1. Criar o projeto Node.js com Express
+2. Configurar os scripts de execução e teste
 3. Implementar `GET /health`
 4. Implementar `POST /salas`
 5. Implementar `GET /salas`
 6. Implementar `POST /reservas`
-7. Validar conflito de horário por sala
-8. Implementar `GET /reservas?funcionario=...`
+7. Implementar regra de conflito de horário
+8. Implementar `GET /reservas?funcionario=NOME`
 9. Implementar `DELETE /reservas/:id`
-10. Executar testes automatizados e validações por cURL
+10. Verificar testes e validá-los com curl
 
-## 5. Validação com cURL
+## 5. Implementação e validação
 
-### 5.1 Verificar a saúde da API
+### Tarefa: cadastrar sala
 
-```bash
-curl -s http://localhost:3000/health
-```
+Validação: envio de um POST para `/salas` com JSON válido.
 
-Resposta esperada:
-
-```json
-{"status":"ok","message":"API de reservas de salas em execução."}
-```
-
-### 5.2 Cadastrar uma sala
+Exemplo:
 
 ```bash
-curl -s -X POST http://localhost:3000/salas \
-  -H 'Content-Type: application/json' \
-  -d '{"nome":"Sala A","capacidade":10}'
+curl -X POST http://localhost:3000/salas \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Sala Verde","capacidade":8}'
 ```
 
-Resposta esperada:
+Resultado esperando: status `201` e corpo com a sala criada.
 
-```json
-{"id":1,"nome":"Sala A","capacidade":10}
-```
+### Tarefa: impedir conflito de horário
 
-### 5.3 Criar uma reserva válida
+Validação: envio de duas reservas para a mesma sala no mesmo horário.
+
+Exemplo:
 
 ```bash
-curl -s -X POST http://localhost:3000/reservas \
-  -H 'Content-Type: application/json' \
-  -d '{"salaId":1,"funcionario":"Nicolas","data":"2026-10-01","horario":"09:00"}'
+curl -X POST http://localhost:3000/reservas \
+  -H "Content-Type: application/json" \
+  -d '{"salaId":1,"funcionario":"Ana","data":"2026-10-01","horario":"09:00"}'
+
+curl -X POST http://localhost:3000/reservas \
+  -H "Content-Type: application/json" \
+  -d '{"salaId":1,"funcionario":"Bruno","data":"2026-10-01","horario":"09:00"}'
 ```
 
-Resposta esperada:
+Resultado esperado: segunda resposta com status `409` e mensagem indicando conflito.
 
-```json
-{"id":1,"salaId":1,"sala":"Sala A","funcionario":"Nicolas","data":"2026-10-01","horario":"09:00"}
-```
+### Tarefa: listar reservas por funcionário
 
-### 5.4 Validar conflito de horário na mesma sala
+Validação: uso do filtro `?funcionario=Ana`.
+
+Exemplo:
 
 ```bash
-curl -s -X POST http://localhost:3000/reservas \
-  -H 'Content-Type: application/json' \
-  -d '{"salaId":1,"funcionario":"Maria","data":"2026-10-01","horario":"09:00"}'
+curl "http://localhost:3000/reservas?funcionario=Ana"
 ```
 
-Resposta esperada: status `409` com mensagem:
+Resultado esperado: array com apenas as reservas do funcionário informado.
 
-```json
-{"message":"A sala selecionada já está reservada para este horário."}
-```
+## 6. A IA errou em algum momento?
 
-### 5.5 Listar reservas por funcionário
+A IA pode ser muito eficiente, mas quando o problema é grande e genérico, ela tende a misturar regras ou implementar tudo ao mesmo tempo. Nesse processo, o principal ganho do método Spec foi forçar a divisão do problema em blocos pequenos, com validação após cada etapa.
 
-```bash
-curl -s 'http://localhost:3000/reservas?funcionario=Nicolas'
-```
+Isso reduziu o risco de alucinação e deixou a implementação mais controlada. Em vez de pedir para "fazer a API inteira", pedi etapas pequenas e validei cada passo antes de seguir.
 
-Resposta esperada:
+## 7. Reflexão
 
-```json
-[{"id":1,"salaId":1,"sala":"Sala A","funcionario":"Nicolas","data":"2026-10-01","horario":"09:00"}]
-```
+O método errado seria solicitar a criação completa da API em um único prompt. O resultado provavelmente seria uma implementação incompleta, com regras inconsistentes e pouca rastreabilidade.
 
-### 5.6 Cancelar reserva
+Ao dividir em requisitos, design e tarefas, consegui criar uma solução mais organizada, com melhor controle e testes claros. O aprendizado principal foi: problemas complexos deixam de ser assustadores quando são quebrados em partes pequenas e validados uma por uma.
 
-```bash
-curl -s -X DELETE http://localhost:3000/reservas/1
-```
-
-Resposta esperada:
-
-```json
-{"message":"Reserva cancelada com sucesso.","reserva":{"id":1,...}}
-```
-
-## 6. Testes executados
-
-O projeto foi validado com testes automatizados em Node.js usando `node:test`.
-
-Comando executado:
-
-```bash
-npm test
-```
-
-Resultado verificado:
-
-- 3 testes passaram
-- 0 falharam
-
-## 7. Conclusão
-
-A implementação foi bem-sucedida porque a solução foi construída por etapas, com foco na regra mais sensível do sistema: conflito de horário em uma mesma sala. Esse processo ajudou a reduzir erros, diminuir retrabalho e deixar a API mais fácil de entender, manter e validar.
-
-A abordagem Spec-Driven mostrou-se eficaz para transformar um problema aparentemente grande em blocos menores, objetivos e verificáveis.
+A IA se torna uma aliada poderosa quando a gente a guia com contexto, escopo e validações, em vez de pedir que ela resolva tudo de uma vez.

@@ -1,0 +1,23 @@
+{
+  "name": "aula-07-reserva-salas",
+  "version": "1.0.0",
+  "description": "API de reserva de salas para a aula 07",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "devops",
+    "aula-07",
+    "express",
+    "node"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}

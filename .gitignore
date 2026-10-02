@@ -46,3 +46,6 @@ terraform.rc
 
 # Kiro/Claude config
 .claude/
+
+# Node.js dependencies
+node_modules/
