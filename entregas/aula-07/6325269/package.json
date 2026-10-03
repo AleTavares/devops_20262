@@ -1,0 +1,16 @@
+{
+  "name": "reserva-salas-technova",
+  "version": "1.0.0",
+  "description": "API de Reserva de Salas de Reunião da TechNova (TF Aula 07)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
