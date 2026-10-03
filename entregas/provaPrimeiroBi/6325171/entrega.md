@@ -1,8 +1,3 @@
-# Cria a pasta com seu RA
-mkdir -p entregas/provaPrimeiroBi/6325171
-
-# Cria o entrega.md
-cat > entregas/provaPrimeiroBi/6325171/entrega.md << 'EOF'
 # Entrega — Prova do Primeiro Bimestre (DevOps)
 
 **Aluno:** Nicolas de Jesus Silva
