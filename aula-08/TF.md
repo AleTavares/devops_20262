@@ -59,9 +59,9 @@ Consolidar o aprendizado sobre **GitHub Actions**, CI pipelines e secrets manage
 
 ## Descrição do Trabalho
 
-Você deve criar um pipeline CI completo para o repositório `technova-api` que inclua:
+Você deve criar um pipeline CI completo para o repositório `unifaat-devops-portfolio` que inclua:
 
-1. **Workflow GitHub Actions** (`.github/workflows/ci.yml`)
+1. **Workflow GitHub Actions** (`.github/workflows/ci-aula08.yml`)
 2. **ESLint configurado** (`.eslintrc.json`)
 3. **Testes com Jest** (mínimo 3 test cases)
 4. **Docker build** no pipeline
@@ -75,7 +75,7 @@ Você deve criar um pipeline CI completo para o repositório `technova-api` que 
 
 ### R1 — Workflow CI Multi-Stage
 
-Criar `.github/workflows/ci.yml` com:
+Criar `.github/workflows/ci-aula08.yml` com:
 
 - [ ] Trigger em `push` (main) e `pull_request`
 - [ ] Job **lint** (ESLint)

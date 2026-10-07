@@ -1,0 +1,12 @@
+{
+  "name": "reserva-salas-api",
+  "version": "1.0.0",
+  "description": "API de Reserva de Salas de Reuniao (dados em memoria)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

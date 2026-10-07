@@ -18,7 +18,7 @@ Proteger o pipeline CI com GitHub Secrets, configurar environments com approval 
 ## Pré-requisitos
 
 - [ ] Laboratório Parte 1 concluído (pipeline lint→test→build funcionando)
-- [ ] Repositório `technova-api` com CI verde no GitHub
+- [ ] Repositório `unifaat-devops-portfolio` com CI verde no GitHub
 - [ ] Acesso às Settings do repositório (você é o owner)
 
 ---
@@ -27,7 +27,7 @@ Proteger o pipeline CI com GitHub Secrets, configurar environments com approval 
 
 ### 1.1 Acessar configuração de Secrets
 
-1. No GitHub, acesse seu repositório `technova-api`
+1. No GitHub, acesse seu repositório `unifaat-devops-portfolio`
 2. Clique em **Settings** (aba superior)
 3. No menu lateral, clique em **Secrets and variables** → **Actions**
 4. Clique em **New repository secret**
@@ -150,7 +150,7 @@ git push
 
 ### 2.3 Adicionar secrets ao pipeline CI principal
 
-Atualize `.github/workflows/ci.yml` adicionando um job que usa secrets:
+Atualize `.github/workflows/ci-aula08.yml` adicionando um job que usa secrets:
 
 ```yaml
   verify-credentials:
@@ -329,7 +329,7 @@ git push
 
 ### 4.1 Adicionar step para comentar em PRs
 
-Atualize `.github/workflows/ci.yml` adicionando um job no final:
+Atualize `.github/workflows/ci-aula08.yml` adicionando um job no final:
 
 ```yaml
   pr-comment:
@@ -419,7 +419,7 @@ Agora crie um PR no GitHub:
 
 A matrix strategy permite rodar o mesmo job com diferentes configurações:
 
-Atualize o job `test` em `.github/workflows/ci.yml`:
+Atualize o job `test` em `.github/workflows/ci-aula08.yml`:
 
 ```yaml
   test:
@@ -534,7 +534,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'Dockerfile'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/ci-aula08.yml'
       - '.eslintrc.json'
     paths-ignore:
       - '**.md'
@@ -552,7 +552,7 @@ on:
 ### 5.5 Commit com features avançadas
 
 ```bash
-git add .github/workflows/ci.yml
+git add .github/workflows/ci-aula08.yml
 git commit -m "feat: adicionar matrix, cache, concurrency e path filters"
 git push
 ```
