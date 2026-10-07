@@ -177,6 +177,25 @@ AULAS_CODIGO_NO_PR = {
 }
 
 
+# Aulas de CI/CD (ex.: aula 08): a entrega e o pipeline GitHub Actions no
+# repositorio de portfolio do aluno. Diferente das demais aulas de portfolio,
+# o workflow NAO fica em aula-XX/, e sim em .github/workflows/ na RAIZ do repo.
+# A pasta aula-XX/ guarda a aplicacao (technova-api/) sobre a qual o CI roda.
+# Validamos: (1) workflow em .github/workflows/, (2) app em aula-XX/technova-api/.
+AULAS_CI = {
+    "08": {
+        # arquivos esperados dentro de aula-08/technova-api/
+        "app_obrigatorios": ["package.json", "server.js", "Dockerfile",
+                             ".eslintrc.json"],
+        "app_pasta": "technova-api",
+        # pelo menos um workflow .yml/.yaml em .github/workflows/ no portfolio
+        "exige_workflow": True,
+        # termos que indicam um pipeline CI multi-stage (lint/test/build)
+        "termos_pipeline": ["lint", "test", "build"],
+    },
+}
+
+
 # Estrutura esperada no repositorio proprio da Prova do 1o Bimestre.
 # Aqui verificamos caminhos (arquivos/pastas), pois a prova tem subpastas
 # (app/, infra/, evidencias/) em vez de arquivos .tf na raiz.
@@ -301,6 +320,152 @@ def collect_prova_sources(owner, repo, branch, token, max_bytes=60000):
     for path in ("README.md", "docker-compose.yml", "relatorio.md",
                  "infra/main.tf", "infra/providers.tf", "infra/outputs.tf"):
         _append(path)
+    return "".join(blob)
+
+
+# ---------------------------------------------------------------------------
+# Pre-check para aulas de CI/CD (ex.: aula 08) — pipeline no portfolio
+# ---------------------------------------------------------------------------
+def _portfolio_default_branch(owner, repo, token):
+    """Retorna o branch default do portfolio, priorizando main/master."""
+    h = gh_headers(token)
+    repo_info = get_json(f"{GITHUB_API}/repos/{owner}/{repo}", h)
+    if not repo_info:
+        return None
+    default_branch = repo_info.get("default_branch", "main")
+    branches = get_json(f"{GITHUB_API}/repos/{owner}/{repo}/branches", h) or []
+    branch_names = [b["name"] for b in branches]
+    for preferred in ("main", "master", default_branch):
+        if preferred in branch_names:
+            return preferred
+    return default_branch
+
+
+def precheck_ci(owner, repo, aula, token):
+    """
+    Pre-check para aulas de CI/CD (aula 08): valida que existe um workflow
+    GitHub Actions em .github/workflows/ no portfolio e que a aplicacao
+    (aula-XX/technova-api/) esta presente. So faz leitura via API.
+    """
+    spec = AULAS_CI[aula]
+    result = {
+        "modo": "ci",
+        "portfolio_encontrado": False,
+        "branch": None,
+        "tem_workflow": False,
+        "workflows_encontrados": [],
+        "pipeline_multistage": None,
+        "pasta_app_encontrada": False,
+        "app_presentes": [],
+        "app_faltando": [],
+        "tem_package_lock": False,
+        "node_modules_versionado": False,
+        "observacoes": [],
+    }
+    h = gh_headers(token)
+    branch = _portfolio_default_branch(owner, repo, token)
+    if not branch:
+        result["observacoes"].append(
+            f"Repositorio de portfolio nao encontrado: {owner}/{repo}")
+        return result
+    result["portfolio_encontrado"] = True
+    result["branch"] = branch
+
+    # 1) Workflows em .github/workflows/ (na raiz do portfolio)
+    wf_listing = _list_dir(owner, repo, ".github/workflows", branch, token)
+    workflows = [i for i in wf_listing
+                 if i.get("type") == "file"
+                 and i["name"].endswith((".yml", ".yaml"))]
+    result["workflows_encontrados"] = [w["name"] for w in workflows]
+    result["tem_workflow"] = bool(workflows)
+    if not result["tem_workflow"]:
+        result["observacoes"].append(
+            "Nenhum workflow encontrado em .github/workflows/ no portfolio.")
+
+    # 2) Pipeline multi-stage? procura lint/test/build nos YAMLs
+    termos = [t.lower() for t in spec.get("termos_pipeline", [])]
+    if workflows and termos:
+        achados = set()
+        for wf in workflows:
+            dl = wf.get("download_url")
+            if not dl:
+                continue
+            txt = (get_text(dl, h) or "").lower()
+            for termo in termos:
+                if termo in txt:
+                    achados.add(termo)
+        result["pipeline_multistage"] = achados.issuperset(set(termos))
+        if not result["pipeline_multistage"]:
+            faltam = sorted(set(termos) - achados)
+            result["observacoes"].append(
+                f"Pipeline nao cobre todos os estagios esperados; faltam termos: {', '.join(faltam)}.")
+
+    # 3) Aplicacao em aula-XX/technova-api/
+    app_pasta = spec.get("app_pasta", "technova-api")
+    app_path = f"aula-{aula}/{app_pasta}"
+    app_listing = _list_dir(owner, repo, app_path, branch, token)
+    if app_listing:
+        result["pasta_app_encontrada"] = True
+        nomes_app = {i["name"] for i in app_listing}
+        for req in spec.get("app_obrigatorios", []):
+            (result["app_presentes"] if req in nomes_app
+             else result["app_faltando"]).append(req)
+        result["tem_package_lock"] = "package-lock.json" in nomes_app
+        if not result["tem_package_lock"]:
+            result["observacoes"].append(
+                "package-lock.json ausente em "
+                f"{app_path} (necessario para `npm ci` no CI).")
+        if "node_modules" in nomes_app:
+            result["node_modules_versionado"] = True
+            result["observacoes"].append(
+                "ATENCAO: node_modules/ versionado no portfolio (nao deveria).")
+    else:
+        result["observacoes"].append(
+            f"Pasta {app_path} nao encontrada no portfolio "
+            "(copie a pasta technova-api para dentro de aula-08).")
+
+    return result
+
+
+def collect_ci_sources(owner, repo, aula, branch, token, max_bytes=60000):
+    """
+    Coleta os YAMLs de workflow (.github/workflows/) e os arquivos-chave da
+    aplicacao (package.json, server.js, Dockerfile, testes) para a IA avaliar.
+    """
+    h = gh_headers(token)
+    spec = AULAS_CI[aula]
+    blob = []
+    total = 0
+
+    def _append(path, limit=None):
+        nonlocal total
+        if total >= max_bytes:
+            return
+        url = (f"{GITHUB_API}/repos/{owner}/{repo}/contents/"
+               f"{urllib.parse.quote(path)}?ref={urllib.parse.quote(branch)}")
+        data = get_json(url, h)
+        if isinstance(data, dict) and data.get("download_url"):
+            content = get_text(data["download_url"], h) or ""
+            if limit:
+                content = content[:limit]
+            snippet = f"\n===== {path} =====\n{content}\n"
+            if total + len(snippet) > max_bytes:
+                snippet = snippet[: max_bytes - total]
+            blob.append(snippet)
+            total += len(snippet)
+
+    # Workflows (todos os .yml/.yaml em .github/workflows/)
+    for item in _list_dir(owner, repo, ".github/workflows", branch, token):
+        if item.get("type") == "file" and item["name"].endswith((".yml", ".yaml")):
+            _append(f".github/workflows/{item['name']}")
+
+    # Aplicacao em aula-XX/technova-api/
+    app_pasta = spec.get("app_pasta", "technova-api")
+    base = f"aula-{aula}/{app_pasta}"
+    for rel in ("package.json", "server.js", "Dockerfile", ".eslintrc.json",
+                "__tests__/server.test.js", "README.md"):
+        _append(f"{base}/{rel}")
+
     return "".join(blob)
 
 
@@ -614,6 +779,39 @@ def avaliar_com_bedrock(criterios, entrega_md, tf_sources, precheck_data,
 Gere o parecer final com: nota (X / 1,5), tabela de criterios (processo-spec.md,
 decomposicao, codigo funcional/rotas, validacao por etapas, reflexao), pontos fortes,
 ressalvas e um bloco de texto pronto para o review do PR."""
+    elif modo == "ci":
+        system = (
+            "Voce e um professor de DevOps avaliando um Trabalho de Fixacao (TF) sobre "
+            "CI/CD com GitHub Actions (aula 08). O aluno construiu um pipeline que roda no "
+            "repositorio de portfolio dele (unifaat-devops-portfolio): o(s) workflow(s) ficam "
+            "em .github/workflows/ e a aplicacao Node.js (technova-api) fica em aula-08/. "
+            "Avalie SOMENTE com base nos criterios fornecidos e nos arquivos reais (YAML do "
+            "workflow + codigo da app). Atribua uma nota de 0 a 1,5. "
+            "Verifique: (1) pipeline multi-stage com dependencias corretas (lint -> test -> build "
+            "via `needs`); (2) ESLint configurado e job de lint; (3) testes Jest com coverage; "
+            "(4) build Docker no CI; (5) uso de secrets (`${{ secrets.* }}`); (6) boas praticas "
+            "(cache, matrix, concurrency, path filters) como bonus. "
+            "A EXECUCAO real do pipeline (jobs verdes na aba Actions) e o status badge dependem "
+            "de conferencia do professor — avalie o que for verificavel pelos arquivos e marque "
+            "o resto como pendente. Se nao houver workflow, REPROVE por entrega nao verificavel. "
+            "Produza um parecer em portugues, em markdown, pronto para o review do PR."
+        )
+        user = f"""## Criterios do TF (aula-{aula}/TF.md)
+{criterios or "(criterios nao encontrados no repositorio)"}
+
+## Resultado do pre-check deterministico
+{json.dumps(precheck_data, ensure_ascii=False, indent=2)}
+
+## entrega.md do PR
+{entrega_md or "(entrega.md nao encontrado)"}
+
+## Workflows (.github/workflows/) e codigo da aplicacao (technova-api)
+{tf_sources or "(nenhum arquivo acessivel no portfolio)"}
+
+Gere o parecer final com: nota (X / 1,5), tabela de criterios (pipeline multi-stage,
+ESLint, testes Jest, build Docker, secrets, bonus), pontos fortes, ressalvas e um
+bloco de texto pronto para o review do PR. Marque 'execucao do pipeline / badge' como
+pendente de conferencia do professor na aba Actions."""
     elif modo == "prova":
         system = (
             "Voce e um professor de DevOps avaliando a PROVA DO 1o BIMESTRE (aulas 01 a 07). "
@@ -779,6 +977,40 @@ def parecer_deterministico_prova(pre, ra):
     return "\n".join(linhas)
 
 
+def parecer_deterministico_ci(pre, aula, ra):
+    """Pre-check para aulas de CI/CD (ex.: aula 08) — pipeline no portfolio."""
+    linhas = [f"### Pre-check automatico — Aula {aula} (CI/CD) (RA: {ra or 'n/d'})", ""]
+    if not pre["portfolio_encontrado"]:
+        linhas.append("- ❌ Repositorio `unifaat-devops-portfolio` nao encontrado pelo link do `entrega.md`.")
+        linhas.append("\n**Resultado:** entrega nao verificavel. Publique o portfolio (publico) e reabra.")
+        return "\n".join(linhas)
+    linhas.append(f"- ✅ Portfolio encontrado (branch `{pre['branch']}`).")
+    if pre["tem_workflow"]:
+        linhas.append(f"- ✅ Workflow(s) em `.github/workflows/`: {', '.join(pre['workflows_encontrados'])}")
+    else:
+        linhas.append("- ❌ Nenhum workflow em `.github/workflows/` (o pipeline CI e o item central da entrega).")
+    if pre["pipeline_multistage"] is True:
+        linhas.append("- ✅ Pipeline cobre os estagios `lint`, `test` e `build`.")
+    elif pre["pipeline_multistage"] is False:
+        linhas.append("- ⚠️ Pipeline nao cobre todos os estagios esperados (lint → test → build).")
+    if pre["pasta_app_encontrada"]:
+        linhas.append(f"- ✅ Aplicacao encontrada em `aula-{aula}/technova-api/`.")
+        if pre["app_presentes"]:
+            linhas.append(f"  - Presentes: {', '.join(pre['app_presentes'])}")
+        if pre["app_faltando"]:
+            linhas.append(f"  - ⚠️ Faltando: {', '.join(pre['app_faltando'])}")
+    else:
+        linhas.append(f"- ⚠️ Pasta `aula-{aula}/technova-api/` nao encontrada no portfolio.")
+    if pre["tem_package_lock"]:
+        linhas.append("- ✅ `package-lock.json` presente (necessario para `npm ci`).")
+    else:
+        linhas.append("- ⚠️ `package-lock.json` ausente (o `npm ci` do CI falha sem ele).")
+    if pre["node_modules_versionado"]:
+        linhas.append("- ❌ `node_modules/` versionado (adicione ao `.gitignore`).")
+    linhas.append("\n> ⚠️ A execucao real do pipeline (jobs verdes na aba **Actions**) e conferida pelo professor. O parecer detalhado e gerado pela analise por IA ou pela revisao manual.")
+    return "\n".join(linhas)
+
+
 # ---------------------------------------------------------------------------
 # Comentar no PR
 # ---------------------------------------------------------------------------
@@ -845,6 +1077,38 @@ def main():
                   "A nota final e revisada pelo professor._")
         upsert_comment(repo, pr_number, token, corpo + rodape)
         print("Comentario publicado com sucesso (modo codigo-no-PR).")
+        return
+
+    # --- Caso 1b: aula de CI/CD (ex.: aula 08) — pipeline no portfolio ---
+    if aula in AULAS_CI:
+        _, entrega_md = find_entrega_md(repo, files, base_sha, token)
+        portfolio = extract_portfolio(entrega_md, aula)
+        if not portfolio:
+            pre = {"portfolio_encontrado": False,
+                   "observacoes": ["Link do portfolio nao encontrado no entrega.md."]}
+            upsert_comment(repo, pr_number, token,
+                           parecer_deterministico_ci(pre, aula, ra))
+            return
+        owner, repo_pf = portfolio
+        pre = precheck_ci(owner, repo_pf, aula, token)
+        corpo = None
+        if use_bedrock and pre["portfolio_encontrado"]:
+            try:
+                ci_sources = collect_ci_sources(
+                    owner, repo_pf, aula, pre["branch"], token)
+                corpo = avaliar_com_bedrock(
+                    criterios, entrega_md, ci_sources, pre, aula,
+                    model_id, region, modo="ci")
+            except Exception as exc:
+                corpo = (parecer_deterministico_ci(pre, aula, ra) +
+                         f"\n\n_(analise por IA indisponivel: {exc})_")
+        else:
+            corpo = parecer_deterministico_ci(pre, aula, ra)
+        rodape = ("\n\n---\n_Avaliacao automatica gerada por GitHub Actions. "
+                  "A nota final e revisada pelo professor, incluindo a execucao do "
+                  "pipeline na aba Actions._")
+        upsert_comment(repo, pr_number, token, corpo + rodape)
+        print("Comentario publicado com sucesso (modo CI).")
         return
 
     # --- Caso 2: Prova do 1o Bimestre (repositorio proprio prova-primeiro-bimestre-devops) ---
