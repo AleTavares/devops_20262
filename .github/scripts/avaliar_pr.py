@@ -193,6 +193,16 @@ AULAS_CI = {
         # termos que indicam um pipeline CI multi-stage (lint/test/build)
         "termos_pipeline": ["lint", "test", "build"],
     },
+    "09": {
+        # Aula 09 reaproveita a technova-api (copiada para aula-09/) e adiciona
+        # build+push para ghcr.io e um workflow de AI review.
+        "app_obrigatorios": ["package.json", "server.js", "Dockerfile",
+                             ".dockerignore"],
+        "app_pasta": "technova-api",
+        "exige_workflow": True,
+        # pipeline publica no registry e revisa PRs com IA
+        "termos_pipeline": ["ghcr.io", "build-push-action", "pull_request"],
+    },
 }
 
 
