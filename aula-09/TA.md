@@ -255,14 +255,7 @@ Qual é a principal limitação de um AI code review em comparação com o revie
 
 ---
 
-## Gabarito
-
-| Questão | Resposta | Justificativa |
-|:-------:|:--------:|--------------|
-| 1 | **c** | Git SHA cria vínculo direto commit↔imagem, permitindo saber exatamente qual código gerou cada imagem e fazer rollback preciso |
-| 2 | **c** | GITHUB_TOKEN é automático (sem gestão manual), limitado ao repositório (menor privilégio) e temporário (expira com o workflow) |
-| 3 | **b** | Quality gates existem para impedir que problemas críticos cheguem à produção. CRITICAL deve bloquear; se for falso positivo, o dev corrige ou justifica |
-| 4 | **c** | A IA analisa apenas o diff fornecido — ela não entende decisões de arquitetura, regras de negócio, ou o contexto mais amplo do sistema |
+> As respostas das questões serão discutidas no início da aula.
 
 ---
 
