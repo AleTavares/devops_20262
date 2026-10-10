@@ -18,8 +18,8 @@
 - [x] ESLint configurado e passando
 - [x] Mínimo 3 testes Jest passando com coverage (9 testes, ~89% de statements)
 - [x] Docker build no CI sem erros (imagem `technova-api:${{ github.sha }}`)
-- [ ] Secret referenciado no workflow (`AWS_REGION` e `AWS_ACCESS_KEY_ID`)
-- [ ] Badge de status no README
+- [x] Secret referenciado no workflow (`AWS_REGION` e `AWS_ACCESS_KEY_ID`)
+- [x] Badge de status no README
 - [ ] Screenshots do pipeline verde
 
 ### Bônus
@@ -32,9 +32,9 @@
 
 ## Evidência do Pipeline Rodando
 
-- Execução verde: <!-- TODO: link da run na aba Actions -->
-- Execução falhando (erro intencional): <!-- TODO: link da run -->
-- Comentário automático no PR: <!-- TODO: link do PR -->
+- Execução verde: https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/38052321983 (push em `main`, todos os jobs) e https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/38051174393 (PR #2)
+- Execução falhando (erro intencional): https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/38051408791 (PR #3)
+- Comentário automático no PR: https://github.com/lucaskenway/unifaat-devops-portfolio/pull/2
 
 ### Screenshots
 
