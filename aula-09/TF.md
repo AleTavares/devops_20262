@@ -40,13 +40,13 @@ Consolidar o aprendizado sobre **Docker Registry** e **IA no CI/CD** construindo
 
 ## Evidências
 
-- [ ] Pipeline CI (lint → test → build+push) funcional
-- [ ] Imagem publicada no ghcr.io com tags (sha, latest, semver)
-- [ ] Push condicional (só em push para main/tags, não em PRs)
+- [ ] Script `ecr-push.sh` publicando no **Amazon ECR** com tags (sha, latest, semver)
+- [ ] Repositório ECR `technova-api` criado no Learner Lab (`us-east-1`)
+- [ ] Pull da imagem a partir do ECR funcionando (rollback por tag)
 - [ ] Workflow de AI Review disparando em PRs
 - [ ] Quality gate (CRITICAL bloqueia o PR)
 - [ ] `ia-cicd-analise.md` preenchido
-- [ ] Screenshots (Packages, AI review, pipeline verde, gate bloqueando)
+- [ ] Screenshots (console ECR com as tags, AI review, pipeline verde, gate bloqueando)
 
 ## Evidência do Pipeline Rodando
 
@@ -59,24 +59,24 @@ Consolidar o aprendizado sobre **Docker Registry** e **IA no CI/CD** construindo
 
 ### Contexto
 
-O CTO da TechNova quer o pipeline definitivo: código é verificado (lint, test), imagem é publicada (ghcr.io), e cada PR é revisado por IA antes de qualquer humano olhar. Implemente esse pipeline completo.
+O CTO da TechNova quer o pipeline definitivo: código é verificado (lint, test), a imagem é publicada no **Amazon ECR** (o registry da própria AWS, onde a infra da TechNova já roda), e cada PR é revisado por IA antes de qualquer humano olhar. Implemente esse pipeline completo usando o **AWS Academy Learner Lab**.
+
+> **☁️ Learner Lab:** você vai usar as credenciais temporárias da sessão do Lab (com `aws_session_token`), sempre na região `us-east-1`. O Lab **permite criar repositórios ECR**, mas **não permite criar usuários/grupos/roles IAM** — por isso a autenticação usa as credenciais da sua sessão, não um usuário novo.
 
 ### Requisitos
 
-#### 1. Pipeline CI com Docker Registry (40%)
+#### 1. Build e Push para o Amazon ECR (40%)
 
-Crie/atualize `.github/workflows/ci.yml` com:
+Crie o repositório ECR e um script `ecr-push.sh` (fluxo principal) que:
 
-- **Job lint:** ESLint verifica o código
-- **Job test:** Jest roda testes com coverage
-- **Job build-and-push:** (depende de lint e test)
-  - Login no ghcr.io com GITHUB_TOKEN
-  - Build da imagem Docker (multi-stage)
-  - Push com tags:
-    - `sha-XXXXXXX` em todo push para main
-    - `latest` em push para main
-    - Semver (`1.2.3`, `1.2`, `1`) quando há git tag `v*.*.*`
-  - Push **apenas** em push para main/tags (não em PRs)
+- Cria/garante o repositório `technova-api` no ECR (`aws ecr create-repository`, idempotente)
+- Faz login no ECR: `aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com`
+- Builda a imagem Docker (multi-stage)
+- Faz push com as tags:
+  - `sha-XXXXXXX` (SHA curto do commit — rastreável)
+  - `latest` (conveniência)
+  - Semver (`1.2.3`, `1.2`, `1`) a partir da git tag `v*.*.*`
+- Opcional (Parte 7 do lab): workflow `.github/workflows/ci.yml` que faz o mesmo via `aws-actions/configure-aws-credentials@v4` + `aws-actions/amazon-ecr-login@v2`, usando as 3 credenciais temporárias como secrets. Lembre que as credenciais do Lab **expiram a cada sessão**, então o script local é o fluxo confiável.
 
 #### 2. Workflow de AI Review (30%)
 
@@ -98,6 +98,7 @@ Crie `.github/workflows/ai-review.yml` com:
 
 Crie o arquivo `ia-cicd-analise.md` com:
 
+- Explicação de por que o ECR foi escolhido como registry (vs ghcr.io/Docker Hub) e as restrições do Learner Lab
 - Explicação da estratégia de tagging escolhida (e por quê)
 - Descrição dos padrões que o AI review verifica
 - Prompt/lógica utilizada para a análise
@@ -105,9 +106,9 @@ Crie o arquivo `ia-cicd-analise.md` com:
 - Limitações identificadas (falsos positivos, contexto limitado)
 
 **Screenshots obrigatórios:**
-- Imagem publicada na aba Packages do GitHub (mostrando tags)
+- Repositório `technova-api` no console do Amazon ECR mostrando as tags (sha, latest, semver)
 - Comentário do AI review em um PR (com achados detectados)
-- Pipeline CI completo passando (lint → test → build+push)
+- Execução do `ecr-push.sh` concluída (ou pipeline CI verde, se fez a Parte 7)
 - Quality gate bloqueando um PR com problema CRITICAL
 
 ---
@@ -118,17 +119,18 @@ Crie o arquivo `ia-cicd-analise.md` com:
 entregas/aula-09/RA/
 ├── .github/
 │   ├── workflows/
-│   │   ├── ci.yml              # Pipeline CI: lint → test → build+push
+│   │   ├── ci.yml              # (opcional) CI com push p/ ECR via amazon-ecr-login
 │   │   └── ai-review.yml      # AI review em PRs
 │   └── scripts/
 │       └── ai-review.js        # Script de análise
+├── ecr-push.sh                  # Script principal: cria repo, login, build e push no ECR
 ├── Dockerfile                   # Multi-stage otimizado
 ├── .dockerignore               # Exclusões para build
 ├── ia-cicd-analise.md          # Documentação da estratégia
 ├── screenshots/
-│   ├── packages-tab.png        # Imagem no GitHub Packages
+│   ├── ecr-console.png         # Repositório no console ECR com as tags
 │   ├── ai-review-comment.png  # Comentário de AI review no PR
-│   ├── pipeline-passing.png   # CI completo verde
+│   ├── ecr-push-ok.png        # ecr-push.sh concluído (ou CI verde)
 │   └── quality-gate-block.png # PR bloqueado por CRITICAL
 └── README.md                   # Instruções de como executar/testar
 ```
@@ -139,9 +141,9 @@ entregas/aula-09/RA/
 
 | Critério | Peso | Descrição |
 |----------|:----:|-----------|
-| Pipeline CI funcional | 20% | lint → test → build+push funciona em push para main |
-| Tagging correto | 10% | SHA + latest em push, semver em git tags |
-| Push condicional | 10% | Imagem só é publicada em push (não em PRs) |
+| Build e push no ECR | 20% | `ecr-push.sh` cria o repo, autentica e publica a imagem no ECR |
+| Tagging correto | 10% | SHA + latest sempre, semver a partir de git tags |
+| Repositório ECR + pull | 10% | Repo criado no `us-east-1`; pull por tag funciona (rollback) |
 | AI Review workflow | 15% | Dispara em PR, analisa diff, detecta problemas |
 | Comentário no PR | 10% | Formatado como tabela, categorizado por severidade |
 | Quality gate | 5% | CRITICAL bloqueia, WARNING/INFO não |
@@ -156,7 +158,8 @@ entregas/aula-09/RA/
 
 Para nota acima da média, implemente adicionalmente:
 
-- [ ] Cache de layers Docker no workflow (docker/build-push-action + cache-from/cache-to)
+- [ ] Lifecycle policy no ECR (expira imagens `untagged` ou mantém só as N mais recentes)
+- [ ] Scan de vulnerabilidades do ECR habilitado (`scan on push`) e evidência do resultado
 - [ ] Comentário atualizado (não duplicado) em novos pushes ao PR
 - [ ] Security scan separado (workflow dedicado para segurança)
 - [ ] Badge de status no README do projeto
@@ -173,13 +176,13 @@ Os arquivos do projeto ficam no seu `unifaat-devops-portfolio`, pasta `aula-09/`
 
 ```bash
 cd unifaat-devops-portfolio
-git checkout -b feature/aula-09-registry-ai-review
+git checkout -b feature/aula-09-ecr-ai-review
 mkdir -p aula-09/.github/workflows
 mkdir -p aula-09/.github/scripts
 mkdir -p aula-09/screenshots
-# copie os arquivos do seu projeto para aula-09/
+# copie os arquivos do seu projeto para aula-09/ (ecr-push.sh, Dockerfile, workflows...)
 git add aula-09/
-git commit -m "feat(aula-09): pipeline com Docker Registry e AI review"
+git commit -m "feat(aula-09): pipeline com Amazon ECR e AI review"
 git checkout main
 git merge feature/aula-09-registry-ai-review
 git push origin main
@@ -207,11 +210,12 @@ Abra o Pull Request no GitHub com:
 
 ## Dicas
 
-- Comece pelo pipeline CI com build+push — é a base para tudo
-- Use o workflow da Parte 1 do lab como referência direta
+- Comece pelo `ecr-push.sh` (criar repo + login + build + push) — é a base para tudo
+- Use o script da Parte 1 do lab como referência direta
 - Para o AI review, o script do lab já funciona — adapte para seu projeto
 - Faça commits pequenos e frequentes (facilita debug se algo falhar)
-- Se o push falhar com permissão, verifique: `permissions: packages: write`
+- Se o push falhar com `denied` / `token has expired`, suas credenciais do Lab expiraram — reabra o Learner Lab e recarregue as credenciais da sessão
+- Confirme sempre a região `us-east-1` e o Account ID correto no URI (`<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com`)
 - Screenshots: use a extensão de captura do browser ou `Cmd/Ctrl+Shift+S`
 
 ---
@@ -219,8 +223,8 @@ Abra o Pull Request no GitHub com:
 ## Conexão com Próximas Aulas
 
 O pipeline que você constrói aqui será **expandido no Módulo 4**:
-- Aula 10+: Estratégias de deploy (Blue-Green, Canary) vão fazer **pull** das imagens que você publicou aqui
-- A imagem no ghcr.io será deployada em EC2/ECS
+- Aula 10+: Estratégias de deploy (Blue-Green, Canary) vão fazer **pull** das imagens que você publicou no ECR
+- A imagem no Amazon ECR será deployada em EC2/ECS — o mesmo ecossistema AWS do Learner Lab
 - O AI review será refinado com mais padrões e integração com Bedrock
 
 > **💡 Guarde seu pipeline funcionando** — ele será pré-requisito para as próximas aulas.

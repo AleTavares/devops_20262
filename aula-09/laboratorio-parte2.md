@@ -21,7 +21,7 @@ Implementar um sistema de code review automatizado por IA para a TechNova. A cad
 - [ ] Repositório `unifaat-devops-portfolio` no GitHub (público)
 - [ ] Pasta `aula-09/technova-api/` com o Dockerfile otimizado da Parte 1
 - [ ] Pipeline CI da Aula 08 funcionando
-- [ ] Build+push da Parte 1 desta aula funcionando
+- [ ] Build+push para o **Amazon ECR** da Parte 1 desta aula funcionando (script `ecr-push.sh`)
 - [ ] Familiaridade com conceitos de IA (Aulas 02 e 07)
 
 > **💡 Este lab oferece duas abordagens:**
