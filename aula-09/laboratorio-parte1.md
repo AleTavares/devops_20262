@@ -4,8 +4,6 @@
 
 Automatizar o build e a publicação da imagem Docker da TechNova API no **Amazon Elastic Container Registry (ECR)**, usando o **AWS Academy Learner Lab**. Ao final deste laboratório, você vai buildar, tagear e publicar a imagem no ECR — pronta para pull em qualquer servidor (EC2/ECS) do Lab.
 
-**Tempo estimado:** ~120 minutos
-
 **Resultado final:**
 - Dockerfile multi-stage otimizado para produção
 - Repositório ECR criado (`technova-api`)
@@ -45,7 +43,7 @@ Automatizar o build e a publicação da imagem Docker da TechNova API no **Amazo
 
 ---
 
-## Parte 1 — ECR e Autenticação no Learner Lab (20 min)
+## Parte 1 — ECR e Autenticação no Learner Lab
 
 ### 1.1 O que é o Amazon ECR?
 
@@ -99,18 +97,12 @@ Guarde o **Account ID** (os 12 dígitos em `Account`) — vamos usá-lo na URL d
 
 ![Anatomia de uma Imagem Docker](img/tf001.png)
 
-No ECR, a imagem é endereçada assim:
-
-```
-123456789012.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abc1234
-└──────────── registry (conta + região) ───────────┘ └── nome ──┘ └── tag ──┘
-```
 
 Diferente do ghcr.io (onde o host é fixo `ghcr.io`), no ECR **o host inclui o seu Account ID e a região** — ele aponta para a sua conta AWS.
 
 ---
 
-## Parte 2 — Dockerfile Multi-Stage para Produção (15 min)
+## Parte 2 — Dockerfile Multi-Stage para Produção
 
 ### 2.1 Por que multi-stage?
 
@@ -217,7 +209,7 @@ curl http://localhost:3000/health
 
 ---
 
-## Parte 3 — Criar o Repositório ECR e Fazer Login (20 min)
+## Parte 3 — Criar o Repositório ECR e Fazer Login
 
 ### 3.1 Criar o repositório no ECR
 
@@ -289,7 +281,7 @@ aws ecr list-images --repository-name technova-api --region us-east-1
 
 ---
 
-## Parte 4 — Script de Build e Push (20 min)
+## Parte 4 — Script de Build e Push
 
 Automatizar o fluxo num script evita erros de digitação e serve de base para o CI.
 
@@ -353,7 +345,7 @@ No console da AWS: **ECR → Repositories → technova-api** mostra as tags, o t
 
 ---
 
-## Parte 5 — Tagging com Semantic Versioning (15 min)
+## Parte 5 — Tagging com Semantic Versioning
 
 Além do SHA e do `latest`, releases usam **semver** (`1.2.3`). Vamos publicar uma versão:
 
@@ -385,7 +377,7 @@ $ECR_URI:1.0.0         ← release (semver, comunicação com a equipe)
 
 ---
 
-## Parte 6 — Pull, Execução e Rollback (15 min)
+## Parte 6 — Pull, Execução e Rollback
 
 ### 6.1 Simular deploy em "outro servidor"
 
@@ -420,7 +412,7 @@ curl http://localhost:3000/health
 
 ---
 
-## Parte 7 — (Opcional) Build e Push no CI com credenciais do Lab (15 min)
+## Parte 7 — (Opcional) Build e Push no CI com credenciais do Lab
 
 > **Leia com atenção.** No GitHub Actions, o build+push para o ECR precisa de credenciais AWS. No Learner Lab essas credenciais são **temporárias e expiram a cada sessão** — então o push automático no CI **só funciona enquanto a sessão do Lab estiver válida**. Em um projeto real, usaríamos **OIDC** (role de curta duração sem segredo fixo) ou um usuário IAM dedicado — mas o Lab **não permite criar IAM**. Por isso, nesta disciplina o fluxo principal é o **script local** (Partes 3–6). O CI abaixo é um exercício complementar.
 

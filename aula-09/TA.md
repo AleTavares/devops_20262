@@ -8,7 +8,7 @@ Preparar-se para a Aula 09 através de leitura prévia sobre **Docker Registry**
 
 ---
 
-## Parte 1 — Docker Registry (~35 min)
+## Parte 1 — Docker Registry
 
 ### 1.1 O Problema: Imagens Presas no Runner
 
@@ -222,7 +222,7 @@ docker run -d -p 3000:3000 "$REGISTRY/technova-api:1.0.0"
 
 ---
 
-## Parte 2 — IA no CI/CD (~25 min)
+## Parte 2 — IA no CI/CD
 
 ### 2.1 A Evolução da IA no Curso
 

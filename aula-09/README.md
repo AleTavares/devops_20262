@@ -39,16 +39,16 @@ Esse é o duplo desafio desta aula: publicar imagens Docker automaticamente no r
 
 ---
 
-## Cronograma da Aula (~5 horas)
+## Cronograma da Aula
 
-| Bloco | Atividade | Duração |
-|:-----:|-----------|:-------:|
-| 1 | Revisão TA + Discussão | 30 min |
-| 2 | Conteúdo Teórico — Docker Registry + CI/CD | 50 min |
-| 3 | Laboratório Parte 1 — Build e Push para o Amazon ECR (Learner Lab) | 120 min |
-| 4 | Conteúdo Teórico — IA no CI/CD | 50 min |
-| 5 | Laboratório Parte 2 — PR Review Automatizado com IA | 120 min |
-| 6 | Encerramento + Orientação TF | 15 min |
+| Bloco | Atividade |
+|:-----:|-----------|
+| 1 | Revisão TA + Discussão |
+| 2 | Conteúdo Teórico — Docker Registry + CI/CD |
+| 3 | Laboratório Parte 1 — Build e Push para o Amazon ECR (Learner Lab) |
+| 4 | Conteúdo Teórico — IA no CI/CD |
+| 5 | Laboratório Parte 2 — PR Review Automatizado com IA |
+| 6 | Encerramento + Orientação TF |
 
 ---
 
@@ -77,8 +77,6 @@ Esta aula consolida o conteúdo de:
 ---
 
 ## Conteúdo Teórico — Parte 1: Docker Registry e CI/CD
-
-*Tempo estimado: ~50 minutos*
 
 ### 1. O Problema: Imagens que Nascem e Morrem no CI
 
@@ -213,8 +211,6 @@ Após o push, as imagens aparecem no **console do Amazon ECR** (Elastic Containe
 ---
 
 ## Conteúdo Teórico — Parte 2: IA no CI/CD
-
-*Tempo estimado: ~50 minutos*
 
 ### 1. A Evolução da IA no Curso
 
