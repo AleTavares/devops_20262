@@ -290,7 +290,7 @@ Workflow dispara o agente a cada PR e comenta o resultado:
 
 # OIDC: só como referência de produção
 
-O padrão **ideal em produção** seria o GitHub Actions assumir uma role via **OIDC** — sem credenciais de longa duração.
+O padrão **ideal em produção** seria o GitHub Actions assumir uma role via **OIDC** — sem credenciais estáticas permanentes.
 
 | | Produção | Learner Lab |
 |---|----------|-------------|

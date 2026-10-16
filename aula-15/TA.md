@@ -142,7 +142,7 @@ Durante a apresentação, qual registry de imagens o seu pipeline usa e em qual 
 
 - a) Docker Hub público, em conta pessoal AWS
 - b) **Amazon ECR**, no **AWS Academy Learner Lab** (`us-east-1`, credenciais temporárias)
-- c) ghcr.io, sem relação com a AWS
+- c) ghcr.io (registry alternativa fora do padrão do curso), sem relação com a AWS
 - d) Nenhum — a imagem fica só no runner do CI
 
 ### Questão 3
