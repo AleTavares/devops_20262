@@ -10,15 +10,13 @@
 
 ## Evidências
 
-- [ ] Pipeline CI (lint → test → build+push) funcional
-- [ ] Imagem publicada no ghcr.io com tags (sha, latest, semver)
-- [ ] Push condicional (só em push para main/tags, não em PRs)
-- [ ] Workflow de AI Review disparando em PRs
-- [ ] Quality gate (CRITICAL bloqueia o PR)
-- [ ] `ia-cicd-analise.md` preenchido
-- [ ] Screenshots (Packages, AI review, pipeline verde, gate bloqueando)
-
-> Marque cada item com `[x]` após confirmar no GitHub.
+- [x] Pipeline CI (lint → test → build+push) funcional
+- [x] Imagem publicada no ghcr.io com tags (sha, latest, semver)
+- [x] Push condicional (só em push para main/tags, não em PRs)
+- [x] Workflow de AI Review disparando em PRs
+- [x] Quality gate (CRITICAL bloqueia o PR)
+- [x] `ia-cicd-analise.md` preenchido
+- [x] Screenshots (Packages, AI review, pipeline verde, gate bloqueando)
 
 ## Estrutura entregue no portfólio
 
@@ -51,4 +49,7 @@ unifaat-devops-portfolio/
 
 ## Evidência do Pipeline Rodando
 
-[Cole aqui o link da execução do GitHub Actions ou os screenshots após o push]
+- Execução do pipeline CI (verde): https://github.com/CarinaDalpino/unifaat-devops-portfolio/actions/runs/38829400667
+- Workflows: `.github/workflows/ci.yml`, `.github/workflows/ai-review.yml`, `.github/workflows/security-scan.yml`
+- Imagem publicada: `ghcr.io/carinadalpino/technova-api` (tags `latest` e `sha-...`)
+- Screenshots em: `aula-09/screenshots/` do portfólio (pipeline-passing, packages-tab, ai-review-comment, quality-gate-block)
