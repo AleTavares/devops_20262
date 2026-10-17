@@ -52,15 +52,6 @@ Esse é o duplo desafio desta aula: publicar imagens Docker automaticamente no r
 
 ---
 
-## Conteúdo Original Consolidado
-
-Esta aula consolida o conteúdo de:
-
-- **Aula 16 original:** Docker Registry e Artifacts (Amazon ECR, Docker Hub, ghcr.io, tagging strategies, autenticação no ECR via `aws ecr get-login-password`, multi-stage para CI, console do ECR) — adaptado para o AWS Academy Learner Lab
-- **Conteúdo NOVO:** IA no CI/CD (automated PR review com Bedrock, análise de código por IA em pipelines, security scanning com IA, quality gates com feedback inteligente)
-
----
-
 ## Pré-requisitos
 
 - **Conta GitHub** ativa (repositório público = Actions gratuito com minutos ilimitados)

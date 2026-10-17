@@ -55,15 +55,6 @@ Marina sorriu: "Exatamente. E o melhor: ambas usam o mesmo ALB. A diferença é 
 
 ---
 
-## Conteúdo Original Consolidado
-
-Esta aula consolida o conteúdo de:
-
-- **Aula 19 original:** Blue/Green Deployments (conceito, ALB + 2 Target Groups, traffic switch, zero downtime, rollback instantâneo, implementação Terraform)
-- **Aula 20 original:** Canary Deployments (conceito, analogia da mineração, weighted routing com ALB, rollout gradual 5%→25%→50%→100%, monitoramento durante rollout, rollback automático por taxa de erro)
-
----
-
 ## Pré-requisitos
 
 - **Acesso ao AWS Academy Learner Lab** (sessão iniciada, credenciais temporárias ativas, região `us-east-1`, `LabRole`/`LabInstanceProfile`)

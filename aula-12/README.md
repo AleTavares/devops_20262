@@ -57,17 +57,6 @@ Rafael ficou empolgado:
 
 ---
 
-## Conteúdo Original Consolidado
-
-Esta aula consolida o conteúdo de:
-
-- **Aula 21 original:** Rollback Strategies (MTTR, migrações reversíveis, feature flags, runbooks, políticas de rollback automático)
-- **Conteúdo NOVO:** AIOps com Amazon Bedrock (detecção de anomalias, monitoramento preditivo, análise inteligente de logs, auto-remediação)
-
-> **💡 Esta é a 4ª aula com conteúdo de IA no curso** (após Aula 02 — Kiro AI para planejamento, Aula 07 — Infraestrutura assistida por IA, Aula 09 — CI/CD inteligente).
-
----
-
 ## Pré-requisitos
 
 - **Acesso ao AWS Academy Learner Lab** com a sessão iniciada (credenciais temporárias ativas, região `us-east-1`, `LabRole`)

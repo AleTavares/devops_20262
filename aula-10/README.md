@@ -51,15 +51,6 @@ Esse é o duplo desafio desta aula: automatizar Terraform com GitOps (plan no PR
 
 ---
 
-## Conteúdo Original Consolidado
-
-Esta aula consolida o conteúdo de:
-
-- **Aula 17 original:** Terraform Apply Automatizado (GitOps, plan on PR, apply on merge, autenticação GitHub→AWS, plan como comentário no PR, aprovação antes do apply)
-- **Aula 18 original:** CD Pipelines (Continuous Delivery vs Deployment, pipeline unificado CI→Build→Push→Deploy, estratégia Recreate, deploy SSH em EC2, health check, rollback manual)
-
----
-
 ## Pré-requisitos
 
 - **Conta GitHub** ativa (repositório público = Actions gratuito)
