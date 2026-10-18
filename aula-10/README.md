@@ -73,49 +73,13 @@ Esse é o duplo desafio desta aula: automatizar Terraform com GitOps (plan no PR
 
 Hoje na TechNova, o fluxo de mudanças de infraestrutura é:
 
-```
-┌─── PROBLEMA ATUAL (Manual) ─────────────────────────────────────────┐
-│                                                                       │
-│  1. Dev edita arquivo .tf localmente                                 │
-│  2. Dev roda `terraform plan` no laptop                              │
-│  3. Dev copia output do plan no Slack/Teams                          │
-│  4. Time olha (ou não olha) e responde "👍"                          │
-│  5. Dev roda `terraform apply` no laptop                             │
-│  6. Se deu errado... quem fez o apply? Quando? Com qual state?       │
-│                                                                       │
-│  Riscos:                                                             │
-│  • Qualquer dev pode rodar apply sem review                          │
-│  • State local pode divergir do remoto                               │
-│  • Sem auditoria (quem aplicou o quê e quando)                       │
-│  • Sem rollback fácil (state corrompido)                             │
-│  • Credenciais AWS no laptop do dev                                  │
-│                                                                       │
-└───────────────────────────────────────────────────────────────────────┘
-```
+![Problema Atual](img/rd001.png)
 
 ### 2. GitOps para Infraestrutura
 
 GitOps é o princípio de que **o repositório Git é a fonte da verdade** para toda infraestrutura:
 
-```
-┌─── SOLUÇÃO: GitOps ──────────────────────────────────────────────────┐
-│                                                                        │
-│  1. Dev edita arquivo .tf e abre PR                                   │
-│  2. Pipeline roda `terraform plan` AUTOMATICAMENTE                    │
-│  3. Plan é postado como COMENTÁRIO no PR                              │
-│  4. Time revisa o plan no PR (como code review)                       │
-│  5. Ao fazer MERGE na main → pipeline roda `terraform apply`          │
-│  6. Auditoria completa: quem aprovou, quando, qual plan               │
-│                                                                        │
-│  Benefícios:                                                          │
-│  • Nenhum humano executa Terraform diretamente                        │
-│  • Toda mudança tem review obrigatório                                │
-│  • Histórico completo no Git (quem, quando, o quê)                    │
-│  • Credenciais apenas no CI (secrets do Lab, não no laptop)           │
-│  • Rollback = revert do commit                                        │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![GitOps](img/rd002.png)
 
 ### 3. Autenticação GitHub Actions → AWS no Learner Lab
 
@@ -128,79 +92,17 @@ O **padrão ideal em produção** é **OIDC (OpenID Connect)**: o GitHub Actions
 
 **No Learner Lab**, a autenticação usa as **credenciais temporárias da sessão** como GitHub Secrets:
 
-```
-┌─── Autenticação no Learner Lab ──────────────────────────────────────┐
-│                                                                        │
-│  GitHub Actions                          AWS (Learner Lab)            │
-│       │                                    │                          │
-│       │ 1. Lê os 3 secrets da sessão:      │                          │
-│       │    AWS_ACCESS_KEY_ID               │                          │
-│       │    AWS_SECRET_ACCESS_KEY           │                          │
-│       │    AWS_SESSION_TOKEN               │                          │
-│       │                                    │                          │
-│       │ 2. configure-aws-credentials@v4    │                          │
-│       │──────────────────────────────────► │ 3. Valida credenciais   │
-│       │                                    │    temporárias (us-east-1)│
-│       │ 4. Usa credenciais para            │                          │
-│       │    terraform plan/apply            │                          │
-│       │──────────────────────────────────► │                          │
-│                                                                        │
-│  • As 3 credenciais são da sessão do Lab e EXPIRAM por sessão         │
-│  • Precisam ser atualizadas como secrets a cada nova sessão           │
-│  • Em produção (fora do Lab), o correto é OIDC + role IAM, sem chaves  │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![Autenticação](img/rd003.png)
 
 ### 4. Plan como Comentário no PR
 
 O output do `terraform plan` é postado diretamente no PR para review:
 
-```
-┌─── Comentário no PR ─────────────────────────────────────────────────┐
-│                                                                        │
-│  🤖 Terraform Plan Output                                             │
-│                                                                        │
-│  Plan: 2 to add, 1 to change, 0 to destroy.                          │
-│                                                                        │
-│  + aws_security_group_rule.allow_https                                │
-│  + aws_security_group_rule.allow_http                                 │
-│  ~ aws_instance.technova_api (instance_type: t3.micro → t3.small)    │
-│                                                                        │
-│  ⚠️ Review o plan acima antes de aprovar o merge.                     │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![Comentário PR](img/rd004.png)
 
 ### 5. Fluxo Completo: PR → Plan → Review → Merge → Apply
 
-```
-┌─── GitOps Workflow ──────────────────────────────────────────────────┐
-│                                                                        │
-│  Developer abre PR (modifica .tf)                                     │
-│       │                                                               │
-│       ▼                                                               │
-│  Trigger: pull_request → job: terraform-plan                          │
-│       │                                                               │
-│       ├── terraform init (backend S3)                                 │
-│       ├── terraform validate                                          │
-│       ├── terraform plan -out=tfplan                                  │
-│       └── Posta plan como comentário no PR                            │
-│                                                                        │
-│  Time revisa o plan no PR                                             │
-│       │                                                               │
-│       ▼                                                               │
-│  Merge na main                                                        │
-│       │                                                               │
-│       ▼                                                               │
-│  Trigger: push (main) → job: terraform-apply                          │
-│       │                                                               │
-│       ├── terraform init                                              │
-│       ├── terraform apply -auto-approve                               │
-│       └── Output: recursos criados/modificados                        │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![GitOps WorkFlow](img/rd005.png)
 
 ---
 
@@ -208,27 +110,7 @@ O output do `terraform plan` é postado diretamente no PR para review:
 
 ### 1. Continuous Delivery vs Continuous Deployment
 
-```
-┌─── CD: Dois Significados ────────────────────────────────────────────┐
-│                                                                        │
-│  Continuous DELIVERY                                                  │
-│  ─────────────────                                                    │
-│  • Pipeline prepara TUDO para deploy (build, test, package)           │
-│  • Deploy para produção requer APROVAÇÃO MANUAL (botão)               │
-│  • "A qualquer momento posso deployar, mas escolho quando"            │
-│  • Ideal para: regulamentação, compliance, releases planejados        │
-│                                                                        │
-│  Continuous DEPLOYMENT                                                │
-│  ───────────────────                                                  │
-│  • Pipeline faz deploy AUTOMÁTICO após todos os checks passarem       │
-│  • Sem intervenção humana entre merge e produção                      │
-│  • "Todo commit que passa nos testes vai para produção"               │
-│  • Ideal para: SaaS, iteração rápida, feature flags                  │
-│                                                                        │
-│  CI ─→ Build ─→ Test ─→ Package ─→ [Delivery: botão | Deployment: auto]│
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![CD](img/rd006.png)
 
 **Na TechNova:** Começamos com Continuous **Deployment** — merge na main deploya automaticamente. Simples e eficiente para uma startup.
 
@@ -236,18 +118,7 @@ O output do `terraform plan` é postado diretamente no PR para review:
 
 O pipeline completo integra todas as etapas em um workflow:
 
-```
-┌─── Pipeline Unificado ───────────────────────────────────────────────┐
-│                                                                        │
-│  ┌────────┐   ┌────────┐   ┌────────┐   ┌────────┐   ┌────────┐    │
-│  │  Lint  │──►│  Test  │──►│ Build  │──►│  Push  │──►│ Deploy │    │
-│  │(ESLint)│   │ (Jest) │   │(Docker)│   │ (ECR)  │   │ (EC2)  │    │
-│  └────────┘   └────────┘   └────────┘   └────────┘   └────────┘    │
-│                                                                        │
-│  Se qualquer etapa falhar → pipeline para → nada é deployado          │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![Pipeline Unificado](img/rd007.png)
 
 ### 3. Estratégia de Deploy: Recreate
 

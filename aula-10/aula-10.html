@@ -373,14 +373,7 @@ footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="o-problema-terraform-manual">O Problema: Terraform Manual</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>┌─── PROBLEMA ATUAL (Manual) ──────────────────┐
-│  1. Dev edita .tf e roda plan no laptop       │
-│  2. Copia o output no Slack                   │
-│  3. Alguém responde &quot;<img class="emoji" draggable="false" alt="👍" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f44d.svg" data-marp-twemoji=""/>&quot; (ou não olha)        │
-│  4. Dev roda apply no laptop                  │
-│  5. Deu errado? Quem? Quando? Qual state?     │
-└───────────────────────────────────────────────┘
-</code></pre>
+<p><img src="img/rd001.png" alt="Fluxo manual de Terraform na TechNova" /></p>
 <p><strong>Riscos:</strong></p>
 <ul>
 <li>Qualquer dev roda <code>apply</code> sem review</li>
@@ -476,13 +469,7 @@ img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="gitops-para-infraestrutura">GitOps para Infraestrutura</h1>
 <p><strong>O repositório Git é a fonte da verdade.</strong> Toda mudança vira um PR.</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>1. Dev edita .tf e abre PR
-2. Pipeline roda `terraform plan` AUTOMATICAMENTE
-3. Plan vira COMENTÁRIO no PR
-4. Time revisa o plan (como code review)
-5. MERGE na main → pipeline roda `terraform apply`
-6. Auditoria completa: quem aprovou, quando, qual plan
-</code></pre>
+<p><img src="img/rd002.png" alt="Fluxo GitOps: PR dispara plan, review, merge aplica" /></p>
 <p><strong>Benefícios:</strong></p>
 <ul>
 <li>Nenhum humano executa Terraform diretamente</li>
@@ -574,6 +561,7 @@ footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="autentica%C3%A7%C3%A3o-github-%E2%86%92-aws">Autenticação GitHub → AWS</h1>
+<p><img src="img/rd003.png" alt="Autenticação do GitHub Actions na AWS com credenciais de sessão do Learner Lab" /></p>
 <p><strong>Produção (ideal):</strong> OIDC + role IAM — token temporário, <strong>sem chave armazenada</strong>.</p>
 <p><strong>Learner Lab:</strong> OIDC <strong>não é permitido</strong> (não cria OIDC provider nem role IAM).<br />
 → Usamos as <strong>3 credenciais temporárias de sessão</strong> como GitHub Secrets.</p>
@@ -673,16 +661,7 @@ img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="plan-como-coment%C3%A1rio-no-pr">Plan como Comentário no PR</h1>
 <p>O output do <code>terraform plan</code> é postado direto no PR, para review:</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code><img class="emoji" draggable="false" alt="🤖" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f916.svg" data-marp-twemoji=""/> Terraform Plan Output
-
-Plan: 2 to add, 1 to change, 0 to destroy.
-
- + aws_security_group_rule.allow_https
- + aws_security_group_rule.allow_http
- ~ aws_instance.technova_api (t3.micro → t3.small)
-
-⚠ Review o plan acima antes de aprovar o merge.
-</code></pre>
+<p><img src="img/rd004.png" alt="Terraform plan postado como comentário no Pull Request" /></p>
 <p>O reviewer avalia <strong>antes</strong> do merge:</p>
 <ul>
 <li>&quot;Faz sentido criar esse security group?&quot;</li>
@@ -773,23 +752,7 @@ footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="fluxo-gitops-pr-%E2%86%92-plan-%E2%86%92-merge-%E2%86%92-apply">Fluxo GitOps: PR → Plan → Merge → Apply</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Developer abre PR (modifica .tf)
-      │
-      ▼
-pull_request → job: terraform-plan
-      ├── terraform init (backend S3)
-      ├── terraform validate
-      ├── terraform plan -out=tfplan
-      └── posta plan como comentário no PR
-      │
-      ▼  (time revisa e aprova)
-Merge na main
-      │
-      ▼
-push (main) → job: terraform-apply
-      ├── terraform init
-      └── terraform apply -auto-approve
-</code></pre>
+<p><img src="img/rd005.png" alt="Fluxo completo: PR dispara plan, review aprova, merge aplica" /></p>
 <blockquote>
 <p><code>-auto-approve</code> é seguro aqui: o plan já foi revisado no PR e o merge <strong>é</strong> a aprovação.</p>
 </blockquote>
@@ -903,8 +866,7 @@ img { max-height: 340px; display: block; margin: 6px auto; }
 </tr>
 </tbody>
 </table>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>CI → Build → Test → Package → [Delivery: botão | Deployment: auto]
-</code></pre>
+<p><img src="img/rd006.png" alt="Continuous Delivery vs Continuous Deployment" /></p>
 <blockquote>
 <p><strong>Na TechNova:</strong> começamos com <strong>Continuous Deployment</strong> — merge na main deploya sozinho. Simples e eficiente para uma startup.</p>
 </blockquote>
@@ -992,13 +954,7 @@ footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="pipeline-unificado-ci-%E2%86%92-build-%E2%86%92-push-%E2%86%92-deploy">Pipeline Unificado: CI → Build → Push → Deploy</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐
-│ Lint │─►│ Test │─►│Build │─►│ Push │─►│Deploy│
-│ESLint│  │ Jest │  │Docker│  │ ECR  │  │ EC2  │
-└──────┘  └──────┘  └──────┘  └──────┘  └──────┘
-
-Se qualquer etapa falhar → pipeline para → nada é deployado
-</code></pre>
+<p><img src="img/rd007.png" alt="Pipeline unificado: lint, test, build, push ECR e deploy" /></p>
 <table>
 <thead>
 <tr>
