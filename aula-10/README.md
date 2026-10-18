@@ -124,33 +124,7 @@ O pipeline completo integra todas as etapas em um workflow:
 
 Existem várias estratégias de deploy. A mais simples é **Recreate**:
 
-```
-┌─── Recreate Strategy ────────────────────────────────────────────────┐
-│                                                                        │
-│  Estado inicial:  [Container v1.0 rodando] ← tráfego                 │
-│                                                                        │
-│  Passo 1: STOP   [Container v1.0 PARADO]  ← sem tráfego (DOWNTIME)  │
-│                                                                        │
-│  Passo 2: PULL   docker pull nova-imagem:v1.1                         │
-│                                                                        │
-│  Passo 3: START  [Container v1.1 rodando] ← tráfego restaurado       │
-│                                                                        │
-│  ⚠️ Downtime: segundos a minutos (entre stop e start)                 │
-│                                                                        │
-│  Prós:                                                                │
-│  • Simples de implementar                                             │
-│  • Sem conflito de portas                                             │
-│  • Sem necessidade de load balancer                                   │
-│  • Estado limpo (sem versões coexistindo)                             │
-│                                                                        │
-│  Contras:                                                             │
-│  • Downtime inevitável                                                │
-│  • Não adequado para apps com SLA rigoroso                            │
-│                                                                        │
-│  Quando usar: apps internas, ambientes de staging, MVPs, startups     │
-│                                                                        │
-└────────────────────────────────────────────────────────────────────────┘
-```
+![Recreate Strategy](img/rd008.png)
 
 ### 4. Deploy via SSH em GitHub Actions
 
