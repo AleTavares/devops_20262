@@ -1070,11 +1070,7 @@ footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
 ;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
 <h1 id="estrat%C3%A9gia-de-deploy-recreate">Estratégia de Deploy: Recreate</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>Inicial:  [Container v1.0 rodando] ← tráfego
-Passo 1:  STOP   [v1.0 parado]  ← DOWNTIME
-Passo 2:  PULL   docker pull nova-imagem:v1.1
-Passo 3:  START  [Container v1.1 rodando] ← tráfego
-</code></pre>
+<p><img src="img/rd008.png" alt="Estratégia Recreate: para o container antigo, puxa e sobe o novo (com downtime)" /></p>
 <p><strong>Prós:</strong> simples, sem conflito de portas, sem load balancer, estado limpo.<br />
 <strong>Contras:</strong> <strong>downtime inevitável</strong> (segundos a minutos), ruim para SLA rigoroso.</p>
 <blockquote>

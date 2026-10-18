@@ -188,12 +188,7 @@ O reviewer avalia **antes** do merge:
 
 # Estratégia de Deploy: Recreate
 
-```
-Inicial:  [Container v1.0 rodando] ← tráfego
-Passo 1:  STOP   [v1.0 parado]  ← DOWNTIME
-Passo 2:  PULL   docker pull nova-imagem:v1.1
-Passo 3:  START  [Container v1.1 rodando] ← tráfego
-```
+![Estratégia Recreate: para o container antigo, puxa e sobe o novo (com downtime)](img/rd008.png)
 
 **Prós:** simples, sem conflito de portas, sem load balancer, estado limpo.
 **Contras:** **downtime inevitável** (segundos a minutos), ruim para SLA rigoroso.
