@@ -28,60 +28,51 @@ Construir um pipeline CI completo para a TechNova API usando GitHub Actions. Ao 
 
 ## Parte 1 — Setup do Projeto
 
-### 1.1 Criar/Atualizar o repositório
+> **📦 Você NÃO precisa digitar os arquivos da API à mão.** O repositório da disciplina já traz a pasta `technova-api/` pronta e testada (API Express, testes Jest, ESLint, Dockerfile). Basta **copiar essa pasta** para dentro de `aula-08/` no seu portfólio. A seção 1.1 mostra como. As seções 1.2 a 1.8 ficam como **referência** do que há dentro da pasta — leia para entender, mas não precisa recriar nada.
 
-Se ainda não tem o repositório `unifaat-devops-portfolio`, crie:
+### 1.1 Copiar a pasta `technova-api` para o portfólio
+
+A pasta base vive na raiz do repositório da disciplina (`devops_20262/technova-api`). Copie-a para dentro de `aula-08/` no seu `unifaat-devops-portfolio`:
 
 ```bash
-cd unifaat-devops-portfolio
-mkdir -p aula-08/technova-api
+# a partir da raiz do seu unifaat-devops-portfolio
+mkdir -p aula-08
+cp -r /caminho/para/devops_20262/technova-api aula-08/technova-api
 cd aula-08/technova-api
 ```
 
-### 1.2 Configurar package.json
+> Se você clonou o repositório da disciplina, troque `/caminho/para/devops_20262` pelo caminho real onde ele está na sua máquina.
 
-Crie ou atualize o `package.json` com as dependências e scripts necessários:
-
-```json
-{
-  "name": "technova-api",
-  "version": "1.0.0",
-  "description": "TechNova API - Sistema de gestão de pedidos",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "test": "jest --coverage --forceExit",
-    "test:ci": "jest --coverage --forceExit --ci",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": "echo 'Build step - verificação de sintaxe' && node --check server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1",
-    "cors": "^2.8.5"
-  },
-  "devDependencies": {
-    "eslint": "^8.56.0",
-    "jest": "^29.7.0",
-    "supertest": "^6.3.3"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  }
-}
-```
-
-### 1.3 Instalar dependências
+Instale as dependências (isso recria o `node_modules/` localmente; o `package-lock.json` já vem na pasta):
 
 ```bash
 npm install
 ```
 
-### 1.4 Criar o servidor (server.js)
+> **Por que `npm install` mesmo com o lock file pronto?** Ele baixa o `node_modules/` para você rodar lint e testes localmente. O `package-lock.json` já está versionado na pasta — ele é o que o CI usa com `npm ci`.
 
-Se ainda não existe, crie o `server.js`:
+### 1.2 O que vem dentro da pasta (referência)
+
+A pasta `technova-api/` já contém tudo que o pipeline precisa:
+
+```
+technova-api/
+├── server.js              # API Express (health check + CRUD de orders)
+├── package.json           # Dependências e scripts (start, test, lint, build)
+├── package-lock.json      # Lock file (necessário para npm ci no CI)
+├── .eslintrc.json         # Configuração do ESLint
+├── Dockerfile             # Imagem multi-stage, usuário não-root
+├── .dockerignore          # Exclusões do contexto de build
+├── .gitignore             # node_modules, coverage, .env, etc.
+└── __tests__/
+    └── server.test.js     # Testes Jest (health + orders)
+```
+
+Nas seções abaixo (1.3 a 1.8) estão os conteúdos principais, apenas para você conhecer o que vai rodar no pipeline.
+
+### 1.3 O servidor (`server.js`)
+
+A API expõe um health check e um CRUD de pedidos em memória:
 
 ```javascript
 const express = require('express');
@@ -146,137 +137,34 @@ if (process.env.NODE_ENV !== 'test') {
 module.exports = app;
 ```
 
-### 1.5 Configurar ESLint (.eslintrc.json)
+### 1.4 Scripts e dependências (`package.json`)
 
-Crie o arquivo `.eslintrc.json` na raiz do projeto:
-
-```json
-{
-  "env": {
-    "node": true,
-    "es2021": true,
-    "jest": true
-  },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "ecmaVersion": "latest"
-  },
-  "rules": {
-    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "no-console": "off",
-    "semi": ["error", "always"],
-    "quotes": ["error", "single"],
-    "indent": ["error", 2],
-    "no-trailing-spaces": "error",
-    "eol-last": ["error", "always"]
-  },
-  "ignorePatterns": [
-    "node_modules/",
-    "coverage/",
-    "dist/"
-  ]
-}
-```
-
-### 1.6 Criar testes (__tests__/server.test.js)
-
-Crie o diretório e arquivo de testes:
-
-```bash
-mkdir -p __tests__
-```
-
-Crie `__tests__/server.test.js`:
-
-```javascript
-const request = require('supertest');
-const app = require('../server');
-
-describe('Health Check', () => {
-  it('GET /health deve retornar status 200', async () => {
-    const res = await request(app).get('/health');
-    expect(res.statusCode).toBe(200);
-  });
-
-  it('GET /health deve retornar status ok', async () => {
-    const res = await request(app).get('/health');
-    expect(res.body.status).toBe('ok');
-  });
-
-  it('GET /health deve retornar timestamp', async () => {
-    const res = await request(app).get('/health');
-    expect(res.body.timestamp).toBeDefined();
-  });
-});
-
-describe('Orders API', () => {
-  it('GET /api/orders deve retornar array', async () => {
-    const res = await request(app).get('/api/orders');
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-  });
-
-  it('GET /api/orders deve retornar orders com campos corretos', async () => {
-    const res = await request(app).get('/api/orders');
-    expect(res.body.length).toBeGreaterThan(0);
-    expect(res.body[0]).toHaveProperty('id');
-    expect(res.body[0]).toHaveProperty('product');
-    expect(res.body[0]).toHaveProperty('quantity');
-    expect(res.body[0]).toHaveProperty('status');
-  });
-
-  it('GET /api/orders/:id deve retornar order específica', async () => {
-    const res = await request(app).get('/api/orders/1');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.id).toBe(1);
-  });
-
-  it('GET /api/orders/:id deve retornar 404 para id inexistente', async () => {
-    const res = await request(app).get('/api/orders/999');
-    expect(res.statusCode).toBe(404);
-    expect(res.body.error).toBe('Order not found');
-  });
-
-  it('POST /api/orders deve criar nova order', async () => {
-    const newOrder = { product: 'Mouse Gamer', quantity: 3 };
-    const res = await request(app).post('/api/orders').send(newOrder);
-    expect(res.statusCode).toBe(201);
-    expect(res.body.product).toBe('Mouse Gamer');
-    expect(res.body.status).toBe('pending');
-  });
-
-  it('POST /api/orders deve retornar 400 sem campos obrigatórios', async () => {
-    const res = await request(app).post('/api/orders').send({});
-    expect(res.statusCode).toBe(400);
-    expect(res.body.error).toBeDefined();
-  });
-});
-```
-
-### 1.7 Configurar Jest no package.json
-
-Adicione a configuração do Jest (se não estiver no package.json):
+O `package.json` já traz os scripts que o pipeline usa (`lint`, `test`, `test:ci`, `build`) e a configuração do Jest:
 
 ```json
 {
-  "jest": {
-    "testEnvironment": "node",
-    "coverageDirectory": "coverage",
-    "collectCoverageFrom": [
-      "**/*.js",
-      "!node_modules/**",
-      "!coverage/**",
-      "!__tests__/**"
-    ]
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --coverage --forceExit",
+    "test:ci": "jest --coverage --forceExit --ci",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "echo 'Build step - verificação de sintaxe' && node --check server.js"
   }
 }
 ```
 
-> **Nota:** Adicione esse bloco `"jest"` no final do seu `package.json`, no mesmo nível de `"scripts"`.
+### 1.5 ESLint (`.eslintrc.json`)
 
-### 1.8 Criar Dockerfile
+As regras de lint já estão configuradas (ponto-e-vírgula obrigatório, aspas simples, indentação de 2 espaços, etc.).
 
-Se ainda não existe, crie o `Dockerfile`:
+### 1.6 Testes (`__tests__/server.test.js`)
+
+A pasta já inclui **9 testes** cobrindo o health check e o CRUD de orders (GET lista, GET por id, GET 404, POST válido, POST 400).
+
+### 1.7 Dockerfile
+
+Imagem multi-stage com usuário não-root, pronta para o job de build:
 
 ```dockerfile
 FROM node:20-alpine AS base
@@ -291,17 +179,11 @@ USER node
 CMD ["node", "server.js"]
 ```
 
-### 1.9 Criar .gitignore
+### 1.8 `.gitignore` e `.dockerignore`
 
-```
-node_modules/
-coverage/
-.env
-*.log
-dist/
-```
+Já vêm configurados para excluir `node_modules/`, `coverage/`, `.env` e logs do versionamento e do contexto de build.
 
-### 1.10 Verificar localmente
+### 1.9 Verificar localmente
 
 Antes de criar o pipeline, verifique que tudo funciona localmente:
 
@@ -316,7 +198,7 @@ npm test
 npm run build
 ```
 
-> **✅ Checkpoint:** Todos os 3 comandos devem passar sem erros antes de prosseguir.
+> **✅ Checkpoint:** Todos os 3 comandos devem passar sem erros antes de prosseguir. Como a pasta já vem testada, eles devem passar de primeira — se algum falhar, confira se rodou `npm install` após copiar a pasta.
 
 ---
 
@@ -379,13 +261,17 @@ jobs:
 
 ### 2.3 Commit e push
 
+Faça o commit da **pasta `technova-api` copiada** (com o `package-lock.json`) e do workflow:
+
 ```bash
-git add .
-git commit -m "feat: adicionar configuração de CI com ESLint"
+git add aula-08/technova-api .github/workflows/ci-aula08.yml
+git commit -m "feat: adicionar TechNova API e configuração de CI com ESLint"
 git branch -M main
 # (repositório unifaat-devops-portfolio já existe — apenas faça push na branch)
 git push -u origin main
 ```
+
+> **⚠️ Confirme que o `package-lock.json` foi commitado** (`git status` não deve listá-lo como ignorado). Ele é obrigatório para o `npm ci` do pipeline funcionar.
 
 ### 2.4 Verificar a execução
 
@@ -800,13 +686,17 @@ Remova o teste e push novamente para restaurar o verde.
 
 ### `npm ci` falha com "no package-lock.json"
 
+A pasta `technova-api` já vem com o `package-lock.json`. Se o erro aparecer, provavelmente ele não foi commitado. Confirme e commite:
+
 ```bash
-# Gere o lock file localmente
-npm install
-git add package-lock.json
+# Dentro de aula-08/technova-api
+ls package-lock.json          # deve existir
+git add aula-08/technova-api/package-lock.json
 git commit -m "fix: adicionar package-lock.json"
 git push
 ```
+
+> Se por algum motivo o arquivo não existir, gere com `npm install` dentro de `aula-08/technova-api` e commite.
 
 ### ESLint reporta erros no node_modules
 
