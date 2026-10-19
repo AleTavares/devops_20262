@@ -4,12 +4,11 @@
 
 Discutir estratégias de tagging de imagens Docker e explorar o potencial de IA para code review automatizado, aplicando ao contexto da TechNova.
 
-**Duração:** ~30 minutos
 **Formato:** Discussão em grupo + apresentação
 
 ---
 
-## Parte 1 — Estratégia de Tagging para a TechNova (15 min)
+## Parte 1 — Estratégia de Tagging para a TechNova
 
 ### Contexto
 
@@ -44,7 +43,7 @@ Cada grupo apresenta sua estratégia em 2 minutos. Turma debate prós e contras 
 
 ---
 
-## Parte 2 — O que IA Deve Revisar em um PR? (15 min)
+## Parte 2 — O que IA Deve Revisar em um PR?
 
 ### Contexto
 
