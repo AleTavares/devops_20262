@@ -1,0 +1,7 @@
+$ docker compose ps
+NAME                  IMAGE                COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+reservas-backend-1    reservas-backend     "docker-entrypoint.s…"   backend    24 seconds ago   Up 18 seconds (healthy)   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+reservas-postgres-1   postgres:16-alpine   "docker-entrypoint.s…"   postgres   24 seconds ago   Up 24 seconds (healthy)   5432/tcp
+
+$ curl -s http://localhost:3000/health
+{"status":"ok","database":"up"}

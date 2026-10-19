@@ -18,6 +18,7 @@ Proteger o pipeline CI com GitHub Secrets, configurar environments com approval 
 ## Pré-requisitos
 
 - [ ] Laboratório Parte 1 concluído (pipeline lint→test→build funcionando)
+- [ ] Pasta `aula-08/technova-api/` copiada e commitada no portfólio (com `package-lock.json`)
 - [ ] Repositório `unifaat-devops-portfolio` com CI verde no GitHub
 - [ ] Acesso às Settings do repositório (você é o owner)
 
@@ -561,6 +562,8 @@ git push
 
 ## Parte 6 — PR Workflow Completo
 
+> **📁 Caminho dos arquivos:** o `server.js` e o `__tests__/server.test.js` estão em `aula-08/technova-api/` (a pasta `technova-api` que você copiou na Parte 1 do Lab 1). Os comandos `git` abaixo rodam a partir da raiz do `unifaat-devops-portfolio`; os caminhos nos editores são relativos a `aula-08/technova-api/`.
+
 ### 6.1 Criar branch com changes
 
 ```bash
@@ -571,7 +574,7 @@ git checkout -b feature/add-delete-endpoint
 
 ### 6.2 Adicionar funcionalidade
 
-Adicione no `server.js` antes do `module.exports`:
+Adicione no `aula-08/technova-api/server.js` antes do `module.exports`:
 
 ```javascript
 app.delete('/api/orders/:id', (req, res) => {
@@ -586,7 +589,7 @@ app.delete('/api/orders/:id', (req, res) => {
 
 ### 6.3 Adicionar teste para nova funcionalidade
 
-Adicione no `__tests__/server.test.js`:
+Adicione no `aula-08/technova-api/__tests__/server.test.js`:
 
 ```javascript
 describe('DELETE /api/orders/:id', () => {
