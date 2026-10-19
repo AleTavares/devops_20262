@@ -195,13 +195,25 @@ AULAS_CI = {
     },
     "09": {
         # Aula 09 reaproveita a technova-api (copiada para aula-09/) e adiciona
-        # build+push para ghcr.io e um workflow de AI review.
+        # build+push para o Amazon ECR e um workflow de AI review de PRs.
         "app_obrigatorios": ["package.json", "server.js", "Dockerfile",
                              ".dockerignore"],
         "app_pasta": "technova-api",
         "exige_workflow": True,
-        # pipeline publica no registry e revisa PRs com IA
-        "termos_pipeline": ["ghcr.io", "build-push-action", "pull_request"],
+        # pipeline publica no Amazon ECR e revisa PRs com IA
+        "termos_pipeline": ["amazon-ecr-login", "docker", "pull_request"],
+    },
+    "10": {
+        # Aula 10 (GitOps + CD): a entrega sao os workflows de Terraform
+        # (plan on PR, apply on merge) e o pipeline CD (lint->test->build->
+        # push ECR->deploy SSH na EC2 com health check). A app technova-api
+        # e copiada para aula-10/ como alvo do build/deploy.
+        "app_obrigatorios": ["package.json", "server.js", "Dockerfile"],
+        "app_pasta": "technova-api",
+        "exige_workflow": True,
+        # termos que caracterizam GitOps de Terraform + CD com deploy no ECR
+        "termos_pipeline": ["terraform", "amazon-ecr-login", "appleboy/ssh-action",
+                            "health"],
     },
 }
 
@@ -475,6 +487,16 @@ def collect_ci_sources(owner, repo, aula, branch, token, max_bytes=60000):
     for rel in ("package.json", "server.js", "Dockerfile", ".eslintrc.json",
                 "__tests__/server.test.js", "README.md"):
         _append(f"{base}/{rel}")
+
+    # Aula 10 (GitOps + CD): os arquivos Terraform e a analise sao centrais.
+    # Coleta os .tf de aula-10/terraform/ e o documento gitops-cd-analise.md.
+    if aula == "10":
+        aula_base = f"aula-{aula}"
+        for item in _list_dir(owner, repo, f"{aula_base}/terraform", branch, token):
+            if item.get("type") == "file" and item["name"].endswith(".tf"):
+                _append(f"{aula_base}/terraform/{item['name']}")
+        for rel in ("gitops-cd-analise.md", "docs/runbook-rollback.md"):
+            _append(f"{aula_base}/{rel}")
 
     return "".join(blob)
 
@@ -792,19 +814,28 @@ ressalvas e um bloco de texto pronto para o review do PR."""
     elif modo == "ci":
         system = (
             "Voce e um professor de DevOps avaliando um Trabalho de Fixacao (TF) sobre "
-            "CI/CD com GitHub Actions (aula 08). O aluno construiu um pipeline que roda no "
+            f"CI/CD com GitHub Actions (aula {aula}). O aluno construiu pipeline(s) que rodam no "
             "repositorio de portfolio dele (unifaat-devops-portfolio): o(s) workflow(s) ficam "
-            "em .github/workflows/ e a aplicacao Node.js (technova-api) fica em aula-08/. "
-            "Avalie SOMENTE com base nos criterios fornecidos e nos arquivos reais (YAML do "
-            "workflow + codigo da app). Atribua uma nota de 0 a 1,5. "
-            "Verifique: (1) pipeline multi-stage com dependencias corretas (lint -> test -> build "
-            "via `needs`); (2) ESLint configurado e job de lint; (3) testes Jest com coverage; "
-            "(4) build Docker no CI; (5) uso de secrets (`${{ secrets.* }}`); (6) boas praticas "
-            "(cache, matrix, concurrency, path filters) como bonus. "
-            "A EXECUCAO real do pipeline (jobs verdes na aba Actions) e o status badge dependem "
-            "de conferencia do professor — avalie o que for verificavel pelos arquivos e marque "
-            "o resto como pendente. Se nao houver workflow, REPROVE por entrega nao verificavel. "
-            "Produza um parecer em portugues, em markdown, pronto para o review do PR."
+            f"em .github/workflows/ e a aplicacao Node.js (technova-api) fica em aula-{aula}/. "
+            "Avalie SOMENTE com base nos CRITERIOS FORNECIDOS (do aula-XX/TF.md) e nos arquivos "
+            "reais (YAML do(s) workflow(s) + codigo da app). Os criterios do TF sao a fonte da "
+            "verdade sobre o que esta aula exige — baseie a nota e a tabela neles. "
+            "Atribua uma nota de 0 a 1,5. "
+            "Oriente-se pelo foco de cada aula: "
+            "aula 08 = CI multi-stage (lint -> test -> build via `needs`, ESLint, Jest, build "
+            "Docker, uso de secrets); "
+            "aula 09 = build e PUSH da imagem no Amazon ECR (login via aws-actions/amazon-ecr-login, "
+            "tagging sha/latest/semver, push condicional) + workflow de AI review de PRs; "
+            "aula 10 = GitOps de Terraform (plan on PR comentado, apply on merge) e pipeline CD "
+            "(lint -> test -> build -> push ECR -> deploy Recreate via SSH na EC2 com health check). "
+            "Em qualquer aula, a autenticacao na AWS no AWS Academy Learner Lab usa as credenciais "
+            "temporarias de sessao como secrets (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, "
+            "AWS_SESSION_TOKEN); OIDC + role IAM e apenas o ideal de producao, indisponivel no Lab — "
+            "NAO penalize o uso de credenciais de sessao nem exija OIDC. "
+            "A EXECUCAO real do pipeline (jobs verdes na aba Actions), status badge e os screenshots "
+            "dependem de conferencia do professor — avalie o que for verificavel pelos arquivos e "
+            "marque o resto como pendente. Se nao houver workflow algum, REPROVE por entrega nao "
+            "verificavel. Produza um parecer em portugues, em markdown, pronto para o review do PR."
         )
         user = f"""## Criterios do TF (aula-{aula}/TF.md)
 {criterios or "(criterios nao encontrados no repositorio)"}
@@ -818,10 +849,10 @@ ressalvas e um bloco de texto pronto para o review do PR."""
 ## Workflows (.github/workflows/) e codigo da aplicacao (technova-api)
 {tf_sources or "(nenhum arquivo acessivel no portfolio)"}
 
-Gere o parecer final com: nota (X / 1,5), tabela de criterios (pipeline multi-stage,
-ESLint, testes Jest, build Docker, secrets, bonus), pontos fortes, ressalvas e um
-bloco de texto pronto para o review do PR. Marque 'execucao do pipeline / badge' como
-pendente de conferencia do professor na aba Actions."""
+Gere o parecer final com: nota (X / 1,5), uma tabela de criterios BASEADA nos criterios
+do aula-{aula}/TF.md acima, pontos fortes, ressalvas e um bloco de texto pronto para o
+review do PR. Marque 'execucao do pipeline / badge / screenshots' como pendente de
+conferencia do professor na aba Actions."""
     elif modo == "prova":
         system = (
             "Voce e um professor de DevOps avaliando a PROVA DO 1o BIMESTRE (aulas 01 a 07). "
