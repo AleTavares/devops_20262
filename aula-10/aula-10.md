@@ -89,15 +89,7 @@ Na Aula 09, a imagem já é publicada no **Amazon ECR**. Mas Rafael e Carlos ain
 
 # O Problema: Terraform Manual
 
-```
-┌─── PROBLEMA ATUAL (Manual) ──────────────────┐
-│  1. Dev edita .tf e roda plan no laptop       │
-│  2. Copia o output no Slack                   │
-│  3. Alguém responde "👍" (ou não olha)        │
-│  4. Dev roda apply no laptop                  │
-│  5. Deu errado? Quem? Quando? Qual state?     │
-└───────────────────────────────────────────────┘
-```
+![Fluxo manual de Terraform na TechNova](img/rd001.png)
 
 **Riscos:**
 - Qualquer dev roda `apply` sem review
@@ -113,14 +105,7 @@ Na Aula 09, a imagem já é publicada no **Amazon ECR**. Mas Rafael e Carlos ain
 
 **O repositório Git é a fonte da verdade.** Toda mudança vira um PR.
 
-```
-1. Dev edita .tf e abre PR
-2. Pipeline roda `terraform plan` AUTOMATICAMENTE
-3. Plan vira COMENTÁRIO no PR
-4. Time revisa o plan (como code review)
-5. MERGE na main → pipeline roda `terraform apply`
-6. Auditoria completa: quem aprovou, quando, qual plan
-```
+![Fluxo GitOps: PR dispara plan, review, merge aplica](img/rd002.png)
 
 **Benefícios:**
 - Nenhum humano executa Terraform diretamente
@@ -131,6 +116,8 @@ Na Aula 09, a imagem já é publicada no **Amazon ECR**. Mas Rafael e Carlos ain
 ---
 
 # Autenticação GitHub → AWS
+
+![Autenticação do GitHub Actions na AWS com credenciais de sessão do Learner Lab](img/rd003.png)
 
 **Produção (ideal):** OIDC + role IAM — token temporário, **sem chave armazenada**.
 
@@ -155,17 +142,7 @@ Na Aula 09, a imagem já é publicada no **Amazon ECR**. Mas Rafael e Carlos ain
 
 O output do `terraform plan` é postado direto no PR, para review:
 
-```
-🤖 Terraform Plan Output
-
-Plan: 2 to add, 1 to change, 0 to destroy.
-
- + aws_security_group_rule.allow_https
- + aws_security_group_rule.allow_http
- ~ aws_instance.technova_api (t3.micro → t3.small)
-
-⚠️ Review o plan acima antes de aprovar o merge.
-```
+![Terraform plan postado como comentário no Pull Request](img/rd004.png)
 
 O reviewer avalia **antes** do merge:
 - "Faz sentido criar esse security group?"
@@ -176,24 +153,7 @@ O reviewer avalia **antes** do merge:
 
 # Fluxo GitOps: PR → Plan → Merge → Apply
 
-```
-Developer abre PR (modifica .tf)
-      │
-      ▼
-pull_request → job: terraform-plan
-      ├── terraform init (backend S3)
-      ├── terraform validate
-      ├── terraform plan -out=tfplan
-      └── posta plan como comentário no PR
-      │
-      ▼  (time revisa e aprova)
-Merge na main
-      │
-      ▼
-push (main) → job: terraform-apply
-      ├── terraform init
-      └── terraform apply -auto-approve
-```
+![Fluxo completo: PR dispara plan, review aprova, merge aplica](img/rd005.png)
 
 > `-auto-approve` é seguro aqui: o plan já foi revisado no PR e o merge **é** a aprovação.
 
@@ -207,9 +167,7 @@ push (main) → job: terraform-apply
 | Lema | "Posso deployar quando quiser" | "Todo commit testado vai pra prod" |
 | Ideal para | Compliance, releases planejados | SaaS, iteração rápida |
 
-```
-CI → Build → Test → Package → [Delivery: botão | Deployment: auto]
-```
+![Continuous Delivery vs Continuous Deployment](img/rd006.png)
 
 > **Na TechNova:** começamos com **Continuous Deployment** — merge na main deploya sozinho. Simples e eficiente para uma startup.
 
@@ -217,14 +175,7 @@ CI → Build → Test → Package → [Delivery: botão | Deployment: auto]
 
 # Pipeline Unificado: CI → Build → Push → Deploy
 
-```
-┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐
-│ Lint │─►│ Test │─►│Build │─►│ Push │─►│Deploy│
-│ESLint│  │ Jest │  │Docker│  │ ECR  │  │ EC2  │
-└──────┘  └──────┘  └──────┘  └──────┘  └──────┘
-
-Se qualquer etapa falhar → pipeline para → nada é deployado
-```
+![Pipeline unificado: lint, test, build, push ECR e deploy](img/rd007.png)
 
 | Job | Depende de | Função |
 |-----|-----------|--------|
@@ -237,12 +188,7 @@ Se qualquer etapa falhar → pipeline para → nada é deployado
 
 # Estratégia de Deploy: Recreate
 
-```
-Inicial:  [Container v1.0 rodando] ← tráfego
-Passo 1:  STOP   [v1.0 parado]  ← DOWNTIME
-Passo 2:  PULL   docker pull nova-imagem:v1.1
-Passo 3:  START  [Container v1.1 rodando] ← tráfego
-```
+![Estratégia Recreate: para o container antigo, puxa e sobe o novo (com downtime)](img/rd008.png)
 
 **Prós:** simples, sem conflito de portas, sem load balancer, estado limpo.
 **Contras:** **downtime inevitável** (segundos a minutos), ruim para SLA rigoroso.
