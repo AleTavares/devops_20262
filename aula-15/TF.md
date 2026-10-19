@@ -134,6 +134,8 @@ unifaat-devops-portfolio/
 └── docker-compose.yml
 ```
 
+> **📁 Na pasta de entrega do fork (`entregas/aula-15/RA/`) vai _somente_ o `entrega.md`.** Todo o portfólio (código, infra, workflows e evidências/apresentação) fica no seu repositório `unifaat-devops-portfolio` (público). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
+
 > A estrutura de pastas é livre — o que importa é demonstrar a jornada completa com código funcional e documentação por etapa.
 
 ---
