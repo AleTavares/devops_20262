@@ -22,11 +22,13 @@ Implementar um sistema de code review automatizado por IA para a TechNova. A cad
 - [ ] Build+push para o **Amazon ECR** da Parte 1 desta aula funcionando (script `ecr-push.sh`)
 - [ ] Familiaridade com conceitos de IA (Aulas 02 e 07)
 
-> **💡 Este lab oferece duas abordagens:**
-> - **Opção A (Recomendada):** Usar GitHub Action de AI review (gratuita, funciona sem Bedrock)
-> - **Opção B (Avançada):** Implementação conceitual com script que chamaria Bedrock
+> **⚠️ Sobre o AWS Bedrock no Learner Lab:**
+> O **AWS Academy Learner Lab não inclui acesso ao Bedrock** — o serviço requer habilitação manual de modelos e criação de roles de serviço (ambas bloqueadas no Lab). Por isso este lab usa a Opção A como abordagem principal.
 >
-> Ambas ensinam os mesmos conceitos. Use a Opção A para resultado prático imediato.
+> - **Opção A (obrigatória):** GitHub Action de AI review baseada em regras (gratuita, sem Bedrock, funciona no Learner Lab)
+> - **Opção B (referência conceitual):** script que chamaria Bedrock — **não executável no Learner Lab**, incluído apenas para ilustrar como seria a integração em ambiente real
+>
+> Use a Opção A para o laboratório. A Opção B é leitura complementar.
 
 ---
 
@@ -342,9 +344,11 @@ try {
 }
 ```
 
-### Opção B — Implementação Conceitual com Bedrock (Avançada)
+### Opção B — Referência Conceitual com Bedrock (não executável no Learner Lab)
 
-Para quem tem acesso ao AWS Bedrock, o script chamaria a API diretamente:
+> **⚠️ O Bedrock não está disponível no AWS Academy Learner Lab.** Este bloco é apenas referência para ilustrar como seria a integração em um ambiente real com acesso ao Bedrock. Não tente executar no Lab.
+
+Para um ambiente com acesso ao AWS Bedrock, o script chamaria a API diretamente:
 
 ```javascript
 // .github/scripts/ai-review-bedrock.js (CONCEITUAL)
@@ -390,7 +394,7 @@ Responda em formato Markdown com tabela.`;
 }
 ```
 
-> **💡 Para o lab, use a Opção A.** A Opção B é referência para implementação futura com Bedrock.
+> **💡 Para o lab, use a Opção A.** A Opção B é referência conceitual — o Bedrock não está disponível no AWS Academy Learner Lab.
 
 ---
 
