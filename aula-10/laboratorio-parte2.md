@@ -26,7 +26,28 @@ Construir um pipeline de Continuous Deployment que, ao fazer merge na main, exec
 
 ## Passo 1 — Preparar a EC2 para Receber Deploys
 
-### 1.1 Verificar Docker e AWS CLI na EC2
+### 1.1 Verificar que o Security Group permite SSH do GitHub Actions
+
+> **⚠️ Passo obrigatório antes de continuar:** o deploy via SSH exige que a EC2 aceite conexões na porta 22 vindas dos runners do GitHub Actions. Sem isso, o step de deploy vai expirar por timeout.
+
+Verifique ou adicione a regra no Security Group da EC2 (via Terraform ou Console):
+
+```hcl
+# No seu módulo security-group, adicione a regra para SSH dos runners do GitHub Actions
+ingress {
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]   # GitHub Actions usa IPs variáveis — precisa abrir para todos
+  description = "SSH para GitHub Actions runners (CD pipeline)"
+}
+```
+
+Ou via Console AWS: **EC2 → Security Groups → technova-api-sg → Edit inbound rules → Add rule: SSH, 0.0.0.0/0**.
+
+> Em produção você restringiria aos [ranges de IP publicados pelo GitHub](https://api.github.com/meta) — no Lab, `0.0.0.0/0` na porta 22 é aceitável.
+
+### 1.2 Verificar Docker e AWS CLI na EC2
 
 Conecte na EC2 e confirme que Docker e a AWS CLI estão instalados:
 
@@ -104,7 +125,13 @@ cat ~/.ssh/technova-key.pem
 
 Copie **TODO** o conteúdo (incluindo `-----BEGIN RSA PRIVATE KEY-----` e `-----END RSA PRIVATE KEY-----`) e cole no campo do secret `EC2_SSH_KEY`.
 
-> **⚠️ A chave SSH e as credenciais do Lab são sensíveis.** Nunca commite no repositório. GitHub Secrets criptografa o valor. As credenciais do Lab expiram por sessão — atualize-as ao reabrir o Lab.
+> **⚠️ A chave SSH e as credenciais do Lab são sensíveis.** Nunca commite no repositório. GitHub Secrets criptografa o valor.
+>
+> **As credenciais do Lab expiram por sessão** — ao reabrir o Lab, atualize-as assim:
+> 1. **Start Lab** → aguardar verde → **AWS Details → AWS CLI → Show**
+> 2. **GitHub → Settings → Secrets and variables → Actions**
+> 3. Atualizar `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` e `AWS_SESSION_TOKEN`
+> 4. Reexecutar o workflow que falhou com `ExpiredToken` (aba Actions → rerun)
 
 > **✅ Checkpoint:** secrets criados no repositório (EC2 + credenciais do ECR).
 
@@ -193,7 +220,7 @@ jobs:
       - name: Build e Push
         uses: docker/build-push-action@v5
         with:
-          context: aula-10/technova-api
+          context: .                    # raiz do repositório (onde está a app)
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
