@@ -10,6 +10,10 @@
 - Pasta: [`aula-10/`](https://github.com/lucaskenway/unifaat-devops-portfolio/tree/main/aula-10)
 - Workflows (raiz, onde o GitHub os executa): [`terraform-plan.yml`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/.github/workflows/terraform-plan.yml), [`terraform-apply.yml`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/.github/workflows/terraform-apply.yml), [`cd.yml`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/.github/workflows/cd.yml), [`terraform-destroy.yml`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/.github/workflows/terraform-destroy.yml)
 
+## Trabalho em Aula
+
+- [`trabalho-em-aula.md`](trabalho-em-aula.md) — proteções GitOps, falha de apply pós-merge, prevenção de destroy do RDS e estratégia de deploy por aplicação
+
 ## Evidências
 
 - [x] Workflow `terraform-plan.yml` postando o plan como comentário no PR
