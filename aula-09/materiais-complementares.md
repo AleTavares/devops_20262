@@ -4,9 +4,12 @@
 
 ### Documentação Oficial
 
-- [GitHub Container Registry (ghcr.io)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) — Guia completo do registro de containers do GitHub
+- [Amazon ECR User Guide](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html) — Registry da AWS (**usado nesta aula**)
+- [Push de imagem no Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html) — Passo a passo de build + push
+- [Autenticação no ECR (`get-login-password`)](https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html) — Login do Docker com token temporário
+- [aws-actions/amazon-ecr-login](https://github.com/aws-actions/amazon-ecr-login) — Action da AWS para login no ECR no CI
+- [GitHub Container Registry (ghcr.io)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) — Registry alternativo (comparação)
 - [Docker Hub Documentation](https://docs.docker.com/docker-hub/) — Registry padrão do Docker
-- [Amazon ECR User Guide](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html) — Registry da AWS
 
 ### GitHub Actions para Docker
 
@@ -70,7 +73,9 @@
 
 | Ferramenta | Propósito | Custo |
 |-----------|----------|:-----:|
-| **ghcr.io** | Container registry integrado ao GitHub | Gratuito (público) |
+| **Amazon ECR** | Container registry da AWS (**usado nesta aula**) | ~$0.10/GB/mês (créditos do Lab) |
+| **AWS CLI** | Criar repo ECR e gerar token de login | Gratuito |
+| **ghcr.io** | Container registry integrado ao GitHub (alternativa) | Gratuito (público) |
 | **Docker Scout** | Análise de vulnerabilidades em imagens | Gratuito (3 repos) |
 | **Trivy** | Security scanner (containers + código) | Open Source |
 | **Dependabot** | Atualização automática de deps | Gratuito |
@@ -91,8 +96,8 @@
 - **Aula 08 (GitHub Actions):** Pipeline CI que agora é estendido com push para registry e AI review
 
 ### Módulo 4 (Deploy) — Próximas Aulas
-- As imagens publicadas no ghcr.io serão usadas em estratégias de deploy (Blue-Green, Canary)
-- O deploy server fará `docker pull ghcr.io/user/technova-api:tag` para atualizar a aplicação
+- As imagens publicadas no Amazon ECR serão usadas em estratégias de deploy (Blue-Green, Canary)
+- O deploy server fará `docker pull <acct>.dkr.ecr.us-east-1.amazonaws.com/technova-api:tag` para atualizar a aplicação
 - AI review será estendido para validar configurações de deploy
 
 ---
@@ -116,7 +121,9 @@
 | Termo | Definição |
 |-------|-----------|
 | **Registry** | Servidor que armazena e distribui imagens Docker |
-| **ghcr.io** | GitHub Container Registry |
+| **Amazon ECR** | Elastic Container Registry — registry da AWS (usado nesta aula) |
+| **Learner Lab** | Ambiente AWS Academy com credenciais temporárias (`us-east-1`, sem IAM) |
+| **ghcr.io** | GitHub Container Registry (alternativa) |
 | **Tag** | Identificador de versão de uma imagem |
 | **Manifest** | Metadados de uma imagem (layers, plataforma, config) |
 | **Layer** | Camada individual de um Dockerfile (cada instrução = 1 layer) |
