@@ -27,20 +27,47 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.ref }}
 
-      # Guarda de seguranca: se o PR tocar em arquivos sensiveis (.github/ ou
-      # criterios TF.md), o job aborta ANTES de instalar deps ou usar secrets.
-      # Alteracoes nesses arquivos devem passar por revisao sua (CODEOWNERS),
-      # nunca ser processadas automaticamente por um PR de aluno.
-      - name: Bloquear PR que altera arquivos sensiveis
+      # Guarda de escopo: um PR de aluno so pode alterar arquivos DENTRO da
+      # pasta de entrega (entregas/...). Qualquer arquivo fora de entregas/
+      # (ex.: .github/, TF.md, provas/, aula-XX/, technova-api/, README, etc.)
+      # trava o merge: esse check falha (status vermelho) e, com branch
+      # protection exigindo-o, o PR nao pode ser mergeado.
+      # Excecao: PRs abertos pelo admin (AleTavares) nao sao travados — ele e
+      # quem revisa e pode alterar arquivos do repo da disciplina.
+      - name: Bloquear PR que altera arquivos fora da pasta de entrega
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          ADMIN_LOGIN: AleTavares
         run: |
+          set -euo pipefail
+
+          # Admin pode alterar qualquer arquivo (ele revisa e mantem a disciplina).
+          if [ "$PR_AUTHOR" = "$ADMIN_LOGIN" ]; then
+            echo "PR aberto pelo admin ($PR_AUTHOR) — guarda de escopo nao se aplica."
+            exit 0
+          fi
+
           FILES=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename')
           echo "Arquivos do PR:"; echo "$FILES"
-          if echo "$FILES" | grep -E '^\.github/|/TF\.md$|^provas/' >/dev/null; then
-            echo "::error::PR altera arquivos protegidos (.github/, TF.md ou provas/). Avaliacao automatica bloqueada; requer revisao manual de @AleTavares."
+
+          # Qualquer arquivo que NAO comece com "entregas/" esta fora do escopo
+          # permitido para alunos. Listamos os infratores para o feedback.
+          FORA=$(echo "$FILES" | grep -vE '^entregas/' || true)
+
+          if [ -n "$FORA" ]; then
+            echo "Arquivos fora da pasta de entrega:"; echo "$FORA"
+            LISTA=$(echo "$FORA" | sed 's/^/- /')
+            BODY=$(printf '%s\n\n%s\n\n%s' \
+              "⛔ **PR fora do escopo permitido.** Entregas de aluno só podem alterar arquivos dentro da sua pasta de entrega (\`entregas/aula-XX/SEU-RA/\` ou \`entregas/provaXBimestre/SEU-RA/\`). Este PR altera arquivos **fora** de \`entregas/\`:" \
+              "$LISTA" \
+              "O merge está bloqueado — apenas o administrador (@AleTavares) pode liberar alterações no repositório da disciplina. Remova as alterações fora da sua pasta de entrega e atualize o PR.")
+            gh pr comment "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}" --body "$BODY" || true
+            echo "::error::PR altera arquivos fora de entregas/. Merge bloqueado; somente o admin (@AleTavares) pode alterar o repositorio da disciplina."
             exit 1
           fi
+
+          echo "OK: PR altera apenas arquivos dentro de entregas/."
 
       # Regras exclusivas da PROVA: (1) apenas 1 PR por RA e (2) imutavel apos envio.
       # A prova e identificada pelo titulo. Se um aluno abrir um 2o PR de prova, ou

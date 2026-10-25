@@ -1,0 +1,105 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Rejeitar `nome` whitespace-only e `nome` com mais de 100 caracteres": [
+      {
+        "executionId": "c880098b-b7bd-4f96-97db-ff0badccb3a2",
+        "chatSessionId": "sess_e7ca8496-172e-462c-b679-0f7eb5962b43",
+        "timestamp": 1790906547253
+      },
+      {
+        "executionId": "c880098b-b7bd-4f96-97db-ff0badccb3a2",
+        "chatSessionId": "sess_e7ca8496-172e-462c-b679-0f7eb5962b43",
+        "timestamp": 1790906831072
+      }
+    ],
+    "1. Corrigir validação do `POST /salas`": [
+      {
+        "executionId": "c880098b-b7bd-4f96-97db-ff0badccb3a2",
+        "chatSessionId": "sess_e7ca8496-172e-462c-b679-0f7eb5962b43",
+        "timestamp": 1790906831371
+      }
+    ],
+    "3.1 Rejeitar `funcionario` whitespace-only e `funcionario` com mais de 100 caracteres": [
+      {
+        "executionId": "abf919df-063c-4bf8-a21f-38bd8dc1c5a6",
+        "chatSessionId": "sess_d784d716-a8f1-47c0-856b-4f66a7e5495c",
+        "timestamp": 1790906897250
+      },
+      {
+        "executionId": "abf919df-063c-4bf8-a21f-38bd8dc1c5a6",
+        "chatSessionId": "sess_d784d716-a8f1-47c0-856b-4f66a7e5495c",
+        "timestamp": 1790906947928
+      }
+    ],
+    "3. Corrigir validação do `POST /reservas`": [
+      {
+        "executionId": "abf919df-063c-4bf8-a21f-38bd8dc1c5a6",
+        "chatSessionId": "sess_d784d716-a8f1-47c0-856b-4f66a7e5495c",
+        "timestamp": 1790906947967
+      }
+    ],
+    "4.1 Rejeitar `id` não numérico ou não inteiro positivo com HTTP 400": [
+      {
+        "executionId": "8e14ceaa-9385-46a0-943d-734aa93e75c8",
+        "chatSessionId": "sess_80b31bc0-25a2-40f5-9e2f-ca8c5c66c949",
+        "timestamp": 1790907009433
+      },
+      {
+        "executionId": "8e14ceaa-9385-46a0-943d-734aa93e75c8",
+        "chatSessionId": "sess_80b31bc0-25a2-40f5-9e2f-ca8c5c66c949",
+        "timestamp": 1790907091664
+      }
+    ],
+    "4. Corrigir validação do `DELETE /reservas/:id`": [
+      {
+        "executionId": "8e14ceaa-9385-46a0-943d-734aa93e75c8",
+        "chatSessionId": "sess_80b31bc0-25a2-40f5-9e2f-ca8c5c66c949",
+        "timestamp": 1790907091796
+      }
+    ],
+    "5.1 Rejeitar `funcionario` somente espaços brancos com HTTP 400": [
+      {
+        "executionId": "e46fb94e-7d99-4363-abb7-71bff7a0ecb7",
+        "chatSessionId": "sess_15e2ffa3-e563-4935-99fc-322e9cecf7d9",
+        "timestamp": 1790907180245
+      },
+      {
+        "executionId": "e46fb94e-7d99-4363-abb7-71bff7a0ecb7",
+        "chatSessionId": "sess_15e2ffa3-e563-4935-99fc-322e9cecf7d9",
+        "timestamp": 1790907215060
+      }
+    ],
+    "5. Corrigir validação do `GET /reservas?funcionario=`": [
+      {
+        "executionId": "e46fb94e-7d99-4363-abb7-71bff7a0ecb7",
+        "chatSessionId": "sess_15e2ffa3-e563-4935-99fc-322e9cecf7d9",
+        "timestamp": 1790907215149
+      }
+    ],
+    "6. Validar bloqueio de conflito de horário": [
+      {
+        "executionId": "030a39b1-045a-496e-8ecd-bfec848de8ff",
+        "chatSessionId": "sess_80ee3315-48cf-4956-8dd4-487abb9fe39a",
+        "timestamp": 1790907247249
+      },
+      {
+        "executionId": "030a39b1-045a-496e-8ecd-bfec848de8ff",
+        "chatSessionId": "sess_80ee3315-48cf-4956-8dd4-487abb9fe39a",
+        "timestamp": 1790907363208
+      }
+    ],
+    "7. Checkpoint final — Garantir que todas as validações estão corretas": [
+      {
+        "executionId": "0e7dea44-f95b-4b45-a7c5-4856f1a84382",
+        "chatSessionId": "sess_2521e1fe-f3d4-4a62-93c7-8a7a37a33f62",
+        "timestamp": 1790907433050
+      },
+      {
+        "executionId": "0e7dea44-f95b-4b45-a7c5-4856f1a84382",
+        "chatSessionId": "sess_2521e1fe-f3d4-4a62-93c7-8a7a37a33f62",
+        "timestamp": 1790907667310
+      }
+    ]
+  }
+}
