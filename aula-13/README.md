@@ -161,6 +161,8 @@ Todo o fluxo de imagens usa o **Amazon ECR** e roda no **AWS Academy Learner Lab
 6. **Integração** technova-api → technova-notifications funcionando
 7. **Teste E2E** documentado e funcional
 
+> **📁 Onde entregar:** todos esses artefatos ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-13/`). Na pasta de entrega do fork da disciplina (`entregas/aula-13/RA/`) vai _somente_ o `entrega.md` com o link e as evidências. Ver detalhes em [`TF.md`](TF.md).
+
 ---
 
 ### Critérios de Avaliação

@@ -116,7 +116,9 @@ Crie o arquivo `ia-cicd-analise.md` com:
 ## Estrutura de Entrega
 
 ```
-entregas/aula-09/RA/
+entregas/aula-09/RA/   (apenas o entrega.md; o projeto fica no portfólio)
+
+unifaat-devops-portfolio/aula-09/
 ├── .github/
 │   ├── workflows/
 │   │   ├── ci.yml              # (opcional) CI com push p/ ECR via amazon-ecr-login
@@ -134,6 +136,8 @@ entregas/aula-09/RA/
 │   └── quality-gate-block.png # PR bloqueado por CRITICAL
 └── README.md                   # Instruções de como executar/testar
 ```
+
+> **📁 Na pasta de entrega do fork (`entregas/aula-09/RA/`) vai _somente_ o `entrega.md`.** Todo o código, workflows, script e os screenshots/evidências ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-09/`). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
 
 ---
 

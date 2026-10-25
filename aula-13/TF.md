@@ -114,6 +114,8 @@ O CTO Carlos Mendes quer um serviço de notificações que **nasça certo**: com
 ## Estrutura de Entrega
 
 ```
+entregas/aula-13/RA/   (apenas o entrega.md; o projeto fica no portfólio)
+
 unifaat-devops-portfolio/aula-13/
 ├── technova-notifications/
 │   ├── src/
@@ -144,6 +146,8 @@ unifaat-devops-portfolio/aula-13/
     ├── health-check-response.png
     └── e2e-tests-passing.png
 ```
+
+> **📁 Na pasta de entrega do fork (`entregas/aula-13/RA/`) vai _somente_ o `entrega.md`.** Todo o microserviço, workflows, Terraform e as evidências ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-13/`). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
 
 ---
 
