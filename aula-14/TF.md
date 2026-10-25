@@ -120,7 +120,9 @@ O CTO da TechNova quer provar a resiliência do sistema sob pressão e, em segui
 ## Estrutura de Entrega
 
 ```
-entregas/aula-14/RA/
+entregas/aula-14/RA/   (apenas o entrega.md; o projeto fica no portfólio)
+
+unifaat-devops-portfolio/aula-14/
 ├── chaos-experiments/
 │   ├── docker-compose.chaos.yml
 │   ├── monitor.sh
@@ -161,6 +163,8 @@ entregas/aula-14/RA/
     ├── test-local-output.png
     └── governance-setup.png
 ```
+
+> **📁 Na pasta de entrega do fork (`entregas/aula-14/RA/`) vai _somente_ o `entrega.md`.** Todo o projeto (chaos experiments, governance, agente Bedrock, workflows) e os screenshots/evidências ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-14/`). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
 
 ---
 

@@ -125,7 +125,9 @@ Crie o arquivo `gitops-cd-analise.md` com:
 ## Estrutura de Entrega
 
 ```
-entregas/aula-10/RA/
+entregas/aula-10/RA/   (apenas o entrega.md; o projeto fica no portfólio)
+
+unifaat-devops-portfolio/aula-10/
 ├── .github/
 │   └── workflows/
 │       ├── terraform-plan.yml    # Plan automático em PRs
@@ -147,6 +149,8 @@ entregas/aula-10/RA/
 │   └── health-check-pass.png     # Health check no log
 └── README.md                     # Instruções de como reproduzir
 ```
+
+> **📁 Na pasta de entrega do fork (`entregas/aula-10/RA/`) vai _somente_ o `entrega.md`.** Todo o código, workflows, Terraform, docs e os screenshots/evidências ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-10/`). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
 
 > **☁️ Nota (Learner Lab):** não há `oidc.tf` nem recursos de IAM OIDC/role como entregáveis — o Lab não permite criá-los. A autenticação do GitHub Actions usa as credenciais temporárias de sessão como secrets. Deixe isso explícito no `gitops-cd-analise.md`.
 

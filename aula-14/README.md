@@ -169,6 +169,8 @@ Ao final desta aula, o aluno será capaz de:
 6. **GitHub Action** que invoca o agente em eventos de PR
 7. **Runbook** gerado automaticamente pelo agente
 
+> **📁 Onde entregar:** todos esses artefatos ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-14/`). Na pasta de entrega do fork da disciplina (`entregas/aula-14/RA/`) vai _somente_ o `entrega.md` com o link e as evidências. Ver detalhes em [`TF.md`](TF.md).
+
 ---
 
 ### Critérios de Avaliação

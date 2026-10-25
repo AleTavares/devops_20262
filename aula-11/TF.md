@@ -183,6 +183,8 @@ O arquivo `EXPLICACAO.md` deve conter:
 
 Mínimo: 30 linhas. Máximo: sem limite.
 
+> **📁 Na pasta de entrega do fork (`entregas/aula-11/RA/`) vai _somente_ o `entrega.md`.** Todo o Terraform, workflows, scripts e documentos (`EXPLICACAO.md`, `ROLLBACK.md`/`DECISAO.md`) e as evidências ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-11/`). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
+
 ---
 
 ## Critérios de Avaliação
