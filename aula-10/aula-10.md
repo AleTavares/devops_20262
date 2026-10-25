@@ -55,307 +55,233 @@ Prof. Alexandre Tavares | Semestre 2026-2
 
 ---
 
-# O Problema da TechNova
+# Onde estamos na jornada
 
-Na Aula 09, a imagem já é publicada no **Amazon ECR**. Mas Rafael e Carlos ainda têm dor de cabeça:
+- Aulas 03–06: Terraform provisionando infra ✅
+- Aula 08–09: CI/CD com GitHub Actions + imagem no ECR ✅
+- **Aula 10: unir tudo — infra e deploy virando código revisável**
 
-> **Rafael:** "Toda mudança de infra eu rodo `terraform plan` no laptop, mando o output no Slack e rodo `apply` na mão. Um dia vou errar e derrubar produção."
+**Dois problemas que ainda existem na TechNova:**
 
-> **Carlos:** "E o deploy também é manual: SSH no servidor, para o container, pull, sobe. Se o Rafael tira férias, ninguém deploya."
+> "Toda mudança de infra eu rodo `terraform plan` no laptop e mando o output no Slack. Um dia vou errar e derrubar produção." — **Rafael**
 
-**Dois problemas a resolver hoje:**
-1. Terraform manual — sem auditoria, sem review formal, risco de erro humano
-2. Deploy manual — depende de uma pessoa específica fazer SSH no servidor
+> "O deploy ainda é manual: SSH, para o container, sobe. Se eu tirar férias, ninguém deploya." — **Carlos**
 
-> **Solução:** **GitOps** (plan no PR, apply no merge) + um **pipeline CD** que deploya sozinho a cada merge.
-
----
-
-# Objetivos de Aprendizagem
-
-### Terraform GitOps
-- Gerenciar infraestrutura via **Pull Requests** (Git = fonte da verdade)
-- `terraform plan` automático postado como **comentário no PR**
-- `terraform apply` automático no **merge** para `main`
-- Autenticar o Actions na AWS com as **credenciais de sessão do Learner Lab**
-
-### CD Pipelines
-- Diferenciar **Continuous Delivery** de **Continuous Deployment**
-- Construir o pipeline unificado **CI → Build → Push → Deploy**
-- Aplicar a estratégia **Recreate** (stop → pull → start) via SSH
-- Configurar **health check** pós-deploy e **rollback** manual
+> **Hoje resolvemos os dois com o mesmo princípio: Git como fonte da verdade.**
 
 ---
 
 # O Problema: Terraform Manual
 
-```
-┌─── PROBLEMA ATUAL (Manual) ──────────────────┐
-│  1. Dev edita .tf e roda plan no laptop       │
-│  2. Copia o output no Slack                   │
-│  3. Alguém responde "👍" (ou não olha)        │
-│  4. Dev roda apply no laptop                  │
-│  5. Deu errado? Quem? Quando? Qual state?     │
-└───────────────────────────────────────────────┘
-```
+![Problema atual — Terraform manual na TechNova](img/rd001.png)
 
-**Riscos:**
-- Qualquer dev roda `apply` sem review
-- State local pode divergir do remoto
-- Sem auditoria (quem aplicou o quê e quando)
-- Credenciais AWS no laptop do dev
+Sem automação, qualquer desenvolvedor:
+- Aplica infra **sem review formal** (Slack não é aprovação)
+- Usa credenciais locais — se o laptop sumir, some o acesso
+- Não deixa **rastro auditável** de quem mudou o quê e quando
+- Pode divergir o estado real da infra do que está no repositório
 
-> Review informal "no chat" **não é** revisão de infraestrutura.
+> **A pergunta certa:** "O repositório Git reflete o que está na AWS agora?"
+> Com Terraform manual, a resposta honesta é: "Talvez."
 
 ---
 
-# GitOps para Infraestrutura
+# GitOps — Git como Fonte da Verdade
 
-**O repositório Git é a fonte da verdade.** Toda mudança vira um PR.
+**GitOps** é o princípio de que toda mudança de infraestrutura passa pelo Git — e o Git é sempre a verdade sobre o que deve existir.
 
-```
-1. Dev edita .tf e abre PR
-2. Pipeline roda `terraform plan` AUTOMATICAMENTE
-3. Plan vira COMENTÁRIO no PR
-4. Time revisa o plan (como code review)
-5. MERGE na main → pipeline roda `terraform apply`
-6. Auditoria completa: quem aprovou, quando, qual plan
-```
+![GitOps para infraestrutura](img/rd002.png)
 
-**Benefícios:**
-- Nenhum humano executa Terraform diretamente
-- Toda mudança tem review obrigatório
-- Histórico completo no Git
-- Rollback = `revert` do commit
+**A mudança de mentalidade:**
+
+| Antes (Terraform Manual) | Depois (GitOps) |
+|---|---|
+| Dev executa `apply` localmente | Só o pipeline executa `apply` |
+| Review informal no Slack | PR com output do plan para revisar |
+| Sem histórico de quem aplicou | Git log = auditoria completa |
+| Credenciais no laptop | Credenciais no GitHub Secrets |
+
+> "Toda mudança de infra passa pelo mesmo fluxo de uma mudança de código."
 
 ---
 
-# Autenticação GitHub → AWS
+# GitOps na Prática: Plan on PR
 
-**Produção (ideal):** OIDC + role IAM — token temporário, **sem chave armazenada**.
+Ao abrir um PR com mudanças nos arquivos `.tf`, o pipeline roda `terraform plan` e posta o output **direto no PR como comentário**:
 
-**Learner Lab:** OIDC **não é permitido** (não cria OIDC provider nem role IAM).
-→ Usamos as **3 credenciais temporárias de sessão** como GitHub Secrets.
+![Terraform plan postado como comentário no PR](img/rd004.png)
 
-```yaml
-# No Learner Lab:
-- uses: aws-actions/configure-aws-credentials@v4
-  with:
-    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}   # Lab exige
-    aws-region: us-east-1
-```
+O reviewer agora pode responder perguntas concretas:
+- Esta mudança vai criar, alterar ou **destruir** o quê?
+- O custo vai aumentar?
+- Faz sentido para o que foi pedido?
 
-> **☁️ As credenciais do Lab expiram por sessão** — atualize os secrets ao reabrir o Lab. Em produção, OIDC elimina esse trabalho e os secrets de credencial.
+> **O plan no PR é o diff de infraestrutura — tão importante quanto o diff de código.**
 
 ---
 
-# Plan como Comentário no PR
+# GitOps na Prática: Apply on Merge
 
-O output do `terraform plan` é postado direto no PR, para review:
+Depois que o PR é aprovado e mergeado, o pipeline roda `terraform apply` automaticamente.
 
-```
-🤖 Terraform Plan Output
+![Fluxo completo GitOps: PR → plan → review → merge → apply](img/rd005.png)
 
-Plan: 2 to add, 1 to change, 0 to destroy.
+**Por que isso funciona:**
+- O merge na main **é** a aprovação — não precisa de outro passo
+- O apply usa as credenciais do pipeline, não do laptop de ninguém
+- Se der errado, o `revert` do commit é o rollback de infraestrutura
 
- + aws_security_group_rule.allow_https
- + aws_security_group_rule.allow_http
- ~ aws_instance.technova_api (t3.micro → t3.small)
-
-⚠️ Review o plan acima antes de aprovar o merge.
-```
-
-O reviewer avalia **antes** do merge:
-- "Faz sentido criar esse security group?"
-- "O `instance_type` mudou — aumenta custo?"
-- "Vai **destruir** um recurso? É intencional?"
+> **O Git vira o "botão de aprovação" da infra.**
 
 ---
 
-# Fluxo GitOps: PR → Plan → Merge → Apply
+# Autenticação: GitHub Actions → AWS
 
-```
-Developer abre PR (modifica .tf)
-      │
-      ▼
-pull_request → job: terraform-plan
-      ├── terraform init (backend S3)
-      ├── terraform validate
-      ├── terraform plan -out=tfplan
-      └── posta plan como comentário no PR
-      │
-      ▼  (time revisa e aprova)
-Merge na main
-      │
-      ▼
-push (main) → job: terraform-apply
-      ├── terraform init
-      └── terraform apply -auto-approve
-```
+**Como o pipeline se autentica na AWS para rodar o Terraform?**
 
-> `-auto-approve` é seguro aqui: o plan já foi revisado no PR e o merge **é** a aprovação.
+![Autenticação do Actions na AWS](img/rd003.png)
+
+**Produção (ideal): OIDC + role IAM**
+- Nenhuma chave armazenada em lugar nenhum
+- Token gerado na hora, válido por minutos
+- Segurança máxima, zero manutenção
+
+**Learner Lab: credenciais de sessão**
+- OIDC **não está disponível** no Learner Lab (requer criar OIDC provider e roles IAM — ambos bloqueados)
+- Usamos as 3 credenciais temporárias da sessão como GitHub Secrets
+- Funcionam, mas **expiram** quando a sessão do Lab fecha
+
+> A diferença entre produção e Lab não é de conceito — é de permissão disponível.
 
 ---
 
-# Continuous Delivery vs Deployment
+# Continuous Delivery vs Continuous Deployment
 
-| | **Delivery** | **Deployment** |
+São dois pontos diferentes na escala de automação:
+
+![Continuous Delivery vs Continuous Deployment](img/rd006.png)
+
+| | **Continuous Delivery** | **Continuous Deployment** |
 |---|---|---|
-| Deploy em prod | **Aprovação manual** (botão) | **Automático** após checks |
-| Lema | "Posso deployar quando quiser" | "Todo commit testado vai pra prod" |
-| Ideal para | Compliance, releases planejados | SaaS, iteração rápida |
+| **O que é** | Sempre pronto para deployar | Deploya automaticamente |
+| **Aprovação** | Botão manual antes do deploy | Nenhuma — todo merge vai |
+| **Ideal para** | Compliance, releases planejados | SaaS, startups, iteração rápida |
+| **Lema** | "Posso deployar quando quiser" | "Todo commit testado vai pra prod" |
 
-```
-CI → Build → Test → Package → [Delivery: botão | Deployment: auto]
-```
-
-> **Na TechNova:** começamos com **Continuous Deployment** — merge na main deploya sozinho. Simples e eficiente para uma startup.
+> **Na TechNova:** começamos com **Continuous Deployment** — simples, eficiente, sem cerimônia desnecessária para uma startup.
 
 ---
 
 # Pipeline Unificado: CI → Build → Push → Deploy
 
-```
-┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐
-│ Lint │─►│ Test │─►│Build │─►│ Push │─►│Deploy│
-│ESLint│  │ Jest │  │Docker│  │ ECR  │  │ EC2  │
-└──────┘  └──────┘  └──────┘  └──────┘  └──────┘
+Tudo em um único fluxo acionado pelo push na `main`:
 
-Se qualquer etapa falhar → pipeline para → nada é deployado
-```
+![Pipeline unificado da TechNova](img/rd007.png)
 
-| Job | Depende de | Função |
-|-----|-----------|--------|
-| `lint` | — | Qualidade do código |
-| `test` | lint | Testes (só se lint passar) |
-| `build-push` | lint, test | Login ECR + build + push |
-| `deploy` | build-push | SSH + login ECR + Recreate |
+**Cada job tem uma responsabilidade clara:**
+- **lint / test** — o código está correto?
+- **build-push** — gera e publica a imagem no ECR
+- **deploy** — coloca a nova versão no ar na EC2
+
+> Se qualquer etapa falhar, o deploy não acontece. A EC2 fica na versão anterior.
 
 ---
 
-# Estratégia de Deploy: Recreate
+# Estratégias de Deploy
 
-```
-Inicial:  [Container v1.0 rodando] ← tráfego
-Passo 1:  STOP   [v1.0 parado]  ← DOWNTIME
-Passo 2:  PULL   docker pull nova-imagem:v1.1
-Passo 3:  START  [Container v1.1 rodando] ← tráfego
-```
+Existem diferentes formas de trocar uma versão por outra. A escolha impacta **downtime**, **complexidade** e **custo**.
 
-**Prós:** simples, sem conflito de portas, sem load balancer, estado limpo.
-**Contras:** **downtime inevitável** (segundos a minutos), ruim para SLA rigoroso.
+![Estratégia Recreate](img/rd008.png)
 
-> **Quando usar:** apps internas, staging, MVPs e startups que aceitam segundos de downtime.
+**Recreate (hoje):**
+Para o container antigo → sobe o novo → downtime de segundos.
+Simples, sem infraestrutura extra. Aceitável para startups.
 
----
+**Blue-Green (próxima aula):**
+Mantém duas versões simultâneas → troca o tráfego instantaneamente → zero downtime.
 
-# Deploy via SSH — login no ECR antes do pull
+**Canary (aula seguinte):**
+Envia 10% do tráfego para a nova versão → valida → escala gradualmente → zero risco.
 
-```yaml
-- uses: appleboy/ssh-action@v1
-  with:
-    host: ${{ secrets.EC2_HOST }}
-    username: ubuntu
-    key: ${{ secrets.EC2_SSH_KEY }}
-    script: |
-      REGISTRY=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
-      aws ecr get-login-password --region us-east-1 \
-        | docker login --username AWS --password-stdin "$REGISTRY"
-      docker pull "$REGISTRY/technova-api:latest"
-      docker stop technova-api || true
-      docker rm technova-api || true
-      docker run -d --name technova-api -p 3000:3000 \
-        --restart unless-stopped "$REGISTRY/technova-api:latest"
-```
-
-> O `|| true` evita erro no primeiro deploy (container ainda não existe). O **login no ECR vem antes** do `docker pull`.
+> **Cada estratégia é uma troca entre complexidade, custo e disponibilidade.**
 
 ---
 
-# Health Check Pós-Deploy
+# Por que Health Check pós-deploy?
 
-```yaml
-- name: Health Check
-  run: |
-    for i in $(seq 1 30); do
-      if curl -s http://${{ secrets.EC2_HOST }}:3000/health | grep -q "ok"; then
-        echo "✅ Aplicação saudável!"; exit 0
-      fi
-      echo "Tentativa $i/30 - aguardando..."; sleep 5
-    done
-    echo "❌ Health check falhou"; exit 1
-```
+O pipeline não termina no `docker run`. Ele verifica se a aplicação **realmente funciona**:
 
-**Por que importa:**
-- Garante que o deploy não só "rodou", mas está **funcional**
-- Detecta variável de ambiente errada, porta errada
-- Se falhar → pipeline reporta erro → time é notificado
+**O que pode acontecer sem health check:**
+- Container sobe, mas a app trava por variável de ambiente errada
+- Porta configurada diferente do esperado
+- Bug só aparece em produção (config de prod diferente)
+
+**Com health check:**
+- O pipeline fica tentando por até 2 minutos
+- Se a app não responder, o job falha e o time é notificado
+- A EC2 fica com a versão anterior rodando (o container novo falhou)
+
+> **"Deployou" e "está funcionando" são coisas diferentes.**
 
 ---
 
-# Rollback (manual nesta etapa)
+# Rollback: por que imagens versionadas importam
 
-Pré-requisito: **imagens versionadas no ECR** (tag SHA por commit).
+No pipeline, cada commit gera uma imagem com **tag única** (o SHA do commit).
 
-```bash
-ssh ubuntu@EC2_HOST
-REGISTRY=<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
-aws ecr get-login-password --region us-east-1 \
-  | docker login --username AWS --password-stdin "$REGISTRY"
-docker stop technova-api && docker rm technova-api
-docker run -d --name technova-api -p 3000:3000 \
-  --restart unless-stopped "$REGISTRY/technova-api:sha-COMMIT_BOM"
-```
+**Sem tags versionadas:**
+- Só existe `latest`
+- Rollback = redeployar `latest` = mesma versão com problema
+- Impossível voltar para "a versão de quinta-feira"
 
-> **💡 Nas próximas aulas (Blue-Green, Canary) o rollback será automatizado.** Por agora, a tag SHA é o que torna o rollback possível e rastreável.
+**Com tags versionadas (SHA):**
+- Cada imagem = um momento específico no tempo
+- Rollback = trocar para uma tag anterior conhecida
+- Rastreabilidade completa: commit no Git ↔ imagem no ECR ↔ deploy na EC2
 
----
-
-# Segurança do Pipeline de Deploy
-
-| Preocupação | Solução |
-|-------------|---------|
-| Chave SSH exposta | GitHub Secret (criptografada) |
-| Acesso irrestrito à EC2 | SG libera SSH só do IP do runner |
-| Credenciais AWS | Credenciais de sessão do Lab como secrets (prod: OIDC + role) |
-| Imagem comprometida | Deploy só de imagens que passaram no CI |
-| Deploy não-autorizado | Só push na main (merge requer aprovação) |
-
-> As credenciais do Lab são **temporárias** — menor janela de exposição que uma access key permanente.
+> **As estratégias avançadas (Blue-Green, Canary) dependem de imagens versionadas. A tag SHA é a fundação.**
 
 ---
 
-# Resumo dos Conceitos
+# Segurança do Pipeline
 
-| Conceito | Descrição |
-|----------|-----------|
-| GitOps | Git como fonte da verdade — PR = change request |
-| Plan on PR / Apply on Merge | Plan vira comentário; merge dispara apply |
-| Credenciais de sessão do Lab | 3 secrets temporários (key id, secret, session token) |
-| OIDC | Ideal em produção (sem chaves); **indisponível no Lab** |
-| Continuous Delivery / Deployment | Humano aprova / deploy automático |
-| Pipeline unificado | CI → Build → Push (ECR) → Deploy |
-| Recreate | Para antigo, sobe novo (com downtime) |
-| Login ECR no deploy | `aws ecr get-login-password` antes do `docker pull` |
-| Health check | Verifica se a app responde após o deploy |
-| Rollback | Voltar à tag SHA anterior (manual nesta etapa) |
+| Preocupação | Solução | Por quê funciona |
+|-------------|---------|-----------------|
+| Chave SSH exposta | GitHub Secret | Criptografada, mascarada nos logs |
+| Credenciais AWS permanentes | Credenciais de sessão do Lab (temporárias) | Expiram — janela de exposição mínima |
+| Qualquer branch deploya | Só push na `main` dispara o deploy | Branch protection + fluxo de PR |
+| Imagem não testada | Build só acontece se lint e test passam | Dependência entre jobs (`needs`) |
+| Deploy sem review | PR obrigatório com plan como comentário | GitOps — merge = aprovação |
+
+---
+
+# Resumo: o que mudou hoje na TechNova
+
+**Antes desta aula:**
+- Terraform: laptop do Rafael, sem review, sem auditoria
+- Deploy: SSH manual, depende de uma pessoa
+
+**Depois desta aula:**
+- Toda mudança de infra → PR → plan como comentário → review → merge → apply
+- Todo push na main → lint → test → build → push ECR → deploy EC2 → health check
+- Git = auditoria completa de infra e deploy
+- Rollback = tag SHA no ECR
+
+> **O próximo passo (Aula 11):** eliminar o downtime do Recreate com Blue-Green Deploy.
 
 ---
 
 # Referências e Próximos Passos
 
-**Referências:**
-- Terraform plan/apply — [developer.hashicorp.com/terraform/cli](https://developer.hashicorp.com/terraform/cli/commands/plan)
-- configure-aws-credentials — [github.com/aws-actions/configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials)
-- amazon-ecr-login — [github.com/aws-actions/amazon-ecr-login](https://github.com/aws-actions/amazon-ecr-login)
-- appleboy/ssh-action — [github.com/appleboy/ssh-action](https://github.com/appleboy/ssh-action)
-- Delivery vs Deployment — [atlassian.com/continuous-delivery](https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment)
+**Para aprofundar:**
+- GitOps — [opengitops.dev](https://opengitops.dev/)
+- Terraform plan in CI — [developer.hashicorp.com/terraform/tutorials/automation](https://developer.hashicorp.com/terraform/tutorials/automation/github-actions)
+- Delivery vs Deployment — [atlassian.com](https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment)
 
 **Para a próxima aula:**
 - Completar o TF: GitOps (plan/apply) + pipeline CD com deploy na EC2
-- Guardar os workflows funcionando — pré-requisito das estratégias avançadas
+- Guardar os workflows funcionando — base para Blue-Green e Canary
 
 **Próxima aula:**
-**Aula 11 — Blue-Green Deploy:** duas versões simultâneas, **zero downtime** — a evolução do Recreate.
+**Aula 11 — Blue-Green Deploy**
+Duas versões simultâneas, troca instantânea, **zero downtime**.

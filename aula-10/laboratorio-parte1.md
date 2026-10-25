@@ -22,6 +22,30 @@ Implementar o fluxo GitOps completo para Terraform: ao abrir um PR com mudanças
 
 ---
 
+## Onde ficam os arquivos Terraform?
+
+Este laboratório **não cria a infraestrutura do zero** — ele adiciona a camada de automação (GitOps: plan no PR, apply no merge) **por cima do Terraform que você já escreveu nas Aulas 03 a 06** (provider, backend S3 remoto, VPC, Security Groups, EC2, RDS e módulos). Os workflows deste lab apenas rodam `terraform init/plan/apply` sobre esses arquivos.
+
+Por isso, o repositório de infraestrutura (`technova-infra` ou similar) deve ter os `.tf` numa pasta **`terraform/`** na raiz — é exatamente para onde a variável `TF_WORKING_DIR: ./terraform` dos workflows aponta. A estrutura esperada é:
+
+```
+technova-infra/
+├── .github/
+│   └── workflows/
+│       ├── terraform-plan.yml      # criado no Passo 2 (plan no PR)
+│       └── terraform-apply.yml     # criado no Passo 3 (apply no merge)
+└── terraform/                      # ← os arquivos .tf ficam AQUI (= TF_WORKING_DIR)
+    ├── main.tf                     # composição dos módulos (Aula 06)
+    ├── variables.tf
+    ├── outputs.tf
+    ├── providers.tf                # provider AWS + backend "s3" (Aula 05)
+    └── modules/                    # vpc, security-group, ec2, rds (Aulas 03-06)
+```
+
+> **💡 Reaproveite o que já existe.** O `aws_security_group.technova_api` usado como exemplo no Passo 4 (regra de HTTPS) vem do módulo de Security Group das Aulas 03-04. Se o seu diretório Terraform usa outro nome ou outra pasta, ajuste `TF_WORKING_DIR` e a referência do recurso de acordo. Se ainda não tem a infra das aulas anteriores à mão, use os módulos da Aula 06 como ponto de partida antes de seguir este lab.
+
+---
+
 ## Passo 1 — Autenticação no Learner Lab via Credenciais de Sessão como GitHub Secrets
 
 > **☁️ Learner Lab vs produção:** o padrão **ideal em produção** autentica o GitHub Actions via **OIDC + role IAM** (sem armazenar chave nenhuma). Porém o Learner Lab **não permite criar OIDC Identity Provider nem roles IAM** — então, no laboratório, o fluxo real usa as **credenciais temporárias da sessão** do Lab armazenadas como GitHub Secrets. Elas incluem `aws_session_token` e **expiram por sessão**, então precisam ser atualizadas a cada vez que você reabre o Lab.

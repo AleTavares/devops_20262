@@ -139,6 +139,8 @@ unifaat-devops-portfolio/aula-12/
 └── README.md                   # Como executar/testar
 ```
 
+> **📁 Na pasta de entrega do fork (`entregas/aula-12/RA/`) vai _somente_ o `entrega.md`.** Todo o código, migrações, scripts, Lambda, docs e as evidências ficam no seu repositório de portfólio (`unifaat-devops-portfolio/aula-12/`). PRs que alterem arquivos fora da sua pasta de entrega são bloqueados automaticamente.
+
 ---
 
 ## Critérios de Avaliação
