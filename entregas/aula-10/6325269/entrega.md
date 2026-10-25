@@ -22,8 +22,8 @@
 Bônus: plan com destroy exige o rótulo `aprovado-destroy` (testado no [PR #5](https://github.com/Sir-Jr/unifaat-devops-portfolio/pull/5)), comentário do plan
 atualizado sem duplicar, deploy com `GITHUB_SHA` (rota `/version`), notificação de deploy como comentário no
 commit, `terraform fmt -check` no plan, [`terraform-destroy.yml`](https://github.com/Sir-Jr/unifaat-devops-portfolio/blob/main/.github/workflows/terraform-destroy.yml)
-separado com aprovação manual (environment `destroy` com revisor obrigatório; não foi executado para preservar a
-EC2 usada nas próximas aulas). O environment `production` restringe o deploy à `main`, mas não exige aprovação:
+separado com aprovação manual (environment `destroy` com revisor obrigatório; executado em 25/10 depois da
+aprovação, destruindo os 6 recursos: [run](https://github.com/Sir-Jr/unifaat-devops-portfolio/actions/runs/40158253920)). O environment `production` restringe o deploy à `main`, mas não exige aprovação:
 o fluxo é Continuous Deployment.
 
 ## Resumo da análise ([`gitops-cd-analise.md`](https://github.com/Sir-Jr/unifaat-devops-portfolio/blob/main/aula-10/gitops-cd-analise.md))
