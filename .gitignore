@@ -46,3 +46,9 @@ terraform.rc
 
 # Kiro/Claude config
 .claude/
+
+# Notas de avaliação (arquivo local, não versionar)
+provas/notas.md
+.agents/
+.kiro
+provas/prova-segundo-bimestre.md
