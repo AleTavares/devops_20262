@@ -48,7 +48,7 @@ style: |
 
 <!-- _class: title -->
 
-# Aula 09 — Docker Registry + IA no CI/CD
+# Aula 09 — Docker Registry (Amazon ECR) + IA no CI/CD
 
 **DevOps — Centro Universitário UniFAAT**
 Prof. Alexandre Tavares | Semestre 2026-2
@@ -78,9 +78,9 @@ Marina completou:
 
 ### Docker Registry
 - Entender o papel de um registry (push/pull/tag) no fluxo DevOps
-- Publicar imagens no **GitHub Container Registry (ghcr.io)**
+- Publicar imagens no **Amazon ECR** usando o **AWS Academy Learner Lab**
+- Autenticar com credenciais temporárias (`aws ecr get-login-password`)
 - Aplicar estratégias de tagging: `latest`, SHA e Semantic Versioning
-- Integrar build+push ao pipeline CI (lint → test → build+push)
 
 ### IA no CI/CD
 - Compreender a evolução do uso de IA no curso (interativo → automático)
@@ -125,13 +125,14 @@ Fluxo: `docker build` → `docker tag` → `docker push` → *(registry armazena
 |----------|---------------|-----|
 | **Docker Hub** | Padrão, público grátis, privado limitado | `docker.io/user/img:tag` |
 | **ghcr.io** | Integrado ao GitHub, grátis/ilimitado p/ repos públicos | `ghcr.io/user/img:tag` |
-| **Amazon ECR** | Registry da AWS, integra ECS/EKS, ~$0.10/GB/mês | `<acct>.dkr.ecr.<region>.amazonaws.com/img:tag` |
+| **Amazon ECR** | Registry da AWS, integra ECS/EKS, privado por padrão | `<acct>.dkr.ecr.<region>.amazonaws.com/img:tag` |
 
-**Por que ghcr.io neste curso?**
-- Custo zero (tudo público)
-- Mesmo ecossistema: código + Actions + Registry no GitHub
-- `GITHUB_TOKEN` autentica automaticamente (sem criar PAT)
-- Imagens visíveis na aba **Packages** do repositório
+**Por que Amazon ECR neste curso?**
+- Mesmo ecossistema AWS do **Learner Lab** — imagem ao lado de onde roda
+- Registry **privado** por padrão + scan de vulnerabilidades integrado
+- Prepara para produção real (EC2/ECS/EKS nos próximos módulos)
+
+> **☁️ Learner Lab:** credenciais **temporárias** (c/ `aws_session_token`), região **`us-east-1`**, **sem IAM** (não cria user/group/role) — mas **pode criar repositórios ECR**.
 
 ---
 
@@ -139,12 +140,13 @@ Fluxo: `docker build` → `docker tag` → `docker push` → *(registry armazena
 
 ![Anatomia de uma imagem Docker](img/tf001.png)
 
-Exemplo real: `ghcr.io/joao-silva/technova-api:sha-abc1234`
+Exemplo real: `123456789012.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-abc1234`
 
-- **`ghcr.io`** — o registry (host)
-- **`joao-silva`** — o owner (usuário/organização)
-- **`technova-api`** — o nome da imagem
+- **`123456789012.dkr.ecr.us-east-1.amazonaws.com`** — o registry (host) — **inclui o Account ID + região**
+- **`technova-api`** — o repositório ECR (criado antes do push)
 - **`sha-abc1234`** — a tag (versão específica)
+
+> No ECR o host já identifica a sua conta AWS e a região — diferente do ghcr.io, cujo host é fixo.
 
 ---
 
@@ -161,45 +163,37 @@ Exemplo real: `ghcr.io/joao-silva/technova-api:sha-abc1234`
 **Melhor prática:** combine as três.
 
 ```
-ghcr.io/user/app:sha-a1b2c3d   ← todo commit (rastreável)
-ghcr.io/user/app:latest        ← branch main (conveniência)
-ghcr.io/user/app:1.2.3         ← git tags (releases)
+<acct>.dkr.ecr.us-east-1.amazonaws.com/technova-api:sha-a1b2c3d  ← todo commit
+<acct>.dkr.ecr.us-east-1.amazonaws.com/technova-api:latest       ← branch main
+<acct>.dkr.ecr.us-east-1.amazonaws.com/technova-api:1.2.3        ← git tags (release)
 ```
 
 ---
 
-# Build e Push em GitHub Actions
+# Publicar no ECR — `ecr-push.sh`
 
-Três actions oficiais do Docker, mais a permissão `packages: write`:
+Fluxo principal: um script local com as credenciais da sessão do Lab. Três passos:
 
-```yaml
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write          # obrigatório para push no ghcr.io
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/login-action@v3           # 1. autentica
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@v5        # 2. gera tags
-        with:
-          images: ghcr.io/${{ github.repository_owner }}/technova-api
-          tags: |
-            type=sha,prefix=sha-,format=short
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
-      - uses: docker/build-push-action@v5      # 3. build + push
-        with:
-          context: aula-09/technova-api
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
+```bash
+# 1. Criar o repositório (uma vez) — o Lab permite ECR
+aws ecr create-repository --repository-name technova-api --region us-east-1
+
+# 2. Autenticar o Docker no ECR (token temporário, usuário sempre "AWS")
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+REGISTRY="${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
+aws ecr get-login-password --region us-east-1 \
+  | docker login --username AWS --password-stdin "$REGISTRY"
+
+# 3. Build, tag (sha + latest) e push
+docker build -t technova-api aula-09/technova-api
+SHA=$(git rev-parse --short HEAD)
+docker tag technova-api "$REGISTRY/technova-api:sha-$SHA"
+docker tag technova-api "$REGISTRY/technova-api:latest"
+docker push "$REGISTRY/technova-api:sha-$SHA"
+docker push "$REGISTRY/technova-api:latest"
 ```
+
+> **Por que script e não CI?** As credenciais do Lab **expiram por sessão** e o Lab **não permite OIDC/roles IAM**. O CI via `aws-actions/amazon-ecr-login` é opcional (secrets temporários).
 
 ---
 
@@ -227,16 +221,16 @@ CMD ["node", "server.js"]
 
 ---
 
-# Ciclo de Vida da Imagem + Packages
+# Ciclo de Vida da Imagem + Console ECR
 
 ![Ciclo completo](img/rd004.png)
 
-Após o push, a imagem aparece na aba **Packages** do repositório:
-- URL: `https://github.com/USER/REPO/pkgs/container/technova-api`
-- Mostra todas as tags, tamanho e data
-- Qualquer um faz: `docker pull ghcr.io/user/technova-api:1.0.0`
+Após o push, a imagem aparece no **console do Amazon ECR** (Repositories → `technova-api`):
+- Mostra todas as tags (`sha-...`, `latest`, semver), tamanho e data
+- Pode exibir o resultado do **scan de vulnerabilidades** (se habilitado)
+- Qualquer servidor com credencial faz: `docker pull $REGISTRY/technova-api:1.0.0`
 
-> **Rollback vira trivial:** `docker run ghcr.io/user/technova-api:1.0.0` volta para a versão anterior em segundos.
+> **Rollback vira trivial:** `docker run $REGISTRY/technova-api:1.0.0` volta para a versão anterior em segundos.
 
 ---
 
@@ -337,10 +331,12 @@ if (hasCritical) {
 
 ![Fluxo de integração e análise](img/rd008.png)
 
-Na Aula 07 usamos o Bedrock para gerar IaC. No CI/CD, o fluxo é:
+Na Aula 07 usamos o Bedrock para gerar IaC. No CI/CD, o fluxo **em produção** é:
 
 - GitHub Actions → assume role AWS via **OIDC** → invoca a API do Bedrock
 - Ou: Actions → chama uma **Lambda** com permissão Bedrock → retorna a análise
+
+> **☁️ No Learner Lab:** OIDC e roles IAM **não são permitidos** — esse padrão fica como referência. Para usar o Bedrock de verdade, invoque-o de um script com as credenciais da sessão (`us-east-1`), como na Aula 07.
 
 **Sem acesso ao Bedrock?**
 - Actions de terceiros que integram IA (grátis p/ repos públicos)
@@ -367,30 +363,32 @@ Na Aula 07 usamos o Bedrock para gerar IaC. No CI/CD, o fluxo é:
 | Conceito | Descrição |
 |----------|-----------|
 | Docker Registry | Repositório central de imagens versionadas |
-| ghcr.io | Registry do GitHub, grátis p/ repos públicos |
+| Amazon ECR | Registry da AWS, privado, host inclui Account ID + região |
+| Learner Lab | Credenciais temporárias, `us-east-1`, sem IAM, mas permite ECR |
+| `aws ecr get-login-password` | Gera o token temporário p/ `docker login` (usuário `AWS`) |
 | Push / Pull | Enviar / baixar imagem do registry |
 | Tag SHA | `sha-abc1234` — rastreabilidade commit↔imagem |
 | Semver | `1.2.3` — releases vinculadas a git tags |
-| `docker/build-push-action` | Build + push em um step |
-| `packages: write` | Permissão para publicar no ghcr.io |
+| `ecr-push.sh` | Script: cria repo, autentica, build e push no ECR |
 | AI Code Review | IA analisa o diff do PR e comenta |
 | Quality Gate | CRITICAL bloqueia; WARNING/INFO informam |
-| `GITHUB_TOKEN` | Autentica no ghcr.io e comenta no PR |
+| `GITHUB_TOKEN` | Comenta no PR (AI review) — não é usado p/ o ECR |
 
 ---
 
 # Referências e Próximos Passos
 
 **Referências:**
-- GitHub Container Registry — [docs.github.com/packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
-- docker/build-push-action — [github.com/docker/build-push-action](https://github.com/docker/build-push-action)
+- Amazon ECR — [docs.aws.amazon.com/AmazonECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html)
+- Push de imagem no ECR — [docs.aws.amazon.com/.../docker-push-ecr-image](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
+- aws-actions/amazon-ecr-login — [github.com/aws-actions/amazon-ecr-login](https://github.com/aws-actions/amazon-ecr-login)
 - Semantic Versioning — [semver.org](https://semver.org/lang/pt-BR/)
 - AWS Bedrock — [docs.aws.amazon.com/bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html)
 
 **Para a próxima aula:**
-- Completar o TF desta aula (portfólio + PR): build+push + AI review
+- Completar o TF desta aula (portfólio + PR): push no ECR + AI review
 - Guardar o pipeline funcionando — será pré-requisito no Módulo 4
 
 **Próxima aula:**
 **Módulo 4 — Estratégias de Deploy**
-Blue-Green e Canary fazendo pull das imagens que você publicou aqui.
+Blue-Green e Canary fazendo pull das imagens que você publicou no ECR.

@@ -4,8 +4,6 @@
 
 Implementar um sistema de code review automatizado por IA para a TechNova. A cada Pull Request aberto, um workflow analisará o código alterado e postará feedback automático — identificando problemas de segurança, qualidade e boas práticas antes que qualquer humano precise revisar.
 
-**Tempo estimado:** ~120 minutos
-
 **Resultado final:**
 - Workflow disparado em PRs que coleta o diff dos arquivos alterados
 - Script de análise que formata prompt e envia para IA
@@ -21,18 +19,20 @@ Implementar um sistema de code review automatizado por IA para a TechNova. A cad
 - [ ] Repositório `unifaat-devops-portfolio` no GitHub (público)
 - [ ] Pasta `aula-09/technova-api/` com o Dockerfile otimizado da Parte 1
 - [ ] Pipeline CI da Aula 08 funcionando
-- [ ] Build+push da Parte 1 desta aula funcionando
+- [ ] Build+push para o **Amazon ECR** da Parte 1 desta aula funcionando (script `ecr-push.sh`)
 - [ ] Familiaridade com conceitos de IA (Aulas 02 e 07)
 
-> **💡 Este lab oferece duas abordagens:**
-> - **Opção A (Recomendada):** Usar GitHub Action de AI review (gratuita, funciona sem Bedrock)
-> - **Opção B (Avançada):** Implementação conceitual com script que chamaria Bedrock
+> **⚠️ Sobre o AWS Bedrock no Learner Lab:**
+> O **AWS Academy Learner Lab não inclui acesso ao Bedrock** — o serviço requer habilitação manual de modelos e criação de roles de serviço (ambas bloqueadas no Lab). Por isso este lab usa a Opção A como abordagem principal.
 >
-> Ambas ensinam os mesmos conceitos. Use a Opção A para resultado prático imediato.
+> - **Opção A (obrigatória):** GitHub Action de AI review baseada em regras (gratuita, sem Bedrock, funciona no Learner Lab)
+> - **Opção B (referência conceitual):** script que chamaria Bedrock — **não executável no Learner Lab**, incluído apenas para ilustrar como seria a integração em ambiente real
+>
+> Use a Opção A para o laboratório. A Opção B é leitura complementar.
 
 ---
 
-## Parte 1 — Workflow de Review Disparado em PRs (20 min)
+## Parte 1 — Workflow de Review Disparado em PRs
 
 ### 1.1 Entendendo o trigger
 
@@ -98,7 +98,7 @@ Sem isso, o checkout traz apenas o último commit e `git diff` não funciona.
 
 ---
 
-## Parte 2 — Implementando AI Review (30 min)
+## Parte 2 — Implementando AI Review
 
 ### Opção A — Usando GitHub Action de AI Review (Recomendada)
 
@@ -344,9 +344,11 @@ try {
 }
 ```
 
-### Opção B — Implementação Conceitual com Bedrock (Avançada)
+### Opção B — Referência Conceitual com Bedrock (não executável no Learner Lab)
 
-Para quem tem acesso ao AWS Bedrock, o script chamaria a API diretamente:
+> **⚠️ O Bedrock não está disponível no AWS Academy Learner Lab.** Este bloco é apenas referência para ilustrar como seria a integração em um ambiente real com acesso ao Bedrock. Não tente executar no Lab.
+
+Para um ambiente com acesso ao AWS Bedrock, o script chamaria a API diretamente:
 
 ```javascript
 // .github/scripts/ai-review-bedrock.js (CONCEITUAL)
@@ -392,11 +394,11 @@ Responda em formato Markdown com tabela.`;
 }
 ```
 
-> **💡 Para o lab, use a Opção A.** A Opção B é referência para implementação futura com Bedrock.
+> **💡 Para o lab, use a Opção A.** A Opção B é referência conceitual — o Bedrock não está disponível no AWS Academy Learner Lab.
 
 ---
 
-## Parte 3 — Postar AI Review como Comentário no PR (25 min)
+## Parte 3 — Postar AI Review como Comentário no PR
 
 ### 3.1 Entendendo o mecanismo de comentários
 
@@ -502,7 +504,7 @@ Para evitar múltiplos comentários em pushes seguidos ao mesmo PR, adicione ló
 
 ---
 
-## Parte 4 — Security Scanning Focado com IA (20 min)
+## Parte 4 — Security Scanning Focado com IA
 
 ### 4.1 Criar workflow dedicado de segurança
 
@@ -635,7 +637,7 @@ jobs:
 
 ---
 
-## Parte 5 — Quality Gates com IA (15 min)
+## Parte 5 — Quality Gates com IA
 
 ### 5.1 Implementar bloqueio de PR em achados críticos
 
@@ -682,7 +684,7 @@ Nem tudo que a IA encontra deve bloquear. Considere:
 
 ---
 
-## Parte 6 — Testando o Review com PR Problemático (10 min)
+## Parte 6 — Testando o Review com PR Problemático
 
 ### 6.1 Criar branch com problemas intencionais
 
