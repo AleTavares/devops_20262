@@ -43,11 +43,12 @@ O aluno deve fazer um fork do repositório e entregar os seguintes itens:
 
 | # | Entregável | Peso |
 |:-:|-----------|:----:|
-| 1 | Ambiente Docker local validado (`docker compose up -d`) | 20% |
-| 2 | Infraestrutura Terraform completa (módulos `networking`, `compute`, `database`) | 35% |
-| 3 | Documento de arquitetura (`docs/architecture-design.md`) ⚠️ **eliminatório** | 20% |
+| 1 | Ambiente Docker local validado (`docker compose up -d`) | 15% |
+| 2 | Infraestrutura Terraform completa (módulos `networking`, `compute`, `database`) | 30% |
+| 3 | Documento de arquitetura (`docs/architecture-design.md`) ⚠️ **eliminatório** | 15% |
 | 4 | Workflow `terraform-plan.yml` implementado e funcionando | 15% |
-| 5 | Organização, `.gitignore`, commits semânticos e `pytest` passando | 10% |
+| 5 | Uso do Kiro e Kiro Workflows (Spec + evidência de workflow) | 15% |
+| 6 | Organização, `.gitignore`, commits semânticos e `pytest` passando | 10% |
 
 A entrega é feita via Pull Request no repositório da disciplina, em `entregas/provaSegundoBi/SEU-RA/`, contendo apenas o arquivo `entrega.md` com os links e evidências.
 

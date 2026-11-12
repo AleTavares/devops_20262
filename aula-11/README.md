@@ -632,4 +632,32 @@ Métricas essenciais para observar durante um canary:
 
 ---
 
-*Próximas etapas: Laboratório Parte 1 (Blue/Green) → Laboratório Parte 2 (Canary) → TF (Trabalho de Fixação)*
+## Encerramento da Aula — Apresentação da Prova do Segundo Bimestre
+
+A partir desta aula, as semanas seguintes têm um objetivo diferente: em vez de laboratórios guiados, você trabalhará de forma autônoma em um **desafio técnico real** que será a prova do segundo bimestre.
+
+### O desafio técnico
+
+O desafio é o **Moodle Docker AWS Challenge**, disponível no repositório template [github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle). Você vai fazer um fork desse repositório e implementar a infraestrutura AWS para colocar o Moodle em produção: módulos Terraform (`networking`, `compute`, `database`), script de automação do deploy e um workflow de CI/CD.
+
+Leia o `CHALLENGE.md` e o `README.md` do repositório ainda hoje para entender o escopo completo.
+
+### Como a prova acontece — dois momentos
+
+A prova do segundo bimestre vale **10 pontos** e é dividida em duas partes iguais:
+
+| Momento | O que é | Quando | Valor |
+|---------|---------|--------|:-----:|
+| **1 — Parte Prática** | Entrega do desafio técnico via Pull Request no repositório da disciplina | Nas semanas das aulas 11 a 15 — entrega acumulativa | **5,0 pts** |
+| **2 — Parte Teórica** | Prova escrita em sala com múltipla escolha e dissertativas | No dia e horário da prova, conforme calendário da disciplina | **5,0 pts** |
+
+**Parte Prática:** a cada aula você entrega um push no fork do projeto com o progresso da semana. A entrega final, na aula 15, consolida tudo. Os critérios completos estão em [`provas/prova-segundo-bimestre-pratica.md`](../provas/prova-segundo-bimestre-pratica.md).
+
+**Parte Teórica:** no dia da prova você responderá 7 questões de múltipla escolha sobre o conteúdo das aulas 8 a 15 (CI/CD, estratégias de deploy, Terraform, segurança AWS, Chaos Engineering) e 3 questões dissertativas baseadas diretamente no desafio técnico que você desenvolveu. O enunciado está em [`provas/prova-segundo-bimestre-teorica.md`](../provas/prova-segundo-bimestre-teorica.md).
+
+### O que fazer a partir de agora
+
+1. Faça o fork do [github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle).
+2. Execute `docker compose up -d` localmente e confirme que o Moodle abre em `http://localhost:8080`.
+3. Leia `docs/architecture-design-template.md` — é o esqueleto do documento de arquitetura que você vai preencher.
+4. No TF desta aula, registre no `entrega.md` o link do seu fork e o que você explorou.

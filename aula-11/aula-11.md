@@ -357,10 +357,39 @@ docker pull "$REGISTRY/technova-api:$SHA"
 - ALB — [docs.aws.amazon.com/elasticloadbalancing](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
 - Weighted Target Groups — [forward-actions](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#forward-actions)
 
-**Para a próxima aula:**
-- Completar o TF: Blue/Green **ou** Canary com ALB + ECR
-- Guardar a infraestrutura — a Aula 12 a reaproveita
+**TF desta aula:** push no fork do `implement_Moodle` + relatório do que você explorou
 
 **Próxima aula:**
-**Aula 12 — Observabilidade e Rollback Automatizado**
-CloudWatch, alarmes e rollback disparado por métrica.
+**Aula 12 — Rollback Strategies e AIOps**
+Feature flags, migrações reversíveis, CloudWatch e Bedrock.
+
+---
+
+# Prova do Segundo Bimestre — Como Funciona
+
+A prova vale **10 pontos** e acontece em **dois momentos**:
+
+| Momento | O que é | Quando | Valor |
+|---------|---------|--------|:-----:|
+| **1 — Parte Prática** | Desafio técnico individual | Aulas 11 a 15 — entrega acumulativa | **5,0 pts** |
+| **2 — Parte Teórica** | Prova escrita em sala | Dia da prova, conforme calendário | **5,0 pts** |
+
+**Parte Teórica (no dia da prova):** 7 múltipla escolha + 3 dissertativas
+sobre o conteúdo das aulas 8–15 e sobre o próprio desafio técnico.
+
+---
+
+# Desafio Técnico — Moodle Docker AWS Challenge
+
+**Você tem as próximas semanas para desenvolver e entregar.**
+
+📦 **Template:** [github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle)
+
+**O que você vai construir:**
+- Ambiente Docker local do Moodle (`docker compose up -d`)
+- Módulos Terraform: **networking** · **compute** (EC2 + user_data.sh) · **database** (RDS privado)
+- Workflow `terraform-plan.yml` em cada PR
+- Documento de arquitetura `docs/architecture-design.md` ⚠️ **eliminatório**
+- Evidência de uso do **Kiro** e **Kiro Workflows**
+
+**Faça agora:** fork → `docker compose up -d` → leia o `CHALLENGE.md`
