@@ -1,8 +1,8 @@
 ---
 marp: true
+theme: unset
 paginate: true
-backgroundColor: '#F5F7FA'
-footer: 'DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares'
+backgroundColor: #F5F7FA
 style: |
   section {
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -11,7 +11,7 @@ style: |
     color: #333333;
   }
   h1 {
-    color: #0D2B45;
+    color: #1B3A5C;
     border-bottom: 3px solid #F58220;
     padding-bottom: 5px;
     font-size: 1.45em;
@@ -30,6 +30,9 @@ style: |
   table th { background-color: #1B3A5C; color: white; padding: 3px 7px; }
   table td { padding: 2px 7px; border-bottom: 1px solid #ddd; }
   blockquote { font-size: 0.88em; border-left: 4px solid #F58220; padding-left: 10px; margin: 4px 0; color: #555; }
+  img.diagram { display: block; margin: 6px auto 0; max-height: 310px; width: auto; }
+  img.diagram-wide { display: block; margin: 6px auto 0; max-height: 260px; width: auto; }
+  img.diagram-side { float: right; margin: 0 0 6px 18px; max-height: 320px; width: auto; }
   section.title {
     background-color: #1B3A5C;
     color: white !important;
@@ -37,331 +40,400 @@ style: |
     justify-content: center;
     padding: 60px;
   }
-  section.title h1 { color: #F58220 !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
+  section.title h1 { color: white !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
   section.title h2 { color: #F58220 !important; font-size: 1.3em; }
   section.title h3 { color: #ccc !important; }
   section.title p { color: #ccc !important; }
   section.title strong { color: #F58220 !important; }
   footer { color: #888; font-size: 0.62em; }
-  img { max-height: 340px; display: block; margin: 6px auto; }
+footer: "DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares"
 ---
 
 <!-- _class: title -->
+<!-- _backgroundColor: #1B3A5C -->
+<!-- _color: white -->
+
+![bg right:40%](img/aula-11/rd002.png)
 
 # Aula 11 — Blue/Green e Canary Deployments
 
-**DevOps — Centro Universitário UniFAAT**
-Prof. Alexandre Tavares | Semestre 2026-2
+## <span style="color:#F58220">DevOps — Centro Universitário UniFAAT</span>
+
+<span style="color:#cccccc">Prof. Alexandre Tavares | Semestre 2026-2</span>
 
 ---
 
-# O Problema da TechNova
+# Objetivos de Aprendizagem 🎯
 
-Um cliente enterprise reclamou: o sistema ficou fora por **8 segundos** durante um deploy.
-
-> **Episódio 11 — "Deploy Invisível: Zero Downtime"**
-
-- A estratégia **Recreate** (Aula 10) para o container antigo e sobe o novo
-- Entre o `stop` e o `healthy`, a aplicação fica **indisponível**
-- SLA de 99.9% não tolera downtime a cada release
-
-> **Meta:** o deploy precisa ser **invisível** para o usuário — zero downtime e rollback em segundos.
-
----
-
-# Objetivos de Aprendizagem
-
-### Blue/Green
-- Entender dois ambientes idênticos (Blue ativo, Green standby)
-- Implementar com **ALB + 2 Target Groups**
-- Fazer **traffic switch** instantâneo e **rollback** em < 1 segundo
-
-### Canary
-- Entender a analogia do canário na mina de carvão
-- Implementar **weighted routing** no ALB
-- Conduzir **rollout gradual** (5%→25%→50%→100%) com monitoramento
-- Configurar **rollback automático** por taxa de erro
+1. Compreender o conceito de **Blue/Green deployment** e zero downtime
+2. Configurar **ALB + Target Groups** no Terraform para Blue/Green
+3. Executar o **traffic switch** via AWS CLI em < 1 segundo
+4. Realizar **rollback instantâneo** voltando o listener para Blue
+5. Compreender o conceito de **Canary deployment** e a analogia da mineração
+6. Implementar **weighted routing** no ALB para divisão gradual de tráfego
+7. Executar um **rollout gradual** 5% → 25% → 50% → 100%
+8. Implementar **auto-rollback** por taxa de erro no pipeline
 
 ---
 
-# O Downtime do Recreate
+# O Problema: Downtime no Recreate 😱
 
-```
-t=0s   [Container v1.0 rodando]   ← tráfego dos clientes
-t=1s   docker stop v1.0           ← DOWNTIME COMEÇA
-t=2s   docker pull v1.1           ← baixando imagem do ECR...
-t=5s   docker run v1.1            ← iniciando container...
-t=8s   [Container v1.1 healthy]   ← DOWNTIME TERMINA
-```
+### O incidente TechNova — 8 segundos que custaram caro:
 
-- **8 segundos** de pedidos falhando (pode ser mais com imagens grandes)
-- Sem lugar para onde voltar rápido se o deploy quebrar
+- Durante a demo ao investidor, **8 segundos de tela de erro**
+- Causa: estratégia Recreate para o container antes de subir o novo
+- Resultado: cliente enterprise ameaçou cancelar contrato
 
-> A imagem já está versionada no **Amazon ECR** (Aula 09) — o problema não é a imagem, é **como trocamos a versão em produção**.
+<img src="img/aula-11/rd001.png" class="diagram" />
+
+> **SLA 99.9% = máximo 8.76h de downtime por ANO.** Um deploy manual por semana = SLA violado em 2 meses.
 
 ---
 
-# Blue/Green: Conceito
+# Blue/Green — Conceito Fundamental 🎭
 
-Dois ambientes idênticos rodando ao mesmo tempo:
+### Dois ambientes idênticos — switch instantâneo no ALB:
 
-```
-                 ┌──────────────┐
- Usuários ─────►│  ALB         │
-                 └──────┬───────┘
-          ┌─────────────┴─────────────┐
-          ▼                           ▼
-  ┌───────────────┐          ┌───────────────┐
-  │  TG BLUE      │          │  TG GREEN     │
-  │  v1.0 (ativo) │          │  v1.1 (standby)│
-  └───────────────┘          └───────────────┘
-```
+- **Blue:** ambiente ATIVO, recebendo tráfego dos usuários
+- **Green:** standby, nova versão sendo preparada nos bastidores
+- **Switch:** Listener muda de Blue para Green — **usuário não percebe**
 
-- **Deploy** = mudar para onde o ALB aponta
-- **Rollback** = voltar o ALB para o grupo anterior
-- **Downtime** = ZERO
+<img src="img/aula-11/rd002.png" class="diagram" />
 
-> **Analogia:** duas cortinas de teatro — troca-se a cena sem o público perceber.
+**Deploy = apenas mudar o apontamento do Listener**
 
 ---
 
-# Componentes AWS do Blue/Green
+# Componentes AWS — ALB + Target Groups ⚙️
+
+<img src="img/aula-11/rd003.png" class="diagram-side" />
 
 | Componente | Função |
-|-----------|--------|
-| **ALB** | Recebe o tráfego e distribui para Target Groups |
-| **Listener** | Define qual Target Group recebe o tráfego |
-| **TG Blue** | Versão ATUAL (estável) |
-| **TG Green** | NOVA versão (a validar) |
-| **Health Check** | Verifica saúde de cada instância |
+|---|---|
+| **ALB** | Recebe tráfego, distribui para TGs |
+| **Listener** | Define qual TG recebe o tráfego |
+| **Target Group Blue** | Versão ATUAL (estável) |
+| **Target Group Green** | NOVA versão |
+| **Health Check** | Verifica saúde das instâncias |
 
-> **☁️ Learner Lab:** ALB, Target Groups e EC2 são **permitidos**. Região `us-east-1`, credenciais temporárias de sessão, instance profile = `LabInstanceProfile`.
+### Fluxo do switch:
+1. ALB recebe requisição do cliente
+2. Listener decide: **qual Target Group?**
+3. Modificar o Listener = **mudar destino**
+4. TGs não mudam — só o apontamento
 
----
-
-# Fluxo de Deploy Blue/Green
-
-```
-ESTADO INICIAL: ALB → TG BLUE (v1.0)
-
-1. Deploy no GREEN   → login ECR + docker pull v1.1 + docker run
-2. Health Check      → GET /health → 200 OK ✅
-3. Traffic Switch    → ALB Listener → TG GREEN (instantâneo)
-4. Monitorar         → erro 5xx, latência p99, CPU/memory
-
-OK   → BLUE fica standby
-ERRO → Rollback: ALB volta p/ BLUE (< 1 segundo)
-```
-
-> O switch é só mudar o `default_action` do listener — nenhuma conexão é perdida.
+**Switch é uma chamada de API → < 1 segundo**
 
 ---
 
-# Traffic Switch e Rollback via CLI
+# Terraform para Blue/Green 🏗️
+
+```hcl
+resource "aws_lb" "main" {
+  name               = "technova-alb"
+  load_balancer_type = "application"
+  subnets            = var.public_subnets
+}
+resource "aws_lb_target_group" "blue" {
+  name     = "technova-blue"
+  port     = 3000;  protocol = "HTTP";  vpc_id = var.vpc_id
+  health_check { path = "/health";  matcher = "200" }
+}
+resource "aws_lb_target_group" "green" {
+  name     = "technova-green"
+  port     = 3000;  protocol = "HTTP";  vpc_id = var.vpc_id
+  health_check { path = "/health";  matcher = "200" }
+}
+# Listener aponta inicialmente para Blue
+resource "aws_lb_listener" "main" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 80
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.blue.arn
+  }
+}
+```
+
+---
+
+# Fluxo de Deploy Blue/Green 🚀
+
+<img src="img/aula-11/rd004.png" class="diagram-side" />
+
+**Passo 1:** Deploy v1.1 no **Green**
+*(Blue continua 100%)*
+
+**Passo 2:** ALB Health Check verifica Green
+`GET /health → 200 OK ✅`
+
+**Passo 3:** Traffic Switch — Listener → Green
+*(instantâneo — sem downtime)*
+
+**Passo 4:** Monitorar métricas:
+- Error rate 5xx < 5%
+- Latência p99 dentro do baseline
+- CPU/Memory normais
+
+**Passo 5A ✅:** Métricas OK → Blue fica standby
+
+**Passo 5B ❌:** Problema → **Rollback em < 1s**
+
+---
+
+# Traffic Switch — AWS CLI ⚡
+
+### O comando que faz o switch:
 
 ```bash
-# Switch: Blue → Green
+# Switch Blue → Green
 aws elbv2 modify-listener \
   --listener-arn $LISTENER_ARN \
   --default-actions Type=forward,TargetGroupArn=$GREEN_TG_ARN
 
-# Rollback: Green → Blue
+echo "✅ Switch concluído — 100% no Green"
+
+# Rollback: voltar para Blue
 aws elbv2 modify-listener \
   --listener-arn $LISTENER_ARN \
   --default-actions Type=forward,TargetGroupArn=$BLUE_TG_ARN
 ```
 
-| | Recreate | Blue/Green |
+| Etapa | Tempo |
+|---|---|
+| Preparar Green (subir containers) | 1–3 min |
+| Health check do Target Group | 30s |
+| **Modificar Listener (switch)** | **< 1 segundo** |
+| Usuários percebem downtime | **Zero** |
+
+---
+
+# Rollback Instantâneo 🔙
+
+<img src="img/aula-11/rd005.png" class="diagram-wide" />
+
+| Estratégia | Tempo | Reinicia containers? |
 |---|---|---|
-| Rollback | 30s–5min (pull + restart) | **< 1 segundo** (muda ponteiro) |
-| Downtime | segundos | **zero** |
+| Recreate | 30s a 5 min | **Sim** |
+| **Blue/Green** | **< 1 segundo** | **Não** |
+| Canary | 5–30s | Não |
+
+> Blue **nunca foi desligado** — apenas uma chamada de API ao ALB.
 
 ---
 
-# Terraform — ALB + Target Groups
+# Canary — A Analogia da Mina 🐦
 
-```hcl
-resource "aws_lb_target_group" "blue" {
-  name     = "technova-blue"
-  port     = 3000
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
-  health_check {
-    path = "/health"
-    matcher = "200"
-    interval = 10
-  }
-}
-# ... "green" idêntico ...
+<img src="img/aula-11/rd006.png" class="diagram-wide" />
 
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.technova.arn
-  port = 80
-  protocol = "HTTP"
-  default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.blue.arn  # Blue é o padrão
-  }
-}
-```
+> Mineradores levavam canários para detectar gases tóxicos **antes** de serem afetados. No deploy, 5% do tráfego é o "canário" — se houver erros, o rollback protege os 95% restantes.
 
 ---
 
-# Canary: a Analogia do Canário
+# Blue/Green vs Canary — Quando Usar 📊
 
-No século XIX, mineradores levavam canários — mais sensíveis a gases tóxicos — para alertar sobre perigo antes que atingisse a todos.
+<img src="img/aula-11/rd007.png" class="diagram-side" />
 
-```
-MINERAÇÃO                  DEPLOY
-──────────                 ──────
-Canário                    Pequeno % de tráfego
-Gases tóxicos              Bugs, erros, crashes
-Canário morre = ALERTA     Taxa de erro sobe = ROLLBACK
-Canário vive = SEGURO      Métricas ok = continua rollout
-```
+| Critério | Blue/Green | Canary |
+|---|---|---|
+| Switch | 100% de uma vez | Gradual 5→100% |
+| Rollback | < 1 segundo | 5–30 segundos |
+| Impacto se falhar | Zero | Só X% |
+| Teste em produção | Não | Sim |
+| Complexidade | Média | Alta |
 
-> O princípio: **testar com pouco antes de comprometer com tudo**.
-
----
-
-# Weighted Routing no ALB
-
-Uma única regra encaminha para dois Target Groups com **pesos**:
-
-```
- 100 requests ──► ALB ──► weight=95 │ weight=5
-                          ▼              ▼
-                  ┌──────────────┐ ┌──────────────┐
-                  │ STABLE v1.0  │ │ CANARY v1.1  │
-                  │ 95 requests  │ │ 5 requests   │
-                  └──────────────┘ └──────────────┘
-```
-
-- Canary saudável → ajustar pesos: 75/25 → 50/50 → 0/100
-- Canary com erro → voltar para 100/0 (rollback)
+### Regra prática TechNova:
+- **Blue/Green:** correção urgente
+- **Canary:** feature nova incerta
 
 ---
 
-# Rollout Gradual — Etapas
+# Weighted Routing com ALB ⚖️
 
-```
-Etapa 1: 5% canary   ├─ Duração: 5-10 minutos
-Etapa 2: 25% canary  ├─ Duração: 10-15 minutos
-Etapa 3: 50% canary  ├─ Duração: 15-20 minutos
-Etapa 4: 100% canary = PROMOÇÃO COMPLETA
-
-⚠️ Em QUALQUER etapa: erro > threshold → ROLLBACK para 0%
-```
-
-Entre cada etapa, observa-se: error rate, latência p99, CPU, memory.
-
-> O rollout avança **somente** se as métricas da etapa estiverem dentro do threshold.
-
----
-
-# Terraform — Weighted Forward
-
-```hcl
-default_action {
-  type = "forward"
-  forward {
-    target_group {
-      arn    = aws_lb_target_group.stable.arn
-      weight = var.stable_weight   # padrão 100
-    }
-    target_group {
-      arn    = aws_lb_target_group.canary.arn
-      weight = var.canary_weight   # padrão 0
-    }
-    stickiness {
-      enabled  = true
-      duration = 300   # 5 min — mesmo usuário no mesmo TG
-    }
-  }
-}
-```
-
----
-
-# Decisão por Métrica
-
-| Métrica | Threshold de rollback |
-|---------|:---------------------:|
-| Error rate (5xx) | > 5% (ou 2x do baseline) |
-| Latência p99 | > 2x do baseline |
-| CPU | > 80% |
-| Memory | > 85% |
-| Healthy targets | < 100% |
+<img src="img/aula-11/rd008.png" class="diagram-side" />
 
 ```bash
-error_rate=$((errors * 100 / total))
-if [ $error_rate -gt $ERROR_THRESHOLD ]; then
-  echo "❌ Rollback!"; update_weights 100 0; exit 1
+# Canary inicial: 95% stable + 5% canary
+aws elbv2 modify-listener \
+  --listener-arn $LISTENER_ARN \
+  --default-actions '[{
+    "Type": "forward",
+    "ForwardConfig": {
+      "TargetGroups": [
+        {"TargetGroupArn":"'$BLUE_TG'","Weight":95},
+        {"TargetGroupArn":"'$GREEN_TG'","Weight":5}
+      ],
+      "TargetGroupStickinessConfig": {
+        "Enabled": true, "DurationSeconds": 300
+      }
+    }
+  }]'
+```
+
+> **Stickiness:** mesmo usuário sempre cai no mesmo TG durante a sessão.
+
+---
+
+# Rollout Gradual — 5 → 25 → 50 → 100 📈
+
+<img src="img/aula-11/rd009.png" class="diagram-wide" />
+
+| Etapa | Canary % | Duração | Decisão |
+|---|---|---|---|
+| Inicial | **5%** | 15–30 min | Error rate < 5%? |
+| Expansão | **25%** | 15–30 min | Latência OK? |
+| Metade | **50%** | 10–15 min | CPU/Memory OK? |
+| Promoção | **100%** | — | ✅ Finalizado |
+
+---
+
+# Monitoramento do Canary 📊
+
+<img src="img/aula-11/rd010.png" class="diagram-side" />
+
+| Métrica | Threshold de Rollback |
+|---|---|
+| Error Rate 5xx | > 5% |
+| Latência p99 | > 2x baseline |
+| CPU | > 85% por 5 min |
+| Healthy targets | < 50% do TG |
+
+```bash
+# Rollback automático no pipeline
+RATE=$((ERRORS * 100 / TOTAL))
+if [ $RATE -gt 5 ]; then
+  aws elbv2 modify-listener \
+    --listener-arn $LISTENER_ARN \
+    --default-actions \
+      Type=forward,TargetGroupArn=$BLUE_TG_ARN
+  exit 1
 fi
 ```
 
-> A decisão de promover ou reverter é **objetiva**, baseada em números — não em "achismo".
-
 ---
 
-# Deploy puxando do ECR
-
-O deploy nas instâncias Blue/Green sempre **loga no ECR antes do pull**:
+# Script de Rollout Gradual 💻
 
 ```bash
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-REGISTRY="${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
-aws ecr get-login-password --region us-east-1 \
-  | docker login --username AWS --password-stdin "$REGISTRY"
-docker pull "$REGISTRY/technova-api:$SHA"
+#!/bin/bash
+update_weights() {
+  aws elbv2 modify-listener --listener-arn $LISTENER_ARN \
+    --default-actions "[{\"Type\":\"forward\",\"ForwardConfig\":{
+      \"TargetGroups\":[
+        {\"TargetGroupArn\":\"$BLUE_TG\",\"Weight\":$1},
+        {\"TargetGroupArn\":\"$GREEN_TG\",\"Weight\":$2}
+      ]}}]"
+  echo "Pesos: Blue=$1% Green=$2%"
+}
+
+check_health() {
+  RATE=$(aws cloudwatch get-metric-statistics \
+    --metric-name HTTPCode_Target_5XX_Count \
+    --namespace AWS/ApplicationELB \
+    --query 'Datapoints[0].Sum' --output text)
+  [ "${RATE:-0}" -gt 10 ] && return 1; return 0
+}
+
+rollback() { echo "🔄 ROLLBACK"; update_weights 100 0; exit 1; }
+
+for weights in "95 5" "75 25" "50 50" "0 100"; do
+  read blue green <<< $weights
+  update_weights $blue $green
+  sleep 1800          # observar 30 min
+  check_health || rollback
+done
+echo "🎉 Canary promovido!"
 ```
 
-> **☁️ Learner Lab:** no GitHub Actions, as 3 credenciais de sessão (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`) entram como **secrets** e expiram por sessão. Em produção real, o ideal seria **OIDC + role IAM** — que o Lab não permite.
+---
+
+# Comparação Final 📋
+
+| Critério | Recreate | Blue/Green | Canary |
+|---|---|---|---|
+| **Downtime** | Sim | **Zero** | **Zero** |
+| **Rollback** | 1–5 min | **< 1s** | 5–30s |
+| **Complexidade** | Baixa | Média | Alta |
+| **Custo infra** | 1x | 2x | 2x |
+| **Teste em prod** | Não | Não | **Sim** |
+| **Impacto falha** | 100% | Zero | X% |
+| **Ideal para** | Dev/staging | Releases críticas | Features novas |
+
+### Evolução recomendada:
+1. **Aula 11:** Blue/Green → zero downtime em produção
+2. **Próximo semestre:** Canary → releases de alto risco
+3. **Aula 12:** Feature flags → controle ainda mais granular
 
 ---
 
-# Canary vs Blue/Green: Quando Usar
+# Revisão do TA — Blue/Green 📖
 
-| | Blue/Green | Canary |
+<img src="img/aula-11/ta002.png" class="diagram-side" />
+
+### O que você estudou no TA — Parte 1:
+
+- O problema do Recreate: **8 segundos de downtime**
+- Blue = ambiente ativo; Green = standby
+- ALB Listener como **ponto de controle do tráfego**
+- Rollback em < 1 segundo vs 30s–5min no Recreate
+- Custo: infraestrutura dobrada durante o deploy
+
+### Questão de aquecimento:
+> No Blue/Green, o que acontece com o ambiente Blue **após** o traffic switch para Green?
+
+---
+
+# Revisão do TA — Canary 📖
+
+<img src="img/aula-11/ta004.png" class="diagram-side" />
+
+### O que você estudou no TA — Parte 2:
+
+- **Analogia:** canário na mina detecta perigo antes dos humanos
+- Rollout gradual: **5% → 25% → 50% → 100%**
+- **Stickiness:** mesmo usuário sempre vai ao mesmo Target Group
+- Métricas: error rate, latência p99, CPU, memory
+- Rollback automático quando métrica > threshold
+
+### Questão de aquecimento:
+> Error rate sobe para 12% (threshold = 5%). O que deve acontecer?
+
+---
+
+# Cronograma da Aula ⏰
+
+| Bloco | Atividade | Duração |
 |---|---|---|
-| Troca de tráfego | 100% de uma vez | gradual |
-| Impacto se der errado | 100% dos usuários | ~5% dos usuários |
-| Tempo de deploy | instantâneo | gradual (min/h) |
-| Complexidade | média | alta |
+| 1 | Revisão TA + Discussão | 30 min |
+| 2 | Teoria — Blue/Green e ALB | 50 min |
+| 3 | Lab Parte 1 — Terraform ALB + traffic switch | 60 min |
+| 4 | Teoria — Canary e weighted routing | 40 min |
+| 5 | Lab Parte 2 — Rollout gradual + auto-rollback | 60 min |
+| 6 | Encerramento + Trabalho Final (TF) | 15 min |
 
-**Blue/Green:** alta confiança, hotfix testado, baixo tráfego.
-**Canary:** mudança de alto risco, muitos usuários, validar com dados reais.
-
----
-
-# Resumo dos Conceitos
-
-| Conceito | Descrição |
-|----------|-----------|
-| Blue/Green | Dois ambientes; tráfego chaveado de uma vez |
-| Canary | Rollout gradual com % crescente de tráfego |
-| Target Group | Grupo de EC2 registradas no ALB |
-| Traffic Switch | Mudar o listener para outro TG |
-| Weighted Routing | ALB divide tráfego por pesos |
-| Stickiness | Fixa o usuário no mesmo TG na sessão |
-| Rollback | Voltar o tráfego para a versão estável |
-| Error Rate Threshold | Limite que dispara rollback automático |
+### Sobre os laboratórios:
+- **Lab 1:** Provisionar ALB + 2 Target Groups Blue/Green via Terraform, executar switch e rollback via AWS CLI
+- **Lab 2:** Implementar weighted routing, script de rollout gradual e rollback automático por taxa de erro
 
 ---
 
-# Referências e Próximos Passos
+# Referências e Próximos Passos 📚
 
-**Referências:**
-- Blue/Green — [martinfowler.com/bliki/BlueGreenDeployment](https://martinfowler.com/bliki/BlueGreenDeployment.html)
-- Canary Release — [martinfowler.com/bliki/CanaryRelease](https://martinfowler.com/bliki/CanaryRelease.html)
-- ALB — [docs.aws.amazon.com/elasticloadbalancing](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
-- Weighted Target Groups — [forward-actions](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html#forward-actions)
+### Referências:
+- **AWS ALB Weighted Routing** — docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html
+- **Blue/Green Deployments na AWS** — docs.aws.amazon.com/whitepapers/latest/blue-green-deployments
+- **Canary Release (Martin Fowler)** — martinfowler.com/bliki/CanaryRelease.html
+- **AWS CLI — modify-listener** — awscli.amazonaws.com/v2/documentation/api/latest/reference/elbv2/modify-listener.html
 
-**TF desta aula:** push no fork do `implement_Moodle` + relatório do que você explorou
+### Próxima aula:
+> **Aula 12 — Rollback Strategies e AIOps**
+> MTTR, expand-contract migrations, feature flags, anomaly detection com Bedrock.
 
-**Próxima aula:**
-**Aula 12 — Rollback Strategies e AIOps**
-Feature flags, migrações reversíveis, CloudWatch e Bedrock.
+### Para a próxima aula:
+- ✅ Estudar o **TA.md** da Aula 12
+- ✅ Ter Blue/Green funcionando com ALB
+- ✅ Revisar conceitos de CloudWatch Metrics
+- ✅ Completar o TF desta aula
 
 ---
 
