@@ -49,6 +49,9 @@ terraform.rc
 
 # Notas de avaliação (arquivo local, não versionar)
 provas/notas.md
+provas/prova-segundo-bimestre.md
 .agents/
 .kiro
-provas/prova-segundo-bimestre.md
+provas/gabarito-segundo-bimestre-teorica.md
+provas/prova-segundo-bimestre-pratica.md
+provas/prova-segundo-bimestre-teorica.md

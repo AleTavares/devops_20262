@@ -6,17 +6,17 @@
 * **Disciplina:** DevOps
 * **Aula:** 1☐ 2☐ 3☐ 4☐ 5☐ 6☐ 7☐ 8☐ 9☐ 10☐ 11☐ 12☒ 13☐ 14☐ 15☐
 * **Data da aula:** [Data da aula]
-* **Título da aula:** Rollback Strategies e AIOps (ECR / Learner Lab)
+* **Título da aula:** Rollback Strategies e AIOps
 
 ---
 
 ## Resumo da Atividade Aplicada
 
 ### Objetivo
-Demonstrar domínio de estratégias de rollback (feature flags, migrações reversíveis expand-contract, rollback automático no pipeline e runbooks) e de **AIOps** (detecção de anomalias no CloudWatch + Lambda inteligente com Amazon Bedrock), operando no **AWS Academy Learner Lab** (`us-east-1`, `LabRole`) e reaproveitando as imagens versionadas no **Amazon ECR**.
+Avançar no **Moodle Docker AWS Challenge** ([github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle)), com foco em iniciar a criação dos módulos Terraform (`networking`, `compute` e/ou `database`) e planejar a arquitetura da solução na AWS.
 
 ### Tarefa
-Construir o conjunto de defesas operacionais para o `technova-api`: módulo de **feature flags** por variáveis de ambiente integrado a uma rota; **migrações expand-contract** com up/down/verify e CLI; workflow de **CD com rollback automático** que reverte para a versão anterior (imagem no ECR) quando o health check falha; **runbook** operacional de incidente; métricas customizadas e alarmes no **CloudWatch** (threshold fixo + anomaly band); e uma **Lambda de AIOps** (usando a role pré-existente `LabRole`, pois o Lab não cria roles IAM) que analisa o alarme via **Bedrock** — ou, sem acesso ao Bedrock, via simulador local + Kiro AI. Comprovar com screenshots (feature flag ligando/desligando, migração up/down, rollback automático, alarme CloudWatch e a análise da Lambda/simulador).
+Trabalhar no fork do `implement_Moodle` iniciando a estrutura dos módulos Terraform: criar o diretório `terraform/` com os módulos `networking` (VPC, subnets públicas e privadas, Internet Gateway, Security Groups), `compute` (EC2 com `LabInstanceProfile`) e/ou `database` (RDS PostgreSQL em subnets privadas). Executar `terraform init` e `terraform validate` para verificar a sintaxe dos arquivos criados até o momento. Explorar o template de arquitetura em `docs/architecture-design-template.md` e começar a rascunhar o documento `docs/architecture-design.md`. Registrar o progresso com um commit no fork, preencher o relatório descrevendo o que foi feito e as dificuldades encontradas, e entregar via Pull Request no repositório da disciplina em `entregas/aula-12/RA/`.
 
 ---
 

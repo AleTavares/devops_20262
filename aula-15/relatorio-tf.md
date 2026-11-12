@@ -6,17 +6,17 @@
 * **Disciplina:** DevOps
 * **Aula:** 1☐ 2☐ 3☐ 4☐ 5☐ 6☐ 7☐ 8☐ 9☐ 10☐ 11☐ 12☐ 13☐ 14☐ 15☒
 * **Data da aula:** [Data da aula]
-* **Título da aula:** Apresentação Final
+* **Título da aula:** Apresentação Final e Entrega do Portfólio
 
 ---
 
 ## Resumo da Atividade Aplicada
 
 ### Objetivo
-Demonstrar, de forma integrada, o domínio de todo o conteúdo do curso através da entrega e apresentação do **portfólio DevOps completo** (`unifaat-devops-portfolio`): da fundação com Git e Docker, passando por Terraform/IaC na AWS, CI/CD com GitHub Actions e Amazon ECR, estratégias de deploy (Blue/Green e Canary), rollback e AIOps, até o projeto integrador com microserviço end-to-end e agente de IA (AWS Bedrock), tudo operando no **AWS Academy Learner Lab**.
+Entregar o **Moodle Docker AWS Challenge** ([github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle)) completo, consolidando tudo que foi desenvolvido ao longo das aulas 11 a 15, e registrar a jornada de aprendizagem por meio de um relatório final detalhado.
 
 ### Tarefa
-Entregar o repositório público `unifaat-devops-portfolio` consolidando as entregas das aulas do curso (conforme a grade real) e **apresentar ao vivo** a plataforma: demonstrar o pipeline end-to-end (push → CI lint/test/build → push da imagem no **Amazon ECR** → deploy automatizado com health check), a integração de IA no fluxo (review de PR e/ou agente Bedrock), e articular a evolução técnica da Aula 01 à Aula 15. Preparar e ensaiar a demo, verificar a completude do portfólio, preencher a autoavaliação de maturidade DevOps e os próximos passos, e participar da retrospectiva de encerramento do curso. Comprovar com o repositório público, o README da jornada e as evidências do pipeline (execução do CI/CD, imagem no console do ECR, deploy no Learner Lab).
+Finalizar o fork do `implement_Moodle` com todos os entregáveis da prova prática: ambiente Docker local validado, módulos Terraform completos (`networking`, `compute`, `database`) com `terraform validate` e `terraform plan` passando, `user_data.sh` funcional, documento `docs/architecture-design.md` com diagrama e justificativas, workflow `terraform-plan.yml` implementado, `.gitignore` correto e `pytest -v` passando. Fazer o commit final no fork. Preencher o `entrega.md` com os links e evidências de todos os entregáveis, o relatório final descrevendo a jornada completa das semanas de desenvolvimento — decisões tomadas, dificuldades superadas, aprendizados — e entregar via Pull Request no repositório da disciplina em `entregas/provaSegundoBi/RA/`.
 
 ---
 
