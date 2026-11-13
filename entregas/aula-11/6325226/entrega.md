@@ -1,55 +1,28 @@
-# Entrega — Aula 11: Blue/Green e Canary Deployments
+# Entrega — Aula 11 (TF)
 
 **Aluno:** Weslley Lucas Souza Alves
 **RA:** 6325226
-**Data:** 2026-11-06
+**Data:** 2026-11-12
 
-## Repositório
+## Link do commit
 
-- URL: https://github.com/lucaskenway/unifaat-devops-portfolio
-- Pasta: [`aula-11/`](https://github.com/lucaskenway/unifaat-devops-portfolio/tree/main/aula-11)
-- Workflow (raiz, onde o GitHub o executa): [`deploy-blue-green.yml`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/.github/workflows/deploy-blue-green.yml)
-- Documentos: [`EXPLICACAO.md`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/aula-11/EXPLICACAO.md) · [`ROLLBACK.md`](https://github.com/lucaskenway/unifaat-devops-portfolio/blob/main/aula-11/ROLLBACK.md)
+- Fork: https://github.com/lucaskenway/implement_Moodle
+- Commit: https://github.com/lucaskenway/implement_Moodle/commit/f948b86e0831aa849a6d5b9c89f170c5b91accf5
 
-## Estratégia escolhida
+## O que foi feito nesta aula
 
-- [x] Opção A — Blue/Green
-- [ ] Opção B — Canary
+- Fiz o fork do `implement_Moodle`, clonei e li o `CHALLENGE.md`, a rubrica, o `architecture.md` e os workflows para entender os entregáveis da prova.
+- Validei o ambiente Docker local: `docker compose up -d --build` subiu PostgreSQL 15 (healthcheck `healthy`) e o Moodle 4.1.22, que responde em `http://localhost:8080` (redireciona para `install.php`). O `scripts/health-check.sh` passou.
+- Corrigi o `docker-compose.yml`: o `env_file` apontava para o `.env.example` (senhas de exemplo). Agora lê o `docker/.env`, que está no `.gitignore`, com senhas geradas aleatoriamente.
+- Rodei o `pytest` do template: 41 passaram e 10 foram pulados, porque a pasta `terraform/modules/` ainda não existe.
+- Comecei o `docs/architecture-design.md` (item eliminatório): visão geral, decisões de design, componentes planejados (VPC `10.0.0.0/16`, 1 subnet pública e 2 privadas, SGs, EC2 `t3.medium`, RDS `db.t3.micro`), segurança, escalabilidade e custo estimado (~US$ 51/mês).
+- As evidências estão em `evidencias/` no fork, em TXT e PNG renderizado.
+- **Ainda não está pronto:** os módulos Terraform, o `user_data.sh`, o `terraform-plan.yml`, o diagrama real com ícones AWS, o link do Pricing Calculator e o uso do Kiro (Spec).
+- **Próximo passo:** criar `terraform/` com `versions.tf` e o módulo `networking`, rodando `terraform validate` e `plan` no Learner Lab.
+- **Uso de IA:** usei o Claude Code como apoio para revisar o template, rodar os comandos e redigir o rascunho do documento de arquitetura. Revisei o conteúdo gerado.
 
-## Trabalho em Aula
+## Dificuldades encontradas
 
-- [`trabalho-em-aula.md`](trabalho-em-aula.md): escolha de estratégia (Canary, Recreate, Blue/Green) por cenário e plano de rollout do canary
-
-## Evidências
-
-- [x] Terraform do ALB + 2 Target Groups aplicável (`terraform validate`/`plan` → 23 recursos criados no Learner Lab)
-- [x] Workflow de deploy com validação e rollback (`deploy-blue-green.yml` + `aula-11/scripts/bluegreen.sh`)
-- [x] Imagem puxada do **Amazon ECR** no deploy das instâncias (login ECR via SSH antes do `docker pull`)
-- [x] `EXPLICACAO.md` preenchido (com os tempos medidos)
-- [x] Screenshots (ALB respondendo, traffic switch, rollback acionado)
-
-Bônus:
-- Workflow testado com evidência: run com sucesso e run com `simulate_failure`.
-- Health check customizado: `/health/ready` confere a camada de dados e a memória.
-- Notificação de rollback: comentário no commit, mais Discord se o webhook estiver configurado.
-- Lifecycle policy no ECR.
-
-## Evidência do Deploy Rodando
-
-| O quê | Link |
-|-------|------|
-| Deploy Blue/Green com sucesso (green → blue, switch em 2,6 s, 20/20 requisições OK) | https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/42309886648 |
-| Rollback automático (`simulate_failure=true`: 20/20 HTTP 500 → volta para blue em 2,9 s) | https://github.com/lucaskenway/unifaat-devops-portfolio/actions/runs/42310187138 |
-| Correções encontradas no lab real (TG ocioso sem health check; propagação do switch) | https://github.com/lucaskenway/unifaat-devops-portfolio/pull/13 · https://github.com/lucaskenway/unifaat-devops-portfolio/pull/15 |
-
-**Deploy Blue/Green verde**
-
-![Deploy Blue/Green](https://raw.githubusercontent.com/lucaskenway/unifaat-devops-portfolio/main/aula-11/screenshots/02-deploy-blue-green-sucesso.png)
-
-**ALB respondendo (`/version` com a cor ativa)**
-
-![ALB respondendo](https://raw.githubusercontent.com/lucaskenway/unifaat-devops-portfolio/main/aula-11/screenshots/03-alb-respondendo-version.png)
-
-**Rollback automático acionado**
-
-![Rollback automático](https://raw.githubusercontent.com/lucaskenway/unifaat-devops-portfolio/main/aula-11/screenshots/04-rollback-automatico-run.png)
+- **Docker no WSL:** o daemon do Docker dentro do WSL estava parado, e iniciá-lo exige `sudo`. Usei o engine do Docker Desktop (Windows) pelo `docker.exe`. No meio do trabalho a interoperabilidade WSL→Windows caiu (`UtilAcceptVsock: accept4 failed 110`), e por isso não consegui terminar a instalação do Moodle pela CLI (`admin/cli/install.php`). O site sobe e responde, mas ainda para no instalador web. Vou concluir pelo navegador ou reiniciando o WSL (`wsl --shutdown`).
+- **pytest em `/mnt/c`:** o teste `test_git_ignores_sensitive_filenames` falhou com `DeadlineExceeded` do Hypothesis (210 ms contra o limite de 200 ms). O teste chama `git check-ignore`, que é lento no sistema de arquivos do Windows montado no WSL. Rodando uma cópia no FS Linux, os 41 testes passaram. A falha é de desempenho do ambiente, não do `.gitignore`.
+- **Senhas do compose:** com `env_file: .env.example`, trocar as senhas só no `.env` deixaria o Postgres e o Moodle com senhas diferentes, porque o Postgres lê o `env_file` e o Moodle lê a interpolação `${...}` do `.env`. A correção foi apontar os dois serviços para o mesmo `.env`.
