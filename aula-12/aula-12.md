@@ -57,6 +57,8 @@ Prof. Alexandre Tavares | Semestre 2026-2
 
 # O Incidente da TechNova
 
+![bg right:42%](img/aula-12/rd001.png)
+
 Sexta, 17h45: deploy da v2.8 do sistema de pedidos. Pipeline verde. "Bom fim de semana."
 
 Às 18h02 o Slack explode:
@@ -91,11 +93,7 @@ Carlos (CTO) para Marina:
 
 # MTTR: a métrica que importa no incidente
 
-```
-Deploy ──► Detecção ──► Rollback ──► Recuperação
-      │◄─ TTD ─►│◄──── TTR ────►│
-      │◄──────── MTTR ──────────►│
-```
+![bg right:44%](img/aula-12/rd001.png)
 
 | | TechNova (sexta) | Meta com automação |
 |--|:---:|:---:|
@@ -108,6 +106,8 @@ Deploy ──► Detecção ──► Rollback ──► Recuperação
 ---
 
 # Rollback por Estratégia de Deploy
+
+![bg right:48%](img/aula-12/rd002.png)
 
 | Estratégia | Mecanismo | Downtime |
 |-----------|-----------|:--------:|
@@ -123,6 +123,8 @@ Deploy ──► Detecção ──► Rollback ──► Recuperação
 ---
 
 # O Problema do Banco: Migrações Reversíveis
+
+![bg right:45%](img/aula-12/rd003.png)
 
 Código é stateless (troca de container). **Dados são stateful.** Uma migração incompatível trava o rollback.
 
@@ -156,6 +158,8 @@ module.exports = {
 
 # Feature Flags: Rollback Sem Redeploy
 
+![bg right:48%](img/aula-12/rd004.png)
+
 ```
 Sem flag:  bug → commit → CI/CD → deploy  → 10-15 min
 Com flag:  bug → desliga a flag           → < 1 segundo
@@ -180,6 +184,8 @@ if (featureFlags.isEnabled('new_shipping_calc')) {
 
 # Rollback Automático no Pipeline
 
+![bg right:46%](img/aula-12/rd005.png)
+
 ```
 Deploy v2.8 ──► Janela de observação ──► health checks
    health falha além do limite?
@@ -196,6 +202,8 @@ Deploy v2.8 ──► Janela de observação ──► health checks
 
 # Runbooks: o Manual de Emergência
 
+![bg right:46%](img/aula-12/rd006.png)
+
 Documento **prescritivo** para responder a um incidente — "faça isso, depois aquilo".
 
 **Componentes:** Trigger · Severidade (P1-P4) · Diagnóstico · Ação · Verificação · Escalação · Post-mortem
@@ -211,6 +219,8 @@ Documento **prescritivo** para responder a um incidente — "faça isso, depois 
 
 # AIOps: Evolução do Monitoramento
 
+![bg right:46%](img/aula-12/rd007.png)
+
 ```
 Tradicional   →      AIOps       →    Auto-Remediation
  (reativo)        (preditivo)           (autônomo)
@@ -225,6 +235,8 @@ Tradicional   →      AIOps       →    Auto-Remediation
 ---
 
 # CloudWatch Anomaly Detection
+
+![bg right:50%](img/aula-12/rd008.png)
 
 Threshold fixo não vê **degradação gradual** nem distingue **picos normais**.
 
@@ -244,6 +256,8 @@ Latência
 ---
 
 # Arquitetura AIOps com Bedrock
+
+![bg right:48%](img/aula-12/rd009.png)
 
 ```
 CloudWatch ──(EventBridge)──► Lambda ──► Bedrock
@@ -296,6 +310,8 @@ AIOps não só detecta — **prevê** antes de acontecer:
 ---
 
 # Limites do AIOps
+
+![bg right:48%](img/aula-12/rd010.png)
 
 | ✅ Funciona hoje | ❌ Ainda não confiável |
 |------------------|------------------------|
