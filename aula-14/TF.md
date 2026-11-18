@@ -2,7 +2,7 @@
 
 ## Entrega
 
-O TF desta aula é um **push no repositório do desafio técnico** ([github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle)) com o progresso realizado até aqui, acompanhado de um **relatório** descrevendo o que foi feito.
+O TF desta aula é um **push no seu fork do desafio técnico** ([github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle)) com o progresso realizado até aqui, acompanhado de um relatório registrado neste repositório da disciplina via Pull Request.
 
 ---
 
@@ -12,16 +12,17 @@ O TF desta aula é um **push no repositório do desafio técnico** ([github.com/
 |------|---------|
 | **Prazo** | 1 semana a partir da data da aula |
 | **Forma de entrega** | Pull Request (PR) para o repositório da disciplina |
-| **Pasta de entrega no fork** | `entregas/aula-14/RA/` (substitua RA pelo seu número de matrícula) |
+| **Pasta de entrega no fork da disciplina** | `entregas/aula-14/RA/` (substitua RA pelo seu número de matrícula) |
 | **Conteúdo do PR** | Apenas o arquivo `entrega.md` com o relatório e o link do commit |
+| **Arquivos do projeto** | No seu fork de `github.com/AleTavares/implement_Moodle` |
 
----
+### Como Entregar via Pull Request
 
-## O que fazer
-
-1. Trabalhe no seu fork do `implement_Moodle` avançando no desafio — nesta semana o foco natural é na finalização dos módulos Terraform, no workflow `terraform-plan.yml` e no documento de arquitetura, mas qualquer progresso conta.
-2. Faça um commit com as alterações realizadas até o prazo.
-3. Crie o arquivo `entrega.md` na pasta de entrega da disciplina conforme o modelo abaixo.
+1. Trabalhe no seu fork do `implement_Moodle` e faça um commit com o progresso da semana
+2. No fork **deste repositório da disciplina**, crie a pasta `entregas/aula-14/SEU-RA/`
+3. Adicione apenas o arquivo `entrega.md` (modelo abaixo)
+4. Faça commit e push para o seu fork da disciplina
+5. Abra um Pull Request para o repositório original da disciplina
 
 ---
 
@@ -34,20 +35,39 @@ O TF desta aula é um **push no repositório do desafio técnico** ([github.com/
 **RA:** [Seu RA]
 **Data:** [Data da entrega]
 
-## Link do commit
+## Fork do projeto
 
-- Fork: https://github.com/SEU-USUARIO/implement_Moodle
-- Commit: https://github.com/SEU-USUARIO/implement_Moodle/commit/HASH
+- URL: https://github.com/SEU-USUARIO/implement_Moodle
+- Commit desta semana: https://github.com/SEU-USUARIO/implement_Moodle/commit/HASH
 
 ## O que foi feito nesta aula
 
-[Descreva em 5 a 15 linhas o que você avançou no projeto desta semana.
+[Descreva em 5 a 15 linhas o que você avançou no projeto.
 Inclua: o que tentou, o que funcionou, o que ainda não está pronto e qual é o próximo passo.]
 
 ## Dificuldades encontradas
 
-[Descreva pelo menos uma dificuldade técnica ou conceitual que encontrou e como você abordou o problema.]
+[Descreva pelo menos uma dificuldade técnica ou conceitual que encontrou e como abordou o problema.]
 ```
+
+---
+
+## Como Entregar via Pull Request
+
+```bash
+cd /caminho/para/seu-fork-da-disciplina
+git checkout -b entregas/aula-14/SEU-RA
+mkdir -p entregas/aula-14/SEU-RA
+# Crie o arquivo entrega.md com o modelo acima
+git add entregas/aula-14/SEU-RA/entrega.md
+git commit -m "feat(aula-14): entrega TF - SEU NOME (RA: SEU-RA)"
+git push -u origin entregas/aula-14/SEU-RA
+```
+
+Abra o Pull Request no GitHub com:
+- **Título:** `[Aula 14] RA: SEU-RA - SEU NOME`
+- **Base:** `main`
+- **Compare:** `entregas/aula-14/SEU-RA`
 
 ---
 
@@ -55,7 +75,7 @@ Inclua: o que tentou, o que funcionou, o que ainda não está pronto e qual é o
 
 | Critério | Peso |
 |----------|:----:|
-| Commit presente no fork com progresso real | 50% |
+| Commit presente no fork do projeto com progresso real | 50% |
 | Relatório descrevendo o que foi feito com clareza | 30% |
 | Dificuldades relatadas com honestidade e detalhamento | 20% |
 
