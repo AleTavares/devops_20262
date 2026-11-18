@@ -1,45 +1,29 @@
-# Entrega — Aula 11: Blue/Green e Canary Deployments
+# Entrega — Aula 11 (TF)
 
 **Aluno:** Gabriel Reis Cunha
 **RA:** 6325149
-**Data:** 12/11/2026
+**Data:** 18/11/2026
 
-## Repositório
+## Fork do projeto
 
 - URL: https://github.com/gabrielreis354/implement_Moodle
+- Commit desta semana: https://github.com/gabrielreis354/implement_Moodle/commit/a86c7b1125c19f43af57a7f0dd4ad302f47ab86f
 
-## Estratégia escolhida
+## O que foi feito nesta aula
 
-- [ ] Opção A — Blue/Green
-- [ ] Opção B — Canary
+Analisei a Aula 11 e o desafio `implement_Moodle` (rubrica, restrições do Learner Lab) e validei o ambiente Docker local em uma cópia de teste, sem alterar o template. `docker compose config` e `docker build` passam (PHP 8.1.34, Moodle 4.1.22) e `docker compose up` sobe o `db` (healthy) e o `moodle`. O registro completo está em `docs/progress-notes.md`, no commit acima.
 
-> Relatório de progresso: a estratégia ainda não foi implementada. Decisão de planejamento: Blue/Green como base; Canary somente se houver bônus por ele.
+O que funcionou / o que encontrei:
+- O Moodle responde, mas cai no instalador web (`/install.php`): não há `config.php` e as variáveis `MOODLE_*` do compose não são consumidas pela imagem.
+- Falta a extensão PHP `pgsql` (só há `pdo_pgsql`; `pg_connect()` inexistente), necessária ao driver PostgreSQL do Moodle.
+- `env_file: .env.example` no compose (o `.env` real não é lido por ele) e `.gitignore` sem `.terraform/`/`*.tfstate` e com `.kiro/` ignorado.
 
-## Evidências
+Ainda não está pronto: módulos Terraform (`networking`, `compute`, `database`), `terraform-plan.yml`, `docs/architecture-design.md` e a Spec do Kiro. Nada foi aplicado na AWS; não há recursos ativos no Learner Lab.
 
-- [ ] Terraform do ALB + 2 Target Groups aplicável (`terraform validate`/`plan`)
-- [ ] Workflow (ou script) de deploy com validação e rollback
-- [ ] Imagem puxada do **Amazon ECR** no deploy das instâncias
-- [ ] `EXPLICACAO.md` preenchido
-- [ ] Screenshots (ALB respondendo, traffic switch/rollout, rollback acionado)
+Próximo passo: corrigir os achados com o Kiro (Spec do módulo `compute`), criar os módulos Terraform e validar com `terraform validate`/`plan`.
 
-## Evidência do Deploy Rodando
+Uso de IA: Claude Code (análise, testes e verificação, com log literal dos prompts); o Kiro será o gerador principal dos artefatos da prova.
 
-Esta entrega é um **relatório de progresso** do desafio técnico (repositório `implement_Moodle`, fork de `AleTavares/implement_Moodle`). Nenhuma infraestrutura foi aplicada na AWS até aqui; nada ficou ativo no Learner Lab.
+## Dificuldades encontradas
 
-### O que foi feito
-- Análise da Aula 11 (requisitos, critérios, armadilhas) e do desafio Moodle (rubrica de 100 pts, restrições do Learner Lab).
-- Validação do ambiente Docker local em cópia de teste (fork intacto): `docker compose config` OK; `docker build` OK (PHP 8.1.34, Moodle 4.1.22); `docker compose up` sobe `db` (healthy) e `moodle`.
-- Achados confirmados por teste:
-  1. O Moodle sobe no instalador web (`/install.php`): não há `config.php` e as variáveis `MOODLE_*` do compose não são consumidas pela imagem.
-  2. Falta a extensão PHP `pgsql` (`pg_connect` indisponível; só há `pdo_pgsql`), necessária ao driver PostgreSQL do Moodle; também faltam `soap` e `exif`.
-  3. O compose usa `env_file: .env.example` enquanto a interpolação lê o `.env` (risco de senhas divergentes).
-  4. O `.gitignore` não cobre `.terraform/`; a documentação cita arquivos inexistentes (`versions.tf`, `backend.tf.example`, `terraform.tfvars.example`).
-- Hipótese testada e descartada: falso negativo do `health-check.sh` com `pipefail`.
-
-### Uso de IA (quem fez o quê)
-- Claude Code: análise, testes e este relatório (log literal dos prompts mantido pelo aluno).
-- Kiro: será o gerador principal na prova.
-
-### Próximos passos
-Spec do Blue/Green (ALB + 2 Target Groups + workflow + rollback), `terraform validate`/`plan`, apply curto no Learner Lab com evidências e `terraform destroy` imediato.
+O ambiente Docker "funcional" do template não sobe pronto: o Moodle abre o instalador web e a extensão `pgsql` não está instalada, o que impediria a conexão com o PostgreSQL. Abordei confirmando cada hipótese por teste (build, `compose up`, `php -m`, `function_exists('pg_connect')`) em vez de assumir, e descartei uma hipótese que não se confirmou (falso negativo do `health-check.sh` com `pipefail`). Também a rede lenta do WSL atrasou o build/pull e a porta 8080 ficou indisponível; usei a 8081 no teste.
