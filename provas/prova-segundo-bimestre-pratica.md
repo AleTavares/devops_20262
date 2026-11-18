@@ -176,28 +176,37 @@ No `entrega.md`, na seção **Entregável 5 — Kiro**, inclua:
 
 ## Como Entregar
 
-### 1. Publicar no fork
+> **Regra fundamental:** o repositório da disciplina recebe **somente o `entrega.md`**. Todo o código, módulos Terraform, screenshots, Spec do Kiro e demais evidências ficam no seu fork do `implement_Moodle`. O `entrega.md` aponta para eles com links. PRs que incluam arquivos além do `entrega.md` na pasta de entrega são bloqueados automaticamente.
 
-Trabalhe no seu fork do `implement_Moodle`. Commite os arquivos do projeto (módulos Terraform, `user_data.sh`, `docs/architecture-design.md`, `.env.example` atualizado, etc.) diretamente no fork.
+### 1. Trabalhar e evidenciar no fork do projeto
+
+Todo o trabalho fica no seu fork do `implement_Moodle`:
 
 ```bash
 cd implement_Moodle
 git checkout -b feature/terraform-aws
-# ... desenvolva os módulos e documentação ...
-git add docs/architecture-design.md terraform/ docker/ .gitignore README.md
+# desenvolva os módulos, user_data.sh, architecture-design.md,
+# .kiro/specs/, screenshots/, etc.
+git add .
 git commit -m "feat: infraestrutura terraform aws e documento de arquitetura"
 git push origin feature/terraform-aws
 ```
 
-### 2. Registrar entrega no repositório da disciplina
+**Onde ficam as evidências no fork:**
+- Screenshots → pasta `screenshots/` ou `docs/img/` no fork
+- Spec do Kiro → `.kiro/specs/<nome-do-modulo>/` no fork
+- Documento de arquitetura → `docs/architecture-design.md` no fork
+- Resultado do `pytest -v` → screenshot linkado a partir do `entrega.md`
 
-Crie a pasta `entregas/provaSegundoBi/SEU-RA/` no fork do repositório da disciplina, adicione somente o arquivo `entrega.md` (modelo abaixo) e abra um Pull Request.
+### 2. Registrar apenas o `entrega.md` no repositório da disciplina
+
+Crie a pasta `entregas/provaSegundoBi/SEU-RA/` no fork **deste repositório da disciplina**, adicione somente o `entrega.md` com os links para o fork do projeto, e abra um Pull Request.
 
 ```bash
 cd /caminho/para/fork-da-disciplina
 git checkout -b prova2/SEU-RA
 mkdir -p entregas/provaSegundoBi/SEU-RA
-# Crie o entrega.md com o modelo abaixo
+# Crie o entrega.md com o modelo abaixo — apenas links, sem copiar arquivos
 git add entregas/provaSegundoBi/SEU-RA/entrega.md
 git commit -m "feat(prova2): entrega - SEU NOME (RA: SEU-RA)"
 git push -u origin prova2/SEU-RA
@@ -209,6 +218,8 @@ git push -u origin prova2/SEU-RA
 
 ### Modelo de `entrega.md`
 
+> **Lembre-se:** este arquivo vai **somente** no repositório da disciplina. As evidências (screenshots, código, Terraform, Spec do Kiro) ficam no fork do `implement_Moodle` — aqui você coloca apenas os links para elas.
+
 ```markdown
 # Entrega — Prova do Segundo Bimestre (Parte Prática)
 
@@ -219,45 +230,43 @@ git push -u origin prova2/SEU-RA
 ## Fork do Desafio
 
 - URL do fork: https://github.com/SEU-USUARIO/implement_Moodle
-- Branch principal com a solução: main (ou indicar branch)
+- Branch principal com a solução: [main ou nome da branch]
+- Commit final: https://github.com/SEU-USUARIO/implement_Moodle/commit/HASH
 
 ## Evidências
 
+> Todas as evidências (screenshots, código, documentos) estão no fork acima.
+> Coloque aqui os links diretos para cada uma.
+
 ### Entregável 1 — Docker Local
-- [ ] Moodle acessível em localhost:8080 (screenshot anexado ou link)
+- [ ] Screenshot do Moodle em localhost:8080: [link no fork]
 
 ### Entregável 2 — Terraform
-- [ ] Módulo `networking` implementado
-- [ ] Módulo `compute` implementado (com `user_data.sh`)
-- [ ] Módulo `database` implementado (RDS privado)
-- [ ] `terraform validate` passou (screenshot)
-- [ ] `terraform plan` executado sem erros (screenshot)
+- [ ] Módulo `networking`: [link para pasta no fork]
+- [ ] Módulo `compute` (com `user_data.sh`): [link para pasta no fork]
+- [ ] Módulo `database` (RDS privado): [link para pasta no fork]
+- [ ] Screenshot `terraform validate`: [link no fork]
+- [ ] Screenshot `terraform plan` sem erros: [link no fork]
 
 ### Entregável 3 — Documento de Arquitetura
-- [ ] `docs/architecture-design.md` presente no fork
-- [ ] Diagrama incluído
-- [ ] Justificativas de segurança documentadas
-- [ ] Estimativa de custo incluída
+- [ ] `docs/architecture-design.md`: [link direto no fork]
 
 ### Entregável 4 — CI/CD
-- [ ] `terraform-plan.yml` implementado
-- [ ] Workflow executando com sucesso na PR (screenshot ou link da execução)
+- [ ] `terraform-plan.yml`: [link para o arquivo no fork]
+- [ ] Screenshot ou link da execução no GitHub Actions: [link]
 
 ### Entregável 5 — Kiro e Kiro Workflows
-- [ ] Spec do Kiro criada em `.kiro/specs/<modulo>/` (link para a pasta no fork)
-- [ ] Screenshot do Kiro Workflow em execução ou concluído
-- [ ] Descrição do que o workflow fez e como contribuiu para o resultado
+- [ ] Spec do Kiro em `.kiro/specs/`: [link para a pasta no fork]
+- [ ] Screenshot do Kiro Workflow: [link no fork]
+- [ ] Descrição: [o que o workflow fez e como contribuiu — 2 a 5 linhas]
 
 ### Entregável 6 — Organização
-- [ ] `.gitignore` cobrindo arquivos sensíveis
-- [ ] `README.md` atualizado
-- [ ] Commits semânticos
-- [ ] Nenhuma credencial nos commits (`git log` sem segredos)
-- [ ] `pytest -v` passando (screenshot)
+- [ ] Screenshot `pytest -v` passando: [link no fork]
+- [ ] Commits semânticos presentes: [link para o histórico de commits no fork]
 
 ## Observações
 
-[Descreva dificuldades encontradas, decisões de arquitetura ou pontos que merecem atenção do professor]
+[Dificuldades encontradas, decisões de arquitetura ou pontos que merecem atenção do professor]
 
 ## Ferramentas de IA utilizadas
 
@@ -294,18 +303,23 @@ git push -u origin prova2/SEU-RA
 
 ## Checklist Final do Aluno
 
-- [ ] Fork do `implement_Moodle` criado na minha conta GitHub.
+**No fork do `implement_Moodle` (repositório do projeto):**
+- [ ] Fork criado na minha conta GitHub.
 - [ ] Moodle rodando localmente com `docker compose up -d`.
 - [ ] Módulos Terraform `networking`, `compute` e `database` implementados.
 - [ ] `terraform validate` e `terraform plan` executam sem erros.
 - [ ] `docs/architecture-design.md` presente com diagrama e justificativas.
-- [ ] Workflow `terraform-plan.yml` implementado e executando na PR.
+- [ ] Workflow `terraform-plan.yml` implementado e executando na PR do fork.
 - [ ] Kiro Spec criada em `.kiro/specs/` para um dos módulos Terraform.
-- [ ] Screenshot do Kiro Workflow evidenciando uso real da ferramenta.
+- [ ] Screenshots do Kiro Workflow e demais evidências salvas no fork.
 - [ ] `.gitignore` cobrindo `.env`, estado Terraform e arquivos sensíveis.
 - [ ] Nenhuma credencial ou senha nos commits.
 - [ ] `pytest -v` passando na pasta `tests/`.
-- [ ] `entrega.md` preenchido com links e evidências de todos os entregáveis.
-- [ ] Pull Request aberto no repositório da disciplina em `entregas/provaSegundoBi/SEU-RA/`.
+
+**No fork do repositório da disciplina (apenas o `entrega.md`):**
+- [ ] Pasta `entregas/provaSegundoBi/SEU-RA/` criada.
+- [ ] `entrega.md` preenchido com **links** para todas as evidências no fork do projeto.
+- [ ] Nenhum screenshot, código ou arquivo de evidência anexado diretamente aqui.
+- [ ] Pull Request aberto com título `[Prova P2] RA: SEU-RA - SEU NOME`.
 
 Boa prova! Mostre o que aprendeu: infraestrutura segura, pipeline automatizado e documentação clara.
