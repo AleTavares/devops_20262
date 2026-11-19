@@ -71,3 +71,15 @@ provas/prova-exame-modelo-a.md
 provas/prova-exame-modelo-b.md
 provas/prova-exame-modelo-c.md
 provas/gabarito-exame.md
+
+# Provas substitutivas de exame
+provas/prova-substitutiva-exame-modelo-a.md
+provas/prova-substitutiva-exame-modelo-b.md
+provas/prova-substitutiva-exame-modelo-c.md
+provas/gabarito-substitutiva-exame.md
+
+# Proteção genérica: qualquer prova ou gabarito futuro
+provas/prova-*.md
+provas/gabarito-*.md
+provas/*.csv
+
