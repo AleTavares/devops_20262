@@ -11,9 +11,8 @@
 
 ## O que foi feito nesta aula
 
-[Descreva em 5 a 15 linhas o que você avançou no projeto.
-Inclua: o que tentou, o que funcionou, o que ainda não está pronto e qual é o próximo passo.]
+criei a estrutura terraform que sobre o docker na aws.
 
 ## Dificuldades encontradas
 
-[Descreva pelo menos uma dificuldade técnica ou conceitual que encontrou e como abordou o problema.]
+subir pra aws da muito erro, mas com insistência uma hora vai.
