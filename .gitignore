@@ -83,3 +83,6 @@ provas/prova-*.md
 provas/gabarito-*.md
 provas/*.csv
 
+# Exceção: prova prática do segundo bimestre é pública (enunciado para os alunos)
+!provas/prova-segundo-bimestre-pratica.md
+
