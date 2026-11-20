@@ -1,0 +1,26 @@
+# Terraform - nunca versionar estado ou lock
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Arquivos de variáveis com valores sensíveis
+*.tfvars
+*.tfvars.json
+
+# Credenciais AWS Academy (NUNCA versionar)
+aws-creds.sh
+
+# Chaves SSH privadas
+*.pem
+*.key
+*-private-key.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Evidências geradas localmente (commitar apenas as que quiser publicar)
+terraform-plan-output.txt
+evidencia-*.txt
+evidencia-*.json
