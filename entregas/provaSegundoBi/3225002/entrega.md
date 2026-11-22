@@ -51,6 +51,8 @@ Duas decisões que mudam o comportamento:
 - o step do `plan` usa `continue-on-error: true` para que o comentário seja postado mesmo quando o plan falha, e um step final `if: steps.plan.outcome == 'failure'` faz `exit 1`. Sem essa separação, um plan com erro abortaria o job antes de comentar, e o aluno não veria o motivo na PR.
 - o comentário é truncado em 60.000 caracteres preservando o **fim** do plan, não o começo, porque é no fim que o Terraform imprime o erro e o resumo.
 
+> **Nota sobre o último run da PR estar vermelho:** as credenciais do Learner Lab duram 4 horas, e os secrets `AWS_*` do repositório foram gravados em 13/11. Qualquer run disparado depois disso falha no step `Configurar credenciais AWS` com o token expirado — e falha com `exit code != 0`, que é precisamente o comportamento pedido no enunciado. O run verde com o plan comentado na PR é o [44427098249](https://github.com/zzin742/implement_Moodle/actions/runs/44427098249), feito enquanto a sessão estava válida, e é ele que o screenshot mostra.
+
 ### Entregável 5 — Kiro e Kiro Workflows
 
 - [x] Spec do Kiro: [.kiro/specs/networking/](https://github.com/zzin742/implement_Moodle/tree/ci/verifica-plan-na-pr/.kiro/specs/networking) — `requirements.md`, `design.md` e `tasks.md`, com 40 das 51 tarefas marcadas como concluídas
