@@ -88,7 +88,7 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
 <h1 id="aula-10--terraform-automatizado-e-cd-pipelines">Aula 10 — Terraform Automatizado e CD Pipelines</h1>
 <p><strong>DevOps — Centro Universitário UniFAAT</strong><br />
 Prof. Alexandre Tavares | Semestre 2026-2</p>
@@ -174,22 +174,22 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="o-problema-da-technova">O Problema da TechNova</h1>
-<p>Na Aula 09, a imagem já é publicada no <strong>Amazon ECR</strong>. Mas Rafael e Carlos ainda têm dor de cabeça:</p>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="onde-estamos-na-jornada">Onde estamos na jornada</h1>
+<ul>
+<li>Aulas 03–06: Terraform provisionando infra <img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/></li>
+<li>Aula 08–09: CI/CD com GitHub Actions + imagem no ECR <img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/></li>
+<li><strong>Aula 10: unir tudo — infra e deploy virando código revisável</strong></li>
+</ul>
+<p><strong>Dois problemas que ainda existem na TechNova:</strong></p>
 <blockquote>
-<p><strong>Rafael:</strong> &quot;Toda mudança de infra eu rodo <code>terraform plan</code> no laptop, mando o output no Slack e rodo <code>apply</code> na mão. Um dia vou errar e derrubar produção.&quot;</p>
+<p>&quot;Toda mudança de infra eu rodo <code>terraform plan</code> no laptop e mando o output no Slack. Um dia vou errar e derrubar produção.&quot; — <strong>Rafael</strong></p>
 </blockquote>
 <blockquote>
-<p><strong>Carlos:</strong> &quot;E o deploy também é manual: SSH no servidor, para o container, pull, sobe. Se o Rafael tira férias, ninguém deploya.&quot;</p>
+<p>&quot;O deploy ainda é manual: SSH, para o container, sobe. Se eu tirar férias, ninguém deploya.&quot; — <strong>Carlos</strong></p>
 </blockquote>
-<p><strong>Dois problemas a resolver hoje:</strong></p>
-<ol>
-<li>Terraform manual — sem auditoria, sem review formal, risco de erro humano</li>
-<li>Deploy manual — depende de uma pessoa específica fazer SSH no servidor</li>
-</ol>
 <blockquote>
-<p><strong>Solução:</strong> <strong>GitOps</strong> (plan no PR, apply no merge) + um <strong>pipeline CD</strong> que deploya sozinho a cada merge.</p>
+<p><strong>Hoje resolvemos os dois com o mesmo princípio: Git como fonte da verdade.</strong></p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -273,22 +273,20 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="objetivos-de-aprendizagem">Objetivos de Aprendizagem</h1>
-<h3 id="terraform-gitops">Terraform GitOps</h3>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="o-problema-terraform-manual">O Problema: Terraform Manual</h1>
+<p><img src="img/rd001.png" alt="Problema atual — Terraform manual na TechNova" /></p>
+<p>Sem automação, qualquer desenvolvedor:</p>
 <ul>
-<li>Gerenciar infraestrutura via <strong>Pull Requests</strong> (Git = fonte da verdade)</li>
-<li><code>terraform plan</code> automático postado como <strong>comentário no PR</strong></li>
-<li><code>terraform apply</code> automático no <strong>merge</strong> para <code>main</code></li>
-<li>Autenticar o Actions na AWS com as <strong>credenciais de sessão do Learner Lab</strong></li>
+<li>Aplica infra <strong>sem review formal</strong> (Slack não é aprovação)</li>
+<li>Usa credenciais locais — se o laptop sumir, some o acesso</li>
+<li>Não deixa <strong>rastro auditável</strong> de quem mudou o quê e quando</li>
+<li>Pode divergir o estado real da infra do que está no repositório</li>
 </ul>
-<h3 id="cd-pipelines">CD Pipelines</h3>
-<ul>
-<li>Diferenciar <strong>Continuous Delivery</strong> de <strong>Continuous Deployment</strong></li>
-<li>Construir o pipeline unificado <strong>CI → Build → Push → Deploy</strong></li>
-<li>Aplicar a estratégia <strong>Recreate</strong> (stop → pull → start) via SSH</li>
-<li>Configurar <strong>health check</strong> pós-deploy e <strong>rollback</strong> manual</li>
-</ul>
+<blockquote>
+<p><strong>A pergunta certa:</strong> &quot;O repositório Git reflete o que está na AWS agora?&quot;<br />
+Com Terraform manual, a resposta honesta é: &quot;Talvez.&quot;</p>
+</blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
@@ -371,18 +369,39 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="o-problema-terraform-manual">O Problema: Terraform Manual</h1>
-<p><img src="img/rd001.png" alt="Fluxo manual de Terraform na TechNova" /></p>
-<p><strong>Riscos:</strong></p>
-<ul>
-<li>Qualquer dev roda <code>apply</code> sem review</li>
-<li>State local pode divergir do remoto</li>
-<li>Sem auditoria (quem aplicou o quê e quando)</li>
-<li>Credenciais AWS no laptop do dev</li>
-</ul>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="gitops--git-como-fonte-da-verdade">GitOps — Git como Fonte da Verdade</h1>
+<p><strong>GitOps</strong> é o princípio de que toda mudança de infraestrutura passa pelo Git — e o Git é sempre a verdade sobre o que deve existir.</p>
+<p><img src="img/rd002.png" alt="GitOps para infraestrutura" /></p>
+<p><strong>A mudança de mentalidade:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Antes (Terraform Manual)</th>
+<th>Depois (GitOps)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dev executa <code>apply</code> localmente</td>
+<td>Só o pipeline executa <code>apply</code></td>
+</tr>
+<tr>
+<td>Review informal no Slack</td>
+<td>PR com output do plan para revisar</td>
+</tr>
+<tr>
+<td>Sem histórico de quem aplicou</td>
+<td>Git log = auditoria completa</td>
+</tr>
+<tr>
+<td>Credenciais no laptop</td>
+<td>Credenciais no GitHub Secrets</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p>Review informal &quot;no chat&quot; <strong>não é</strong> revisão de infraestrutura.</p>
+<p>&quot;Toda mudança de infra passa pelo mesmo fluxo de uma mudança de código.&quot;</p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -466,17 +485,19 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="gitops-para-infraestrutura">GitOps para Infraestrutura</h1>
-<p><strong>O repositório Git é a fonte da verdade.</strong> Toda mudança vira um PR.</p>
-<p><img src="img/rd002.png" alt="Fluxo GitOps: PR dispara plan, review, merge aplica" /></p>
-<p><strong>Benefícios:</strong></p>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="gitops-na-pr%C3%A1tica-plan-on-pr">GitOps na Prática: Plan on PR</h1>
+<p>Ao abrir um PR com mudanças nos arquivos <code>.tf</code>, o pipeline roda <code>terraform plan</code> e posta o output <strong>direto no PR como comentário</strong>:</p>
+<p><img src="img/rd004.png" alt="Terraform plan postado como comentário no PR" /></p>
+<p>O reviewer agora pode responder perguntas concretas:</p>
 <ul>
-<li>Nenhum humano executa Terraform diretamente</li>
-<li>Toda mudança tem review obrigatório</li>
-<li>Histórico completo no Git</li>
-<li>Rollback = <code>revert</code> do commit</li>
+<li>Esta mudança vai criar, alterar ou <strong>destruir</strong> o quê?</li>
+<li>O custo vai aumentar?</li>
+<li>Faz sentido para o que foi pedido?</li>
 </ul>
+<blockquote>
+<p><strong>O plan no PR é o diff de infraestrutura — tão importante quanto o diff de código.</strong></p>
+</blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
@@ -559,22 +580,18 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="autentica%C3%A7%C3%A3o-github-%E2%86%92-aws">Autenticação GitHub → AWS</h1>
-<p><img src="img/rd003.png" alt="Autenticação do GitHub Actions na AWS com credenciais de sessão do Learner Lab" /></p>
-<p><strong>Produção (ideal):</strong> OIDC + role IAM — token temporário, <strong>sem chave armazenada</strong>.</p>
-<p><strong>Learner Lab:</strong> OIDC <strong>não é permitido</strong> (não cria OIDC provider nem role IAM).<br />
-→ Usamos as <strong>3 credenciais temporárias de sessão</strong> como GitHub Secrets.</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-yaml"><span class="hljs-comment"># No Learner Lab:</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">aws-actions/configure-aws-credentials@v4</span>
-  <span class="hljs-attr">with:</span>
-    <span class="hljs-attr">aws-access-key-id:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.AWS_ACCESS_KEY_ID</span> <span class="hljs-string">}}</span>
-    <span class="hljs-attr">aws-secret-access-key:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.AWS_SECRET_ACCESS_KEY</span> <span class="hljs-string">}}</span>
-    <span class="hljs-attr">aws-session-token:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.AWS_SESSION_TOKEN</span> <span class="hljs-string">}}</span>   <span class="hljs-comment"># Lab exige</span>
-    <span class="hljs-attr">aws-region:</span> <span class="hljs-string">us-east-1</span>
-</code></pre>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="gitops-na-pr%C3%A1tica-apply-on-merge">GitOps na Prática: Apply on Merge</h1>
+<p>Depois que o PR é aprovado e mergeado, o pipeline roda <code>terraform apply</code> automaticamente.</p>
+<p><img src="img/rd005.png" alt="Fluxo completo GitOps: PR → plan → review → merge → apply" /></p>
+<p><strong>Por que isso funciona:</strong></p>
+<ul>
+<li>O merge na main <strong>é</strong> a aprovação — não precisa de outro passo</li>
+<li>O apply usa as credenciais do pipeline, não do laptop de ninguém</li>
+<li>Se der errado, o <code>revert</code> do commit é o rollback de infraestrutura</li>
+</ul>
 <blockquote>
-<p><strong><img class="emoji" draggable="false" alt="☁️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2601.svg" data-marp-twemoji=""/> As credenciais do Lab expiram por sessão</strong> — atualize os secrets ao reabrir o Lab. Em produção, OIDC elimina esse trabalho e os secrets de credencial.</p>
+<p><strong>O Git vira o &quot;botão de aprovação&quot; da infra.</strong></p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -658,16 +675,25 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="plan-como-coment%C3%A1rio-no-pr">Plan como Comentário no PR</h1>
-<p>O output do <code>terraform plan</code> é postado direto no PR, para review:</p>
-<p><img src="img/rd004.png" alt="Terraform plan postado como comentário no Pull Request" /></p>
-<p>O reviewer avalia <strong>antes</strong> do merge:</p>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="autentica%C3%A7%C3%A3o-github-actions-%E2%86%92-aws">Autenticação: GitHub Actions → AWS</h1>
+<p><strong>Como o pipeline se autentica na AWS para rodar o Terraform?</strong></p>
+<p><img src="img/rd003.png" alt="Autenticação do Actions na AWS" /></p>
+<p><strong>Produção (ideal): OIDC + role IAM</strong></p>
 <ul>
-<li>&quot;Faz sentido criar esse security group?&quot;</li>
-<li>&quot;O <code>instance_type</code> mudou — aumenta custo?&quot;</li>
-<li>&quot;Vai <strong>destruir</strong> um recurso? É intencional?&quot;</li>
+<li>Nenhuma chave armazenada em lugar nenhum</li>
+<li>Token gerado na hora, válido por minutos</li>
+<li>Segurança máxima, zero manutenção</li>
 </ul>
+<p><strong>Learner Lab: credenciais de sessão</strong></p>
+<ul>
+<li>OIDC <strong>não está disponível</strong> no Learner Lab (requer criar OIDC provider e roles IAM — ambos bloqueados)</li>
+<li>Usamos as 3 credenciais temporárias da sessão como GitHub Secrets</li>
+<li>Funcionam, mas <strong>expiram</strong> quando a sessão do Lab fecha</li>
+</ul>
+<blockquote>
+<p>A diferença entre produção e Lab não é de conceito — é de permissão disponível.</p>
+</blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
@@ -750,11 +776,43 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="fluxo-gitops-pr-%E2%86%92-plan-%E2%86%92-merge-%E2%86%92-apply">Fluxo GitOps: PR → Plan → Merge → Apply</h1>
-<p><img src="img/rd005.png" alt="Fluxo completo: PR dispara plan, review aprova, merge aplica" /></p>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="continuous-delivery-vs-continuous-deployment">Continuous Delivery vs Continuous Deployment</h1>
+<p>São dois pontos diferentes na escala de automação:</p>
+<p><img src="img/rd006.png" alt="Continuous Delivery vs Continuous Deployment" /></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Continuous Delivery</strong></th>
+<th><strong>Continuous Deployment</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>O que é</strong></td>
+<td>Sempre pronto para deployar</td>
+<td>Deploya automaticamente</td>
+</tr>
+<tr>
+<td><strong>Aprovação</strong></td>
+<td>Botão manual antes do deploy</td>
+<td>Nenhuma — todo merge vai</td>
+</tr>
+<tr>
+<td><strong>Ideal para</strong></td>
+<td>Compliance, releases planejados</td>
+<td>SaaS, startups, iteração rápida</td>
+</tr>
+<tr>
+<td><strong>Lema</strong></td>
+<td>&quot;Posso deployar quando quiser&quot;</td>
+<td>&quot;Todo commit testado vai pra prod&quot;</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p><code>-auto-approve</code> é seguro aqui: o plan já foi revisado no PR e o merge <strong>é</strong> a aprovação.</p>
+<p><strong>Na TechNova:</strong> começamos com <strong>Continuous Deployment</strong> — simples, eficiente, sem cerimônia desnecessária para uma startup.</p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -838,37 +896,18 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="continuous-delivery-vs-deployment">Continuous Delivery vs Deployment</h1>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Delivery</strong></th>
-<th><strong>Deployment</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Deploy em prod</td>
-<td><strong>Aprovação manual</strong> (botão)</td>
-<td><strong>Automático</strong> após checks</td>
-</tr>
-<tr>
-<td>Lema</td>
-<td>&quot;Posso deployar quando quiser&quot;</td>
-<td>&quot;Todo commit testado vai pra prod&quot;</td>
-</tr>
-<tr>
-<td>Ideal para</td>
-<td>Compliance, releases planejados</td>
-<td>SaaS, iteração rápida</td>
-</tr>
-</tbody>
-</table>
-<p><img src="img/rd006.png" alt="Continuous Delivery vs Continuous Deployment" /></p>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="pipeline-unificado-ci-%E2%86%92-build-%E2%86%92-push-%E2%86%92-deploy">Pipeline Unificado: CI → Build → Push → Deploy</h1>
+<p>Tudo em um único fluxo acionado pelo push na <code>main</code>:</p>
+<p><img src="img/rd007.png" alt="Pipeline unificado da TechNova" /></p>
+<p><strong>Cada job tem uma responsabilidade clara:</strong></p>
+<ul>
+<li><strong>lint / test</strong> — o código está correto?</li>
+<li><strong>build-push</strong> — gera e publica a imagem no ECR</li>
+<li><strong>deploy</strong> — coloca a nova versão no ar na EC2</li>
+</ul>
 <blockquote>
-<p><strong>Na TechNova:</strong> começamos com <strong>Continuous Deployment</strong> — merge na main deploya sozinho. Simples e eficiente para uma startup.</p>
+<p>Se qualquer etapa falhar, o deploy não acontece. A EC2 fica na versão anterior.</p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -952,40 +991,20 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="pipeline-unificado-ci-%E2%86%92-build-%E2%86%92-push-%E2%86%92-deploy">Pipeline Unificado: CI → Build → Push → Deploy</h1>
-<p><img src="img/rd007.png" alt="Pipeline unificado: lint, test, build, push ECR e deploy" /></p>
-<table>
-<thead>
-<tr>
-<th>Job</th>
-<th>Depende de</th>
-<th>Função</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>lint</code></td>
-<td>—</td>
-<td>Qualidade do código</td>
-</tr>
-<tr>
-<td><code>test</code></td>
-<td>lint</td>
-<td>Testes (só se lint passar)</td>
-</tr>
-<tr>
-<td><code>build-push</code></td>
-<td>lint, test</td>
-<td>Login ECR + build + push</td>
-</tr>
-<tr>
-<td><code>deploy</code></td>
-<td>build-push</td>
-<td>SSH + login ECR + Recreate</td>
-</tr>
-</tbody>
-</table>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="estrat%C3%A9gias-de-deploy">Estratégias de Deploy</h1>
+<p>Existem diferentes formas de trocar uma versão por outra. A escolha impacta <strong>downtime</strong>, <strong>complexidade</strong> e <strong>custo</strong>.</p>
+<p><img src="img/rd008.png" alt="Estratégia Recreate" /></p>
+<p><strong>Recreate (hoje):</strong><br />
+Para o container antigo → sobe o novo → downtime de segundos.<br />
+Simples, sem infraestrutura extra. Aceitável para startups.</p>
+<p><strong>Blue-Green (próxima aula):</strong><br />
+Mantém duas versões simultâneas → troca o tráfego instantaneamente → zero downtime.</p>
+<p><strong>Canary (aula seguinte):</strong><br />
+Envia 10% do tráfego para a nova versão → valida → escala gradualmente → zero risco.</p>
+<blockquote>
+<p><strong>Cada estratégia é uma troca entre complexidade, custo e disponibilidade.</strong></p>
+</blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
@@ -1068,13 +1087,23 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="estrat%C3%A9gia-de-deploy-recreate">Estratégia de Deploy: Recreate</h1>
-<p><img src="img/rd008.png" alt="Estratégia Recreate: para o container antigo, puxa e sobe o novo (com downtime)" /></p>
-<p><strong>Prós:</strong> simples, sem conflito de portas, sem load balancer, estado limpo.<br />
-<strong>Contras:</strong> <strong>downtime inevitável</strong> (segundos a minutos), ruim para SLA rigoroso.</p>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="por-que-health-check-p%C3%B3s-deploy">Por que Health Check pós-deploy?</h1>
+<p>O pipeline não termina no <code>docker run</code>. Ele verifica se a aplicação <strong>realmente funciona</strong>:</p>
+<p><strong>O que pode acontecer sem health check:</strong></p>
+<ul>
+<li>Container sobe, mas a app trava por variável de ambiente errada</li>
+<li>Porta configurada diferente do esperado</li>
+<li>Bug só aparece em produção (config de prod diferente)</li>
+</ul>
+<p><strong>Com health check:</strong></p>
+<ul>
+<li>O pipeline fica tentando por até 2 minutos</li>
+<li>Se a app não responder, o job falha e o time é notificado</li>
+<li>A EC2 fica com a versão anterior rodando (o container novo falhou)</li>
+</ul>
 <blockquote>
-<p><strong>Quando usar:</strong> apps internas, staging, MVPs e startups que aceitam segundos de downtime.</p>
+<p><strong>&quot;Deployou&quot; e &quot;está funcionando&quot; são coisas diferentes.</strong></p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -1158,25 +1187,23 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="deploy-via-ssh--login-no-ecr-antes-do-pull">Deploy via SSH — login no ECR antes do pull</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-yaml"><span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">appleboy/ssh-action@v1</span>
-  <span class="hljs-attr">with:</span>
-    <span class="hljs-attr">host:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.EC2_HOST</span> <span class="hljs-string">}}</span>
-    <span class="hljs-attr">username:</span> <span class="hljs-string">ubuntu</span>
-    <span class="hljs-attr">key:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.EC2_SSH_KEY</span> <span class="hljs-string">}}</span>
-    <span class="hljs-attr">script:</span> <span class="hljs-string">|
-      REGISTRY=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
-      aws ecr get-login-password --region us-east-1 \
-        | docker login --username AWS --password-stdin &quot;$REGISTRY&quot;
-      docker pull &quot;$REGISTRY/technova-api:latest&quot;
-      docker stop technova-api || true
-      docker rm technova-api || true
-      docker run -d --name technova-api -p 3000:3000 \
-        --restart unless-stopped &quot;$REGISTRY/technova-api:latest&quot;
-</span></code></pre>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="rollback-por-que-imagens-versionadas-importam">Rollback: por que imagens versionadas importam</h1>
+<p>No pipeline, cada commit gera uma imagem com <strong>tag única</strong> (o SHA do commit).</p>
+<p><strong>Sem tags versionadas:</strong></p>
+<ul>
+<li>Só existe <code>latest</code></li>
+<li>Rollback = redeployar <code>latest</code> = mesma versão com problema</li>
+<li>Impossível voltar para &quot;a versão de quinta-feira&quot;</li>
+</ul>
+<p><strong>Com tags versionadas (SHA):</strong></p>
+<ul>
+<li>Cada imagem = um momento específico no tempo</li>
+<li>Rollback = trocar para uma tag anterior conhecida</li>
+<li>Rastreabilidade completa: commit no Git ↔ imagem no ECR ↔ deploy na EC2</li>
+</ul>
 <blockquote>
-<p>O <code>|| true</code> evita erro no primeiro deploy (container ainda não existe). O <strong>login no ECR vem antes</strong> do <code>docker pull</code>.</p>
+<p><strong>As estratégias avançadas (Blue-Green, Canary) dependem de imagens versionadas. A tag SHA é a fundação.</strong></p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -1260,24 +1287,44 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="health-check-p%C3%B3s-deploy">Health Check Pós-Deploy</h1>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-yaml"><span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Health</span> <span class="hljs-string">Check</span>
-  <span class="hljs-attr">run:</span> <span class="hljs-string">|
-    for i in $(seq 1 30); do
-      if curl -s http://${{ secrets.EC2_HOST }}:3000/health | grep -q &quot;ok&quot;; then
-        echo &quot;<img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2705.svg" data-marp-twemoji=""/> Aplicação saudável!&quot;; exit 0
-      fi
-      echo &quot;Tentativa $i/30 - aguardando...&quot;; sleep 5
-    done
-    echo &quot;<img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/274c.svg" data-marp-twemoji=""/> Health check falhou&quot;; exit 1
-</span></code></pre>
-<p><strong>Por que importa:</strong></p>
-<ul>
-<li>Garante que o deploy não só &quot;rodou&quot;, mas está <strong>funcional</strong></li>
-<li>Detecta variável de ambiente errada, porta errada</li>
-<li>Se falhar → pipeline reporta erro → time é notificado</li>
-</ul>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="seguran%C3%A7a-do-pipeline">Segurança do Pipeline</h1>
+<table>
+<thead>
+<tr>
+<th>Preocupação</th>
+<th>Solução</th>
+<th>Por quê funciona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chave SSH exposta</td>
+<td>GitHub Secret</td>
+<td>Criptografada, mascarada nos logs</td>
+</tr>
+<tr>
+<td>Credenciais AWS permanentes</td>
+<td>Credenciais de sessão do Lab (temporárias)</td>
+<td>Expiram — janela de exposição mínima</td>
+</tr>
+<tr>
+<td>Qualquer branch deploya</td>
+<td>Só push na <code>main</code> dispara o deploy</td>
+<td>Branch protection + fluxo de PR</td>
+</tr>
+<tr>
+<td>Imagem não testada</td>
+<td>Build só acontece se lint e test passam</td>
+<td>Dependência entre jobs (<code>needs</code>)</td>
+</tr>
+<tr>
+<td>Deploy sem review</td>
+<td>PR obrigatório com plan como comentário</td>
+<td>GitOps — merge = aprovação</td>
+</tr>
+</tbody>
+</table>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
@@ -1360,19 +1407,22 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="rollback-manual-nesta-etapa">Rollback (manual nesta etapa)</h1>
-<p>Pré-requisito: <strong>imagens versionadas no ECR</strong> (tag SHA por commit).</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash">ssh ubuntu@EC2_HOST
-REGISTRY=&lt;ACCOUNT_ID&gt;.dkr.ecr.us-east-1.amazonaws.com
-aws ecr get-login-password --region us-east-1 \
-  | docker login --username AWS --password-stdin <span class="hljs-string">&quot;<span class="hljs-variable">$REGISTRY</span>&quot;</span>
-docker stop technova-api &amp;&amp; docker <span class="hljs-built_in">rm</span> technova-api
-docker run -d --name technova-api -p 3000:3000 \
-  --restart unless-stopped <span class="hljs-string">&quot;<span class="hljs-variable">$REGISTRY</span>/technova-api:sha-COMMIT_BOM&quot;</span>
-</code></pre>
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
+<h1 id="resumo-o-que-mudou-hoje-na-technova">Resumo: o que mudou hoje na TechNova</h1>
+<p><strong>Antes desta aula:</strong></p>
+<ul>
+<li>Terraform: laptop do Rafael, sem review, sem auditoria</li>
+<li>Deploy: SSH manual, depende de uma pessoa</li>
+</ul>
+<p><strong>Depois desta aula:</strong></p>
+<ul>
+<li>Toda mudança de infra → PR → plan como comentário → review → merge → apply</li>
+<li>Todo push na main → lint → test → build → push ECR → deploy EC2 → health check</li>
+<li>Git = auditoria completa de infra e deploy</li>
+<li>Rollback = tag SHA no ECR</li>
+</ul>
 <blockquote>
-<p><strong><img class="emoji" draggable="false" alt="💡" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f4a1.svg" data-marp-twemoji=""/> Nas próximas aulas (Blue-Green, Canary) o rollback será automatizado.</strong> Por agora, a tag SHA é o que torna o rollback possível e rastreável.</p>
+<p><strong>O próximo passo (Aula 11):</strong> eliminar o downtime do Recreate com Blue-Green Deploy.</p>
 </blockquote>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
@@ -1456,274 +1506,22 @@ section.title p { color: #ccc !important; }
 section.title strong { color: #F58220 !important; }
 footer { color: #888; font-size: 0.62em; }
 img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="seguran%C3%A7a-do-pipeline-de-deploy">Segurança do Pipeline de Deploy</h1>
-<table>
-<thead>
-<tr>
-<th>Preocupação</th>
-<th>Solução</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Chave SSH exposta</td>
-<td>GitHub Secret (criptografada)</td>
-</tr>
-<tr>
-<td>Acesso irrestrito à EC2</td>
-<td>SG libera SSH só do IP do runner</td>
-</tr>
-<tr>
-<td>Credenciais AWS</td>
-<td>Credenciais de sessão do Lab como secrets (prod: OIDC + role)</td>
-</tr>
-<tr>
-<td>Imagem comprometida</td>
-<td>Deploy só de imagens que passaram no CI</td>
-</tr>
-<tr>
-<td>Deploy não-autorizado</td>
-<td>Só push na main (merge requer aprovação)</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>As credenciais do Lab são <strong>temporárias</strong> — menor janela de exposição que uma access key permanente.</p>
-</blockquote>
-<footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 17px;
-  padding: 35px 48px 28px 48px;
-  color: #333333;
-}
-h1 {
-  color: #0D2B45;
-  border-bottom: 3px solid #F58220;
-  padding-bottom: 5px;
-  font-size: 1.45em;
-  margin-bottom: 8px;
-  margin-top: 0;
-}
-h2 { color: #1B3A5C; font-size: 1.2em; margin: 4px 0; }
-h3 { color: #2E86C1; font-size: 0.98em; margin: 4px 0; }
-p, li { margin: 2px 0; line-height: 1.35; }
-ul, ol { margin: 3px 0; padding-left: 18px; }
-strong { color: #F58220; }
-pre { margin: 4px 0; font-size: 0.72em; line-height: 1.25; }
-code { background-color: #e8eef4; color: #1B3A5C; font-size: 0.82em; padding: 1px 4px; }
-pre code { font-size: 1em; padding: 0; }
-table { font-size: 0.82em; width: 100%; margin: 4px 0; border-collapse: collapse; }
-table th { background-color: #1B3A5C; color: white; padding: 3px 7px; }
-table td { padding: 2px 7px; border-bottom: 1px solid #ddd; }
-blockquote { font-size: 0.88em; border-left: 4px solid #F58220; padding-left: 10px; margin: 4px 0; color: #555; }
-section.title {
-  background-color: #1B3A5C;
-  color: white !important;
-  text-align: center;
-  justify-content: center;
-  padding: 60px;
-}
-section.title h1 { color: #F58220 !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
-section.title h2 { color: #F58220 !important; font-size: 1.3em; }
-section.title h3 { color: #ccc !important; }
-section.title p { color: #ccc !important; }
-section.title strong { color: #F58220 !important; }
-footer { color: #888; font-size: 0.62em; }
-img { max-height: 340px; display: block; margin: 6px auto; }
-" lang="POSIX" data-marpit-pagination="16" style="--paginate:true;--background-color:#F5F7FA;--footer:DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares;--style:section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 17px;
-  padding: 35px 48px 28px 48px;
-  color: #333333;
-}
-h1 {
-  color: #0D2B45;
-  border-bottom: 3px solid #F58220;
-  padding-bottom: 5px;
-  font-size: 1.45em;
-  margin-bottom: 8px;
-  margin-top: 0;
-}
-h2 { color: #1B3A5C; font-size: 1.2em; margin: 4px 0; }
-h3 { color: #2E86C1; font-size: 0.98em; margin: 4px 0; }
-p, li { margin: 2px 0; line-height: 1.35; }
-ul, ol { margin: 3px 0; padding-left: 18px; }
-strong { color: #F58220; }
-pre { margin: 4px 0; font-size: 0.72em; line-height: 1.25; }
-code { background-color: #e8eef4; color: #1B3A5C; font-size: 0.82em; padding: 1px 4px; }
-pre code { font-size: 1em; padding: 0; }
-table { font-size: 0.82em; width: 100%; margin: 4px 0; border-collapse: collapse; }
-table th { background-color: #1B3A5C; color: white; padding: 3px 7px; }
-table td { padding: 2px 7px; border-bottom: 1px solid #ddd; }
-blockquote { font-size: 0.88em; border-left: 4px solid #F58220; padding-left: 10px; margin: 4px 0; color: #555; }
-section.title {
-  background-color: #1B3A5C;
-  color: white !important;
-  text-align: center;
-  justify-content: center;
-  padding: 60px;
-}
-section.title h1 { color: #F58220 !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
-section.title h2 { color: #F58220 !important; font-size: 1.3em; }
-section.title h3 { color: #ccc !important; }
-section.title p { color: #ccc !important; }
-section.title strong { color: #F58220 !important; }
-footer { color: #888; font-size: 0.62em; }
-img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
-<h1 id="resumo-dos-conceitos">Resumo dos Conceitos</h1>
-<table>
-<thead>
-<tr>
-<th>Conceito</th>
-<th>Descrição</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GitOps</td>
-<td>Git como fonte da verdade — PR = change request</td>
-</tr>
-<tr>
-<td>Plan on PR / Apply on Merge</td>
-<td>Plan vira comentário; merge dispara apply</td>
-</tr>
-<tr>
-<td>Credenciais de sessão do Lab</td>
-<td>3 secrets temporários (key id, secret, session token)</td>
-</tr>
-<tr>
-<td>OIDC</td>
-<td>Ideal em produção (sem chaves); <strong>indisponível no Lab</strong></td>
-</tr>
-<tr>
-<td>Continuous Delivery / Deployment</td>
-<td>Humano aprova / deploy automático</td>
-</tr>
-<tr>
-<td>Pipeline unificado</td>
-<td>CI → Build → Push (ECR) → Deploy</td>
-</tr>
-<tr>
-<td>Recreate</td>
-<td>Para antigo, sobe novo (com downtime)</td>
-</tr>
-<tr>
-<td>Login ECR no deploy</td>
-<td><code>aws ecr get-login-password</code> antes do <code>docker pull</code></td>
-</tr>
-<tr>
-<td>Health check</td>
-<td>Verifica se a app responde após o deploy</td>
-</tr>
-<tr>
-<td>Rollback</td>
-<td>Voltar à tag SHA anterior (manual nesta etapa)</td>
-</tr>
-</tbody>
-</table>
-<footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-background-color="#F5F7FA" data-footer="DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares" data-style="section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 17px;
-  padding: 35px 48px 28px 48px;
-  color: #333333;
-}
-h1 {
-  color: #0D2B45;
-  border-bottom: 3px solid #F58220;
-  padding-bottom: 5px;
-  font-size: 1.45em;
-  margin-bottom: 8px;
-  margin-top: 0;
-}
-h2 { color: #1B3A5C; font-size: 1.2em; margin: 4px 0; }
-h3 { color: #2E86C1; font-size: 0.98em; margin: 4px 0; }
-p, li { margin: 2px 0; line-height: 1.35; }
-ul, ol { margin: 3px 0; padding-left: 18px; }
-strong { color: #F58220; }
-pre { margin: 4px 0; font-size: 0.72em; line-height: 1.25; }
-code { background-color: #e8eef4; color: #1B3A5C; font-size: 0.82em; padding: 1px 4px; }
-pre code { font-size: 1em; padding: 0; }
-table { font-size: 0.82em; width: 100%; margin: 4px 0; border-collapse: collapse; }
-table th { background-color: #1B3A5C; color: white; padding: 3px 7px; }
-table td { padding: 2px 7px; border-bottom: 1px solid #ddd; }
-blockquote { font-size: 0.88em; border-left: 4px solid #F58220; padding-left: 10px; margin: 4px 0; color: #555; }
-section.title {
-  background-color: #1B3A5C;
-  color: white !important;
-  text-align: center;
-  justify-content: center;
-  padding: 60px;
-}
-section.title h1 { color: #F58220 !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
-section.title h2 { color: #F58220 !important; font-size: 1.3em; }
-section.title h3 { color: #ccc !important; }
-section.title p { color: #ccc !important; }
-section.title strong { color: #F58220 !important; }
-footer { color: #888; font-size: 0.62em; }
-img { max-height: 340px; display: block; margin: 6px auto; }
-" lang="POSIX" data-marpit-pagination="17" style="--paginate:true;--background-color:#F5F7FA;--footer:DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares;--style:section {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 17px;
-  padding: 35px 48px 28px 48px;
-  color: #333333;
-}
-h1 {
-  color: #0D2B45;
-  border-bottom: 3px solid #F58220;
-  padding-bottom: 5px;
-  font-size: 1.45em;
-  margin-bottom: 8px;
-  margin-top: 0;
-}
-h2 { color: #1B3A5C; font-size: 1.2em; margin: 4px 0; }
-h3 { color: #2E86C1; font-size: 0.98em; margin: 4px 0; }
-p, li { margin: 2px 0; line-height: 1.35; }
-ul, ol { margin: 3px 0; padding-left: 18px; }
-strong { color: #F58220; }
-pre { margin: 4px 0; font-size: 0.72em; line-height: 1.25; }
-code { background-color: #e8eef4; color: #1B3A5C; font-size: 0.82em; padding: 1px 4px; }
-pre code { font-size: 1em; padding: 0; }
-table { font-size: 0.82em; width: 100%; margin: 4px 0; border-collapse: collapse; }
-table th { background-color: #1B3A5C; color: white; padding: 3px 7px; }
-table td { padding: 2px 7px; border-bottom: 1px solid #ddd; }
-blockquote { font-size: 0.88em; border-left: 4px solid #F58220; padding-left: 10px; margin: 4px 0; color: #555; }
-section.title {
-  background-color: #1B3A5C;
-  color: white !important;
-  text-align: center;
-  justify-content: center;
-  padding: 60px;
-}
-section.title h1 { color: #F58220 !important; border-bottom: 3px solid #F58220; font-size: 2.2em; }
-section.title h2 { color: #F58220 !important; font-size: 1.3em; }
-section.title h3 { color: #ccc !important; }
-section.title p { color: #ccc !important; }
-section.title strong { color: #F58220 !important; }
-footer { color: #888; font-size: 0.62em; }
-img { max-height: 340px; display: block; margin: 6px auto; }
-;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="17">
+;background-color:#F5F7FA;background-image:none;" data-marpit-pagination-total="15">
 <h1 id="refer%C3%AAncias-e-pr%C3%B3ximos-passos">Referências e Próximos Passos</h1>
-<p><strong>Referências:</strong></p>
+<p><strong>Para aprofundar:</strong></p>
 <ul>
-<li>Terraform plan/apply — <a href="https://developer.hashicorp.com/terraform/cli/commands/plan">developer.hashicorp.com/terraform/cli</a></li>
-<li>configure-aws-credentials — <a href="https://github.com/aws-actions/configure-aws-credentials">github.com/aws-actions/configure-aws-credentials</a></li>
-<li>amazon-ecr-login — <a href="https://github.com/aws-actions/amazon-ecr-login">github.com/aws-actions/amazon-ecr-login</a></li>
-<li>appleboy/ssh-action — <a href="https://github.com/appleboy/ssh-action">github.com/appleboy/ssh-action</a></li>
-<li>Delivery vs Deployment — <a href="https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment">atlassian.com/continuous-delivery</a></li>
+<li>GitOps — <a href="https://opengitops.dev/">opengitops.dev</a></li>
+<li>Terraform plan in CI — <a href="https://developer.hashicorp.com/terraform/tutorials/automation/github-actions">developer.hashicorp.com/terraform/tutorials/automation</a></li>
+<li>Delivery vs Deployment — <a href="https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment">atlassian.com</a></li>
 </ul>
 <p><strong>Para a próxima aula:</strong></p>
 <ul>
 <li>Completar o TF: GitOps (plan/apply) + pipeline CD com deploy na EC2</li>
-<li>Guardar os workflows funcionando — pré-requisito das estratégias avançadas</li>
+<li>Guardar os workflows funcionando — base para Blue-Green e Canary</li>
 </ul>
 <p><strong>Próxima aula:</strong><br />
-<strong>Aula 11 — Blue-Green Deploy:</strong> duas versões simultâneas, <strong>zero downtime</strong> — a evolução do Recreate.</p>
+<strong>Aula 11 — Blue-Green Deploy</strong><br />
+Duas versões simultâneas, troca instantânea, <strong>zero downtime</strong>.</p>
 <footer>DevOps — UniFAAT 2026-2 | Prof. Alexandre Tavares</footer>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()})}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame(()=>{t.style.display=""}))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=()=>o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o),l=Symbol();let c;const d="marpitSVGPolyfill:setZoomFactor,",h=Symbol(),g=Symbol();const p=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[v]:[],i={then:e=>(t?(async()=>{if(void 0===c){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise(t=>{i.addEventListener("load",()=>t())});i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),c=e.getImageData(5,5,1,1).data[3]<128}return c})().then(t=>{null==e||e(t?[v]:[])}):null==e||e([]),i)};return Object.assign(e,i)};let m,u;function v(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[g]||(Object.defineProperty(window,g,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(d)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(u=i)}}catch(t){console.error(t)}}));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||u||t.currentScale||1;m!==a&&(m=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}}),!1!==n&&Array.from(e.querySelectorAll("iframe"),({contentWindow:t})=>{null==t||t.postMessage(`${d}${n}`,"null"===window.origin?"*":window.origin)})}function w({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[h])return t[h];let e=!0;const i=()=>{e=!1,delete t[h]};Object.defineProperty(t,h,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await p()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}m=1,u=void 0;const b=Symbol(),y=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[l];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,o=t[n].proto();a()&&o!==HTMLElement?i||customElements.define(s,r(o,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach(t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)}))}window[l]=!0})(e),e[b])return e[b];const i=w({target:e}),n=()=>{i(),delete e[b]},o=Object.assign(n,{cleanup:n,update:()=>y(e)});return Object.defineProperty(e,b,{configurable:!0,value:o}),o},f=document.currentScript;y(f?f.getRootNode():document)}();

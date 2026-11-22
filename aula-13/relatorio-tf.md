@@ -13,10 +13,10 @@
 ## Resumo da Atividade Aplicada
 
 ### Objetivo
-Demonstrar domínio do ciclo DevOps completo criando um microserviço novo do zero — o `technova-notifications` — com um pipeline **end-to-end** que vai do commit até a validação em produção: código com testes, container, CI publicando no **Amazon ECR**, infraestrutura como código no **AWS Academy Learner Lab**, deploy automatizado com health check e integração inter-serviço validada por testes E2E.
+Avançar no **Moodle Docker AWS Challenge** ([github.com/AleTavares/implement_Moodle](https://github.com/AleTavares/implement_Moodle)), com foco em aprofundar os módulos Terraform, implementar o `user_data.sh` para automação do deploy na EC2 e evoluir o documento de arquitetura.
 
 ### Tarefa
-Construir o microserviço `technova-notifications` (Express.js, porta 3001) com rotas (`POST /notifications/send`, `GET /notifications`, `GET /notifications/:orderId`, `GET /health`), testes unitários (Jest + Supertest) e ESLint; containerizar com Dockerfile multi-stage (non-root + HEALTHCHECK); implementar pipeline CI (lint → test → build → push) publicando a imagem no **Amazon ECR** (`us-east-1`, credenciais temporárias do Lab com `aws_session_token`); provisionar a infraestrutura com Terraform (EC2 + Security Group + `LabInstanceProfile` para o `docker pull` do ECR); automatizar o deploy (CD) com health check pós-deploy; integrar o `technova-api` ao `technova-notifications` via HTTP com resiliência; e validar o fluxo completo (criar pedido → disparar notificação → confirmar entrega) com testes E2E. Comprovar com screenshots (pipeline CI verde, imagem no console do Amazon ECR, health check respondendo, testes E2E passando).
+Trabalhar no fork do `implement_Moodle` desenvolvendo o módulo `compute`: criar o script `user_data.sh` que instala o Docker na EC2 e sobe o Moodle automaticamente no boot via `docker compose up -d`, passando as variáveis de ambiente do banco com segurança (sem expor senhas no código). Avançar nos módulos `networking` e `database`, garantindo que `terraform validate` e `terraform plan` executem sem erros. Atualizar o documento `docs/architecture-design.md` com diagrama da arquitetura e descrição dos componentes. Executar `pytest -v` na pasta `tests/` para verificar a conformidade do repositório. Registrar o progresso com um commit no fork, preencher o relatório descrevendo o que foi feito e as dificuldades encontradas, e entregar via Pull Request no repositório da disciplina em `entregas/aula-13/RA/`.
 
 ---
 
