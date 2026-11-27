@@ -53,5 +53,36 @@ provas/prova-segundo-bimestre.md
 .agents/
 .kiro
 provas/gabarito-segundo-bimestre-teorica.md
-provas/prova-segundo-bimestre-pratica.md
+
 provas/prova-segundo-bimestre-teorica.md
+provas/prova-segundo-bimestre-pratica.md
+
+# Provas substitutivas do primeiro bimestre
+provas/prova-substitutiva-p1-modelo-a.md
+provas/prova-substitutiva-p1-modelo-b.md
+provas/prova-substitutiva-p1-modelo-c.md
+provas/gabarito-substitutiva-p1-modelo-a.md
+provas/gabarito-substitutiva-p1-modelo-b.md
+provas/gabarito-substitutiva-p1-modelo-c.md
+provas/gabarito-substitutiva-p1.md
+
+# Provas de exame
+provas/prova-exame-modelo-a.md
+provas/prova-exame-modelo-b.md
+provas/prova-exame-modelo-c.md
+provas/gabarito-exame.md
+
+# Provas substitutivas de exame
+provas/prova-substitutiva-exame-modelo-a.md
+provas/prova-substitutiva-exame-modelo-b.md
+provas/prova-substitutiva-exame-modelo-c.md
+provas/gabarito-substitutiva-exame.md
+
+# Proteção genérica: qualquer prova ou gabarito futuro
+provas/prova-*.md
+provas/gabarito-*.md
+provas/*.csv
+
+# Exceção: prova prática do segundo bimestre é pública (enunciado para os alunos)
+!provas/prova-segundo-bimestre-pratica.md
+
