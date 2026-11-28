@@ -8,6 +8,8 @@
 - **Valor desta parte:** 50% da nota da prova (5,0 pontos)
 - **Entrega:** Pull Request no repositório da disciplina até a data indicada no calendário
 
+> ⚠️ **Atenção:** a outra metade da nota vem de uma **prova teórica escrita em sala, sem consulta**. As questões dissertativas dessa prova são baseadas diretamente neste desafio. Quem ler a documentação (`CHALLENGE.md`, `README.md`, `docs/`), entender a arquitetura e executar o projeto estará preparado para ambas as partes. Não deixe o desafio para a última semana.
+
 ---
 
 ## Desafio: Moodle Docker AWS Challenge
