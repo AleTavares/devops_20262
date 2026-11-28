@@ -12,7 +12,7 @@
 
 Ainda não iniciei a implementação prática do projeto, mas já analisei a estrutura do repositório e os objetivos propostos no desafio.
 
-Minha intenção é começar pela primeira etapa, realizando a configuração e execução do ambiente local com Docker Compose, que inclui o Moodle e o PostgreSQL.
+Minha intenção é começar pela primeira etapa, realizando a configuração e execução do ambiente local com Docker Compose
 
 Pretendo verificar os pré-requisitos, configurar as variáveis de ambiente e executar os contêineres para garantir que a aplicação funcione corretamente em ambiente local.
 
