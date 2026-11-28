@@ -30,6 +30,14 @@ O script detecta automaticamente o tipo de entrega:
   código (Node.js) e o `processo-spec.md` vêm **na própria pasta do PR**
   (`entregas/aula-XX/RA/`). O bot valida `processo-spec.md`, `package.json` e o
   arquivo `.js`, e a IA avalia a decomposição, as rotas e a reflexão. Não usa AWS.
+- **Modo CI/CD** (aula 08, listada em `AULAS_CI`): a entrega é o **pipeline GitHub
+  Actions** no portfólio do aluno. O PR traz apenas o `entrega.md` com o link. O bot
+  valida que existe workflow em `.github/workflows/` (na raiz do portfólio), que o
+  pipeline cobre `lint → test → build`, e que a aplicação está em
+  `aula-08/technova-api/` (com `package.json`, `server.js`, `Dockerfile`,
+  `.eslintrc.json` e `package-lock.json`). A IA avalia o YAML do workflow e o código.
+  A **execução real do pipeline** (jobs verdes na aba Actions) e o status badge são
+  conferidos pelo professor. Não usa AWS.
 - **Modo prova** (Prova do 1º Bimestre): título `[Prova Primeiro Bimestre] RA: ...`.
   O aluno entrega só o `entrega.md` (na pasta `entregas/provaPrimeiroBi/RA/`) com o
   link do repositório próprio `prova-primeiro-bimestre-devops`. O bot valida a
@@ -165,6 +173,9 @@ sem custo de API. Útil para validar o fluxo antes de ligar o Bedrock.
   `REQUIRED_BY_AULA`, dentro de `avaliar_pr.py`.
 - **Aulas com código no PR (Node.js, ex.: aula 07):** configure em
   `AULAS_CODIGO_NO_PR` (arquivos obrigatórios, se exige `.js`, rotas esperadas).
+- **Aulas de CI/CD (ex.: aula 08):** configure em `AULAS_CI` (arquivos obrigatórios
+  da app em `aula-XX/technova-api/`, termos do pipeline esperados em
+  `.github/workflows/`).
 
 Os critérios de nota vêm sempre de `aula-XX/TF.md` — basta manter esses arquivos
 atualizados no repositório.

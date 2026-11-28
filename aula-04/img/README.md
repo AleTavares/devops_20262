@@ -50,12 +50,6 @@ Esse é o desafio desta aula: construir a infraestrutura de rede da TechNova do 
 
 ---
 
-## Conteúdo Original Consolidado
-
-Esta aula consolida o conteúdo das aulas originais **Aula 06 (EC2 Instances)** e **Aula 07 (VPC e Networking)** em uma única aula. A ordem foi invertida intencionalmente: ensinamos **VPC primeiro** (construir a rede) e **EC2 depois** (colocar o servidor na rede), pois faz mais sentido pedagógico construir o "terreno" antes de colocar a "casa".
-
----
-
 ## Entrega do Trabalho em Aula
 
 O trabalho em aula vale **1 ponto na nota final** do semestre (contabilizado apenas ao final, com todos os trabalhos entregues).

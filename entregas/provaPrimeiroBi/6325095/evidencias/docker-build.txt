@@ -1,0 +1,79 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.72kB 0.0s done
+#1 DONE 0.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 1.8s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:24-alpine
+#4 DONE 1.1s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 463B done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 379.11kB 0.1s done
+#6 DONE 0.1s
+
+#7 [deps 1/4] FROM docker.io/library/node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
+#7 resolve docker.io/library/node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 0.0s done
+#7 DONE 0.0s
+
+#8 [deps 3/4] COPY package.json package-lock.json ./
+#8 CACHED
+
+#9 [deps 4/4] RUN npm ci
+#9 CACHED
+
+#10 [deps 2/4] WORKDIR /app
+#10 CACHED
+
+#11 [build 3/6] COPY --from=deps /app/node_modules ./node_modules
+#11 CACHED
+
+#12 [build 4/6] COPY package.json package-lock.json nest-cli.json tsconfig.json tsconfig.build.json ./
+#12 CACHED
+
+#13 [build 5/6] COPY src ./src
+#13 DONE 0.1s
+
+#14 [build 6/6] RUN npm run build
+#14 1.355 
+#14 1.355 > reservas@0.0.1 build
+#14 1.355 > nest build
+#14 1.355 
+#14 11.43 npm notice
+#14 11.43 npm notice New major version of npm available! 11.19.0 -> 12.1.0
+#14 11.43 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0
+#14 11.43 npm notice To update run: npm install -g npm@12.1.0
+#14 11.43 npm notice
+#14 DONE 15.7s
+
+#15 [prod-deps 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#15 CACHED
+
+#16 [runtime 3/5] COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
+#16 CACHED
+
+#17 [runtime 4/5] COPY --from=build --chown=node:node /app/dist ./dist
+#17 DONE 0.1s
+
+#18 [runtime 5/5] COPY --chown=node:node package.json ./
+#18 DONE 0.0s
+
+#19 exporting to image
+#19 exporting layers 0.1s done
+#19 exporting manifest sha256:2572f108d7ad0098de5e9a85d369a194b4bdd02d8f95ede3f856319bf806ee73 0.0s done
+#19 exporting config sha256:b68f8782a7a47fb187c2f940b6d9db7f96c75f2c055f957c7498471e5f96cf5e 0.0s done
+#19 exporting attestation manifest sha256:d4f090678d1c970fab3fe69888080bb9f39149ebd3269454b0e59cc840c6c5c8 0.0s done
+#19 exporting manifest list sha256:8e231705b83850b719b6cffefa9e4706400b225beda14492c38cf800549ca5d6 0.0s done
+#19 naming to docker.io/library/reservas-api:latest done
+#19 unpacking to docker.io/library/reservas-api:latest 0.1s done
+#19 DONE 0.3s

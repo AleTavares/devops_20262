@@ -6,61 +6,55 @@
 **Semestre:** 2026-2  
 **Carga Horária:** 80 horas (15 encontros)
 
+---
 
 ## Objetivo
 
 Capacitar o aluno a projetar, implementar e operar pipelines de integração e entrega contínua (CI/CD) utilizando práticas de DevOps, desde o controle de versão com Git até deploys automatizados na AWS com estratégias de zero downtime, incorporando Infraestrutura como Código (Terraform), containerização (Docker) e inteligência artificial aplicada ao fluxo de trabalho.
 
+---
 
 ## Ementa
 
-Fundamentos de controle de versão (Git) e containerização (Docker). Orquestração de containers com Docker Compose. Infraestrutura como Código com Terraform na AWS (IAM, VPC, EC2, RDS). Gerenciamento de estado remoto e modularização. Integração Contínua com GitHub Actions. Registros de imagens Docker e automação de builds. Entrega Contínua com pipelines automatizados e GitOps. Estratégias de deploy (Blue/Green, Canary). Rollback, Feature Flags e AIOps. Inteligência Artificial como copiloto no ciclo DevOps (Kiro, AWS Bedrock). Projeto integrador com microserviço completo end-to-end.
+Fundamentos de controle de versão (Git) e containerização (Docker). Orquestração de containers com Docker Compose. Infraestrutura como Código com Terraform na AWS (IAM, VPC, EC2, RDS). Gerenciamento de estado remoto e modularização. Resolução de problemas complexos com IA (decomposição, Harness e Spec-Driven Development). Integração Contínua com GitHub Actions. Registros de imagens Docker e automação de builds. Entrega Contínua com pipelines automatizados e GitOps. Estratégias de deploy (Blue/Green, Canary). Rollback, Feature Flags e AIOps. Inteligência Artificial como copiloto no ciclo DevOps (Kiro, AWS Bedrock). Projeto integrador com microserviço completo end-to-end.
 
+---
 
 ## Conteúdo Programático
 
-### Módulo 1 — Fundamentos e IA (16h)
+O curso é organizado em **5 módulos** distribuídos ao longo de **15 encontros (aulas)**, seguindo a narrativa "O Resgate da TechNova".
 
-1. Controle de versão com Git: repositórios, branches, merge, remotes, boas práticas de commits
-2. Containerização com Docker: imagens, Dockerfile, layers, comandos essenciais
-3. Orquestração com Docker Compose: services, networks, volumes, variáveis de ambiente
-4. IA como copiloto DevOps: introdução ao Kiro, prompting para infraestrutura
+### Módulo 1 — Fundamentos e IA (Aulas 01–02)
 
-### Módulo 2 — Infraestrutura AWS com Terraform (40h)
+- **Aula 01 — Git e Docker:** controle de versão (repositórios, branches, merge, remotes, boas práticas de commits); containerização com Docker (imagens, Dockerfile, layers, comandos essenciais)
+- **Aula 02 — Docker Compose e IA como Copiloto:** orquestração multi-container (services, networks, volumes, variáveis de ambiente); introdução ao Kiro como copiloto DevOps
 
-5. Terraform fundamentals: HCL, providers, init/plan/apply/destroy, state
-6. IAM: users, groups, roles, policies, princípio do menor privilégio
-7. VPC e Networking: subnets públicas/privadas, Internet Gateway, Route Tables, Security Groups
-8. EC2: instâncias, AMIs, key pairs, user data, instance profiles
-9. RDS: PostgreSQL gerenciado, DB Subnet Groups, conectividade EC2-RDS
-10. Remote State: S3 backend, DynamoDB locking, migração de state
-11. Terraform Modules: módulos locais, for_each, Terraform Registry, composição e versionamento
-12. Revisão de arquitetura e IA para geração de IaC com Kiro/Bedrock
+### Módulo 2 — Infraestrutura AWS com Terraform (Aulas 03–07)
 
-### Módulo 3 — CI/CD e Automação (16h)
+- **Aula 03 — Terraform e Segurança AWS (IAM):** HCL, providers, init/plan/apply/destroy, state; users, groups, roles, policies, princípio do menor privilégio
+- **Aula 04 — VPC, Networking e EC2:** subnets públicas/privadas, Internet Gateway, Route Tables, Security Groups; instâncias EC2, key pairs, user data
+- **Aula 05 — RDS e Remote State:** PostgreSQL gerenciado, DB Subnet Groups, conectividade EC2-RDS; S3 backend e DynamoDB locking
+- **Aula 06 — Terraform Modules (do Básico ao Avançado):** módulos locais, for_each, Terraform Registry, composição e versionamento
+- **Aula 07 — Resolvendo Problemas Complexos com IA:** decomposição, Harness e Spec-Driven Development; geração de IaC com Kiro/Bedrock
 
-13. GitHub Actions: workflows, triggers, jobs, steps, multi-stage pipelines
-14. Testes automatizados: ESLint, Jest, artifacts, status badges
-15. Secrets management: GitHub Secrets, GITHUB_TOKEN, environments com protection rules
-16. Docker Registry (ghcr.io): build, tag, push automatizado
-17. IA no CI/CD: PR review automatizado, security scan de Dockerfiles
+### Módulo 3 — CI/CD e Automação (Aulas 08–09)
 
-### Módulo 4 — Entrega Contínua e Deploy (24h)
+- **Aula 08 — GitHub Actions: CI Completo com Secrets:** workflows, triggers, jobs, steps; lint, testes, artifacts; GitHub Secrets, environments e approval gates
+- **Aula 09 — Docker Registry e IA no CI/CD:** build/tag/push automatizado para ghcr.io; PR review automatizado e security scan com IA
 
-18. GitOps: Terraform plan on PR, apply on merge, OIDC com AWS
-19. Pipelines de CD: CI → Build → Push → Deploy, health checks
-20. Blue/Green Deployment: ALB, Target Groups, traffic switch
-21. Canary Deployment: weighted routing, rollout gradual, métricas de decisão
-22. Rollback strategies: feature flags, expand-contract migrations, runbooks
-23. AIOps: CloudWatch Anomaly Detection, Bedrock para análise de incidentes
+### Módulo 4 — Entrega Contínua e Deploy (Aulas 10–12)
 
-### Módulo 5 — Projeto Integrador (24h)
+- **Aula 10 — Terraform Automatizado e CD Pipelines:** GitOps (plan on PR, apply on merge), OIDC com AWS; pipeline CI → Build → Push → Deploy com health checks
+- **Aula 11 — Blue/Green e Canary Deployments:** zero downtime com ALB e Target Groups; weighted routing, rollout gradual e métricas de decisão
+- **Aula 12 — Rollback Strategies e AIOps:** feature flags, expand-contract migrations, runbooks; CloudWatch Anomaly Detection e Bedrock para análise de incidentes
 
-24. Criação de microserviço do zero com pipeline E2E completo
-25. Chaos Engineering: Game Day, simulação de desastres, métricas de resiliência
-26. Agente DevOps com AWS Bedrock: análise de PRs, detecção de drift, geração de runbooks
-27. Apresentação final: demo da plataforma completa com IA integrada
+### Módulo 5 — Projeto Integrador (Aulas 13–15)
 
+- **Aula 13 — Novo Microserviço com Pipeline End-to-End:** criação de microserviço do zero com pipeline E2E completo
+- **Aula 14 — Disaster Simulation, Code Review e Agente Bedrock:** Chaos Engineering, Game Day; code review automatizado; agente DevOps com AWS Bedrock
+- **Aula 15 — Apresentação Final:** demo da plataforma completa da TechNova com IA integrada
+
+---
 
 ## Bibliografia Básica
 
@@ -68,6 +62,7 @@ Fundamentos de controle de versão (Git) e containerização (Docker). Orquestra
 2. MORRIS, Kief. **Infrastructure as Code: Dynamic Systems for the Cloud Age**. 2. ed. Sebastopol: O'Reilly Media, 2020.
 3. KIM, Gene; HUMBLE, Jez; DEBOIS, Patrick; WILLIS, John. **O Projeto Fênix: um romance sobre TI, DevOps e sobre ajudar o seu negócio a vencer**. Rio de Janeiro: Alta Books, 2018.
 
+---
 
 ## Bibliografia Complementar
 
