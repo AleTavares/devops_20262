@@ -33,9 +33,7 @@ Abra o Pull Request no GitHub com:
 - **Título:** `[Aula 12] RA: 6325120 - Jefferson Camargo Coelho`
 - **Base:** `main`
 - **Compare:** `entregas/aula-12/SEU-RA`
-
 ---
-
 ## Critérios de Avaliação
 
 | Critério | Peso |
