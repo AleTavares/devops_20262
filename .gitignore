@@ -83,6 +83,9 @@ provas/prova-*.md
 provas/gabarito-*.md
 provas/*.csv
 
+# Gabaritos de TA (ficam na pasta da aula, não publicados)
+aula-*/gabarito-ta*.md
+
 # Exceção: prova prática do segundo bimestre é pública (enunciado para os alunos)
 !provas/prova-segundo-bimestre-pratica.md
 
