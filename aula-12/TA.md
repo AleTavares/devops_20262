@@ -8,6 +8,8 @@ Este material deve ser estudado **ANTES** da aula. A leitura completa é obrigat
 
 ## Conteúdo Teórico
 
+![](img/aula-12/ta001.png)
+
 ### 1. Rollback: Por Que Todo Deploy Precisa de Um Plano B
 
 Em produção, a pergunta não é "SE algo vai dar errado", mas "QUANDO algo vai dar errado". Um rollback é o processo de reverter um sistema para um estado anterior funcional após um deploy problemático.
@@ -114,6 +116,8 @@ Um runbook é um documento operacional com instruções passo-a-passo para respo
 | P4 | Bug menor, workaround disponível | Próximo dia útil |
 
 ### 6. Introdução a AIOps
+
+![](img/aula-12/ta002.png)
 
 AIOps (Artificial Intelligence for IT Operations) é a aplicação de IA e ML para automatizar e melhorar operações de TI. Em vez de thresholds fixos e alertas manuais, AIOps usa:
 
